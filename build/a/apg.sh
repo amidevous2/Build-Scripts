@@ -38,7 +38,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -59,7 +59,7 @@ echo "***********************"
 echo ""
 echo "libapg ${APG_VER}..."
 
-if ! "${WGET}" -q -O "$APG_TAR" --ca-certificate="${GITHUB_CA_ZOO}" \
+if ! "${WGET}" -q -O "$APG_TAR" \
      "https://github.com/jabenninghoff/apg/archive/$APG_TAR"
 then
     echo "Failed to download APG"
