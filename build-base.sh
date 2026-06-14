@@ -95,7 +95,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-libxml2.sh
+if ! ./build.sh libxml2
 then
     echo "Failed to build libxml2"
     exit 1
@@ -106,7 +106,7 @@ fi
 # GetText is checked in build-gettext-final.sh
 unset INSTX_DISABLE_GETTEXT_CHECK
 
-if ! ./build-gettext-final.sh
+if ! ./build.sh gettext-final
 then
     echo "Failed to build GetText final"
     exit 1
@@ -118,7 +118,7 @@ fi
 
 rm -f "${INSTX_PKG_CACHE}/pcre2"
 
-if ! ./build-pcre2.sh
+if ! ./build.sh pcre2
 then
     echo "Failed to build PCRE2"
     exit 1
