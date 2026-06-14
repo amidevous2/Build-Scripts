@@ -48,7 +48,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -56,7 +56,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-zlib.sh
+if ! ./build.sh zlib
 then
     echo "Failed to build zLib"
     exit 1
@@ -64,7 +64,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-bzip.sh
+if ! ./build.sh bzip
 then
     echo "Failed to build Bzip"
     exit 1
@@ -80,7 +80,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-gdbm.sh
+if ! ./build.sh gdbm
 then
     echo "Failed to build GNU DB"
     exit 1
@@ -88,7 +88,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-bdb.sh
+if ! ./build.sh bdb
 then
     echo "Failed to build Berkeley DB"
     exit 1
@@ -96,13 +96,13 @@ fi
 
 ###############################################################################
 
-if [[ ! -f "$INSTX_PREFIX/bin/sed" ]]; then
-    if ! ./build-sed.sh
+#if [[ ! -f "$INSTX_PREFIX/bin/sed" ]]; then
+    if ! ./build.sh sed
     then
         echo "Failed to build Sed"
         exit 1
     fi
-fi
+#fi
 
 ###############################################################################
 
