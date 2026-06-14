@@ -9,7 +9,7 @@
 # https://sourceware.org/bzip2/downloads.html
 
 BZIP2_VER=1.0.8
-#BZIP2_VER=1.0.5
+#BZIP2_VER=1.0.6
 BZIP2_TAR=bzip2-${BZIP2_VER}.tar.gz
 BZIP2_DIR=bzip2-${BZIP2_VER}
 PKG_NAME=bzip2
@@ -98,7 +98,7 @@ if [[ -e ../patch/bzip-$BZIP2_VER.patch ]]; then
     echo "****************************"
     echo "Patching package"
     echo "****************************"
-    patch -u -p0 < ./patch/bzip-$BZIP2_VER.patch
+    patch p1 < ./patch/bzip-$BZIP2_VER.patch
 fi
 
 # Escape dollar sign for $ORIGIN in makefiles. Required so
