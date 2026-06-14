@@ -36,7 +36,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -44,7 +44,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-gmp.sh
+if ! ./build.sh gmp
 then
     echo "Failed to build GMP"
     exit 1
@@ -62,7 +62,7 @@ echo "************************"
 echo "Downloading package"
 echo "************************"
 
-if ! "${WGET}" -q -O "$MPFR_TAR" --ca-certificate="${LETS_ENCRYPT_ROOT}" \
+if ! "${WGET}" -q -O "$MPFR_TAR" \
      "https://ftp.gnu.org/gnu/mpfr/$MPFR_TAR"
 then
     echo "Failed to download MPFR"
