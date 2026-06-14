@@ -98,7 +98,7 @@ if [[ -e ../patch/bzip-$BZIP2_VER.patch ]]; then
     echo "****************************"
     echo "Patching package"
     echo "****************************"
-    patch p1 < ./patch/bzip-$BZIP2_VER.patch
+    patch -p1 < ../patch/bzip-$BZIP2_VER.patch
 fi
 
 # Escape dollar sign for $ORIGIN in makefiles. Required so
