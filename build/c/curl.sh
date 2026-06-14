@@ -3,7 +3,7 @@
 # Written and placed in public domain by Jeffrey Walton
 # This script builds cURL from sources.
 
-CURL_VER=8.4.0"
+CURL_VER=7.76.1"
 CURL_TAR="curl-${CURL_VER}.tar.gz"
 CURL_DIR="curl-${CURL_VER}"
 PKG_NAME=curl
@@ -36,7 +36,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA certs"
     exit 1
@@ -44,7 +44,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-zlib.sh
+if ! ./build.sh zlib
 then
     echo "Failed to build zLib"
     exit 1
@@ -52,7 +52,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-bzip.sh
+if ! ./build.sh bzip
 then
     echo "Failed to build Bzip2"
     exit 1
@@ -68,7 +68,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-unistr.sh
+if ! ./build.sh unistr
 then
     echo "Failed to build Unistring"
     exit 1
@@ -76,7 +76,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-idn2.sh
+if ! ./build.sh idn2
 then
     echo "Failed to build IDN2"
     exit 1
@@ -84,7 +84,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-pcre2.sh
+if ! ./build.sh pcre2
 then
     echo "Failed to build PCRE2"
     exit 1
@@ -92,7 +92,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-openssl.sh
+if ! ./build.sh openssl
 then
     echo "Failed to build OpenSSL"
     exit 1
@@ -103,7 +103,7 @@ fi
 # Needs real C++14 support
 if [[ "$INSTX_CXX14" -eq 1 ]]
 then
-    if ! ./build-nghttp2.sh
+    if ! ./build.sh nghttp2
     then
         echo "Failed to build NGHTTP2"
         exit 1
@@ -112,7 +112,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-openldap.sh
+if ! ./build.sh openldap
 then
     echo "Failed to build OpenLDAP"
     exit 1
@@ -127,7 +127,7 @@ then
     ver=$(python -V 2>&1 | sed 's/.* \([0-9]\).\([0-9]\).*/\1\2/')
     if [ "$ver" -ge 27 ]
     then
-        if ! ./build-libpsl.sh
+        if ! ./build.sh libpsl
         then
             echo "Failed to build Public Suffix List library"
             exit 1
@@ -147,7 +147,7 @@ echo "**********************"
 echo "Downloading package"
 echo "**********************"
 
-if ! "${WGET}" -q -O "$CURL_TAR" --ca-certificate="${THE_CA_ZOO}" \
+if ! "${WGET}" -q -O "$CURL_TAR" \
      "https://curl.se/download/$CURL_TAR"
 then
     echo "Failed to download cURL"
