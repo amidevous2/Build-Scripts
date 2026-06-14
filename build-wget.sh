@@ -96,6 +96,14 @@ fi
 
 ###############################################################################
 
+if ! ./build-perl.sh
+then
+    echo "Failed to build OpenSSL"
+    exit 1
+fi
+
+###############################################################################
+
 if ! ./build-openssl.sh
 then
     echo "Failed to build OpenSSL"
