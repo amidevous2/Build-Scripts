@@ -36,7 +36,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -46,7 +46,7 @@ fi
 
 # libunistring only needs iConvert
 
-if ! ./build-iconv-gettext.sh
+if ! ./build.sh iconv-gettext
 then
     echo "Failed to build iConv and GetText"
     exit 1
