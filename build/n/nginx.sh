@@ -30,7 +30,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -38,7 +38,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-zlib.sh
+if ! ./build.sh zlib
 then
     echo "Failed to build zLib"
     exit 1
@@ -46,7 +46,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-pcre.sh
+if ! ./build.sh pcre
 then
     echo "Failed to build PCRE"
     exit 1
@@ -54,7 +54,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-openssl.sh
+if ! ./build.sh openssl
 then
     echo "Failed to build OpenSSL"
     exit 1
@@ -75,7 +75,7 @@ echo "****************************"
 echo ""
 echo "Nginx ${NGINX_VER}..."
 
-if ! "${WGET}" -q -O "$NGINX_TAR" --ca-certificate="${LETS_ENCRYPT_ROOT}" \
+if ! "${WGET}" -q -O "$NGINX_TAR" \
      "https://nginx.org/download/$NGINX_TAR"
 then
     echo "Failed to download Nginx"
