@@ -138,6 +138,40 @@ fi
 
 ###############################################################################
 
+# Trigger a rebuild of IDN2
+
+if ! ./build.sh wget
+
+then
+    echo "Failed to build WGET"
+    exit 1
+fi
+
+###############################################################################
+
+# Trigger a rebuild of IDN2
+
+if ! ./build.sh bash
+
+then
+    echo "Failed to build BASH"
+    exit 1
+fi
+
+###############################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
 touch "${INSTX_PKG_CACHE}/${PKG_NAME}"
 
 exit 0
