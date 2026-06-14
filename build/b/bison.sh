@@ -58,7 +58,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -87,7 +87,7 @@ echo "*************************"
 echo ""
 echo "Bison ${BISON_VER}..."
 
-if ! "${WGET}" -q -O "$BISON_TAR" --ca-certificate="${THE_CA_ZOO}" \
+if ! "${WGET}" -q -O "$BISON_TAR" \
      "https://ftp.gnu.org/gnu/bison/$BISON_TAR"
 then
     echo "Failed to download Bison"
