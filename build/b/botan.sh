@@ -40,7 +40,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -48,7 +48,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-bzip.sh
+if ! ./build.sh bzip
 then
     echo "Failed to build Bzip2"
     exit 1
@@ -56,7 +56,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-zlib.sh
+if ! ./build.sh zlib
 then
     echo "Failed to build zLib"
     exit 1
@@ -64,14 +64,14 @@ fi
 
 ###############################################################################
 
-if [[ ! -f "${INSTX_PREFIX}/bin/xz" ]]
-then
-    if ! ./build-xz.sh
+#if [[ ! -f "${INSTX_PREFIX}/bin/xz" ]]
+#then
+    if ! ./build.sh xz
     then
         echo "Failed to build XZ"
         exit 1
     fi
-fi
+#fi
 
 ###############################################################################
 
@@ -88,7 +88,7 @@ echo "*************************"
 echo ""
 echo "Botan ${BOTAN_VER}..."
 
-if ! "${WGET}" -q -O "$BOTAN_XZ" --ca-certificate="${LETS_ENCRYPT_ROOT}" \
+if ! "${WGET}" -q -O "$BOTAN_XZ" \
      "https://botan.randombit.net/releases/$BOTAN_XZ"
 then
     echo "Failed to download Botan"
