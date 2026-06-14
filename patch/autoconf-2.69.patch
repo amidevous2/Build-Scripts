@@ -1,0 +1,247 @@
+From e5654a5591884b92633c7785f325626711e7f7aa Mon Sep 17 00:00:00 2001
+From: Paul Eggert <eggert@cs.ucla.edu>
+Date: Tue, 29 Jan 2013 13:46:48 -0800
+Subject: [PATCH] autoscan: port to perl 5.17
+
+* bin/autoscan.in (scan_sh_file): Escape '{'.  This avoids a
+feature that is deprecated in Perl 5.17.  Reported by Ray Lauff in
+<http://lists.gnu.org/archive/html/bug-autoconf/2013-01/msg00059.html>.
+---
+ bin/autoscan.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/bin/autoscan.in b/bin/autoscan.in
+index 993a750..db1df79 100644
+--- a/bin/autoscan.in
++++ b/bin/autoscan.in
+@@ -358,7 +358,7 @@ sub scan_sh_file ($)
+     {
+       # Strip out comments and variable references.
+       s/#.*//;
+-      s/\${[^\}]*}//g;
++      s/\$\{[^\}]*}//g;
+       s/@[^@]*@//g;
+ 
+       # Tokens in the code.
+-- 
+2.1.0
+
+
+
+
+From 4c1f7a361f4fd6180b7b46b950e3bfe389b5b831 Mon Sep 17 00:00:00 2001
+From: Ondrej Dubaj <odubaj@redhat.com>
+Date: Wed, 28 Aug 2019 07:39:50 +0200
+Subject: [PATCH] Port tests to Bash 5
+    
+* tests/local.at (AT_CHECK_ENV, AT_CONFIG_CMP):
+Add BASH_ARGC, BASH_ARGV to list of variables to be ignored when
+comparing variable space dumps.
+(AT_CONFIG_CMP): Also ignore LINENO.
+* tests/m4sh.at: Also unset LINENO in 'reference' and 'test/test-1'.
+
+---
+ tests/local.at | 5 ++++-
+ tests/m4sh.at  | 4 ++--
+ 2 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/tests/local.at b/tests/local.at
+index 40b7318..f3ad2b5 100644
+--- a/tests/local.at
++++ b/tests/local.at
+@@ -324,7 +324,7 @@ if test -f state-env.before && test -f state-env.after; then
+       [AWK|LEX|LEXLIB|LEX_OUTPUT_ROOT|LN_S|M4|MKDIR_P|RANLIB|SET_MAKE|YACC],
+       [GREP|[EF]GREP|SED],
+       [[_@]|.[*#?$].],
+-      [argv|ARGC|LINENO|OLDPWD|PIPESTATUS|RANDOM|SECONDS]))=' \
++      [argv|ARGC|LINENO|BASH_ARGC|BASH_ARGV|OLDPWD|PIPESTATUS|RANDOM|SECONDS]))=' \
+      $act_file ||
+        test $? -eq 1 || echo failed >&2
+     ) 2>stderr-$act_file |
+@@ -381,6 +381,9 @@ do
+ 	/'\'\\\$\''=/ d
+ 	/^argv=/ d
+ 	/^ARGC=/ d
++  /^BASH_ARGC=/ d
++  /^BASH_ARGV=/ d
++  /^LINENO=/ d
+ 	' $act_file >at_config_vars-$act_file
+ done
+ AT_CMP([at_config_vars-$1], [at_config_vars-$2])[]dnl
+diff --git a/tests/m4sh.at b/tests/m4sh.at
+index 4e4da5d..80684ca 100644
+--- a/tests/m4sh.at
++++ b/tests/m4sh.at
+@@ -254,7 +254,7 @@ AT_CHECK([autom4te -l m4sh $1.as -o $1])
+ # `_oline_', once processed and ran, produces our reference.
+ # We check that we find ourselves by looking at a string which is
+ # available only in the original script: `_oline_'.
+-AT_DATA_LINENO([reference], [false], [__OLINE__], [_oline__])
++AT_DATA_LINENO([reference], [true], [__OLINE__], [_oline__])
+ AT_CHECK([./reference], 0, [stdout])
+ 
+ # The reference:
+@@ -264,7 +264,7 @@ mv stdout expout
+ # Be sure to be out of the PATH.
+ AT_CHECK([mkdir test || exit 77])
+ 
+-AT_DATA_LINENO([test/test-1], [false], [__LINENO__], [LINENO])
++AT_DATA_LINENO([test/test-1], [true], [__LINENO__], [LINENO])
+ AT_CHECK([./test/test-1],                          0, [expout])
+ AT_CHECK([(PATH=test$PATH_SEPARATOR$PATH; export PATH; exec test-1)],
+ 						   0, [expout])
+-- 
+2.19.1
+
+From a197431414088a417b407b9b20583b2e8f7363bd Mon Sep 17 00:00:00 2001
+From: Eric Blake <eblake@redhat.com>
+Date: Thu, 12 Sep 2013 15:11:29 -0600
+Subject: [PATCH] AC_INIT: add --runstatedir option to configure
+
+http://lwn.net/Articles/436012/ documents that many distros
+are now preferring to use /run rather than /var/run for
+storage of pid files and other per-process temporary files
+that must not be cleaned out during arbitrary TMPDIR sweeps.
+As such, the GNU Coding Standards were recently changed to
+recommend a new configure option to make it easy to choose
+this directory at configure time.  This patch adds support
+for the option to all configure scripts built by autoconf.
+
+* general.m4 (_AC_INIT_PARSE_ARGS): Add new directory option.
+(_AC_INIT_HELP): Document it.
+* doc/autoconf.texi (Installation Directory Variables): Document
+new option.
+(Site Defaults): Mention typical use within a distro.
+* NEWS: Mention the addition.
+
+Signed-off-by: Eric Blake <eblake@redhat.com>
+---
+ NEWS                    |    5 +++++
+ doc/autoconf.texi       |   14 +++++++++++++-
+ lib/autoconf/general.m4 |   13 ++++++++++++-
+ 3 files changed, 30 insertions(+), 2 deletions(-)
+
+diff --git a/doc/autoconf.texi b/doc/autoconf.texi
+index 26e7b17..4932067 100644
+--- a/doc/autoconf.texi
++++ b/doc/autoconf.texi
+@@ -2826,7 +2826,18 @@ usually has a subdirectory per locale.
+ 
+ @defvar localstatedir
+ @ovindex localstatedir
+-The directory for installing modifiable single-machine data.
++The directory for installing modifiable single-machine data.  Content in
++this directory typically survives a reboot.
++@end defvar
++
++@defvar runstatedir
++@ovindex runstatedir
++The directory for installing temporary modifiable single-machine data.
++Content in this directory survives as long as the process is running
++(such as pid files), as contrasted with @file{/tmp} that may be
++periodically cleaned.  Conversely, this directory is typically cleaned
++on a reboot.  By default, this is a subdirectory of
++@code{localstatedir}.
+ @end defvar
+ 
+ @defvar mandir
+@@ -22606,6 +22617,7 @@ test "$prefix" = NONE && prefix=/usr/share/local/gnu
+ test "$exec_prefix" = NONE && exec_prefix=/usr/local/gnu
+ test "$sharedstatedir" = '$@{prefix@}/com' && sharedstatedir=/var
+ test "$localstatedir" = '$@{prefix@}/var' && localstatedir=/var
++test "$runstatedir" = '$@{localstatedir@}/run' && runstatedir=/run
+ 
+ # Give Autoconf 2.x generated configure scripts a shared default
+ # cache file for feature test results, architecture-specific.
+diff --git a/lib/autoconf/general.m4 b/lib/autoconf/general.m4
+index 70b0168..1ce9922 100644
+--- a/lib/autoconf/general.m4
++++ b/lib/autoconf/general.m4
+@@ -586,6 +586,7 @@ AC_SUBST([datadir],        ['${datarootdir}'])dnl
+ AC_SUBST([sysconfdir],     ['${prefix}/etc'])dnl
+ AC_SUBST([sharedstatedir], ['${prefix}/com'])dnl
+ AC_SUBST([localstatedir],  ['${prefix}/var'])dnl
++AC_SUBST([runstatedir],    ['${localstatedir}/run'])dnl
+ AC_SUBST([includedir],     ['${prefix}/include'])dnl
+ AC_SUBST([oldincludedir],  ['/usr/include'])dnl
+ AC_SUBST([docdir],         [m4_ifset([AC_PACKAGE_TARNAME],
+@@ -812,6 +813,15 @@ do
+   | -silent | --silent | --silen | --sile | --sil)
+     silent=yes ;;
+ 
++  -runstatedir | --runstatedir | --runstatedi | --runstated \
++  | --runstate | --runstat | --runsta | --runst | --runs \
++  | --run | --ru | --r)
++    ac_prev=runstatedir ;;
++  -runstatedir=* | --runstatedir=* | --runstatedi=* | --runstated=* \
++  | --runstate=* | --runstat=* | --runsta=* | --runst=* | --runs=* \
++  | --run=* | --ru=* | --r=*)
++    runstatedir=$ac_optarg ;;
++
+   -sbindir | --sbindir | --sbindi | --sbind | --sbin | --sbi | --sb)
+     ac_prev=sbindir ;;
+   -sbindir=* | --sbindir=* | --sbindi=* | --sbind=* | --sbin=* \
+@@ -921,7 +931,7 @@ fi
+ for ac_var in	exec_prefix prefix bindir sbindir libexecdir datarootdir \
+ 		datadir sysconfdir sharedstatedir localstatedir includedir \
+ 		oldincludedir docdir infodir htmldir dvidir pdfdir psdir \
+-		libdir localedir mandir
++		libdir localedir mandir runstatedir
+ do
+   eval ac_val=\$$ac_var
+   # Remove trailing slashes.
+@@ -1058,6 +1068,7 @@ Fine tuning of the installation directories:
+   --sysconfdir=DIR        read-only single-machine data [PREFIX/etc]
+   --sharedstatedir=DIR    modifiable architecture-independent data [PREFIX/com]
+   --localstatedir=DIR     modifiable single-machine data [PREFIX/var]
++  --runstatedir=DIR       modifiable per-process data [LOCALSTATEDIR/run]
+   --libdir=DIR            object code libraries [EPREFIX/lib]
+   --includedir=DIR        C header files [PREFIX/include]
+   --oldincludedir=DIR     C header files for non-gcc [/usr/include]
+-- 
+1.7.2.5
+
+
+
+diff --git a/lib/autoconf/fortran.m4 b/lib/autoconf/fortran.m4
+	index 0a0c4168..59a8859b 100644
+	--- a/lib/autoconf/fortran.m4
+	+++ b/lib/autoconf/fortran.m4
+	@@ -698,6 +698,7 @@ while test $[@%:@] != 1; do
+	 	-zallextract*| -zdefaultextract)
+	 	  ac_cv_[]_AC_LANG_ABBREV[]_libs="$ac_cv_[]_AC_LANG_ABBREV[]_libs $ac_arg"
+	 	  ;;
+	+	-mllvm) ${2+shift};; # Defend against 'clang -mllvm -loopopt=0'.
+	 	  # Ignore everything else.
+	   esac
+	 done
+	-- 
+	2.45.0
+
+
+
+
+  From dfb0659b205e03af62542cd318a9f3253e28c40a Mon Sep 17 00:00:00 2001
+From: Daniel Colascione <dancol@dancol.org>
+Date: Sun, 4 Mar 2018 13:36:55 -0800
+Subject: [PATCH] Fix test suite with modern Perl
+
+---
+ tests/tools.at | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tests/tools.at b/tests/tools.at
+index 31d4aadb..4ee916af 100644
+--- a/tests/tools.at
++++ b/tests/tools.at
+@@ -1290,7 +1290,7 @@ do
+   funny=`func_sanitize_file_name "$funny"`
+   file=" file $funny"
+   dir=`func_sanitize_dir_name " dir $funny"`
+-  TMPDIR=" tmp$dir"
++  TMPDIR="./ tmp$dir"
+   export TMPDIR
+ 
+   # skip if we cannot create such a file or directory
+-- 
+2.47.0
