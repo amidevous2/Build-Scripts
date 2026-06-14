@@ -118,7 +118,7 @@ CFLAGS=$(echo "${INSTX_CFLAGS}" | sed 's/\$/\$\$/g')
 CXXFLAGS=$(echo "${INSTX_CXXFLAGS}" | sed 's/\$/\$\$/g')
 LDFLAGS=$(echo "${INSTX_LDFLAGS}" | sed 's/\$/\$\$/g')
 LDLIBS="${INSTX_LDLIBS}"
-export O3=""
+O3="-O3"
 
 MAKE_FLAGS=()
 MAKE_FLAGS+=("-f" "Makefile")
