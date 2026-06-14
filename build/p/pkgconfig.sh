@@ -40,7 +40,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -60,7 +60,7 @@ echo "******************************"
 
 if [[ -n $(command -v "${WGET}" 2>/dev/null) ]]
 then
-    if ! "${WGET}" -q -O "$PKGCONFIG_TAR" --ca-certificate="${LETS_ENCRYPT_ROOT}" \
+    if ! "${WGET}" -q -O "$PKGCONFIG_TAR" \
          "https://pkg-config.freedesktop.org/releases/$PKGCONFIG_TAR"
     then
         echo "Failed to download pkg-config"
