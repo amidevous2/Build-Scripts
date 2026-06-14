@@ -8,5 +8,7 @@ chmod +x ./setup-bash.sh
 ./setup-bash.sh
 chmod +x ./build-base.sh
 chmod +x./build.sh wget
-INSTX_PREFIX="$HOME/.local" ./build-base.sh
-INSTX_PREFIX="$HOME/.local" ./build.sh wget
+INSTX_PREFIX="$HOME/.local"
+export INSTX_PREFIX
+./build-base.sh
+./build.sh wget
