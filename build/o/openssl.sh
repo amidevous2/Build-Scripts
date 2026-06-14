@@ -58,7 +58,7 @@ then
 
     printf "\nFound PERL_MAJ=%d, PERL_MIN=%d, using OpenSSL 1.0.2\n" "${PERL_MAJ}" "${PERL_MIN}"
 
-    if ! ./build-openssl-1.0.2.sh
+    if ! ./build.sh openssl-1.0.2
     then
         echo "Failed to build OpenSSL 1.0.2"
         exit 1
@@ -67,7 +67,7 @@ else
 
     printf "\nFound PERL_MAJ=%d, PERL_MIN=%d, using OpenSSL 1.1.1\n" "${PERL_MAJ}" "${PERL_MIN}"
 
-    if ! ./build-openssl-1.1.1.sh
+    if ! ./build.sh openssl-1.1.1
     then
         echo "Failed to build OpenSSL 1.1.1"
         exit 1
