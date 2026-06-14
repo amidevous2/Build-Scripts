@@ -12,3 +12,4 @@ else
    echo "cd $HOME/Build-Scripts" >> $HOME/reset-build-scripts-repo.sh
    bash $HOME/reset-build-scripts-repo.sh
 fi
+#
