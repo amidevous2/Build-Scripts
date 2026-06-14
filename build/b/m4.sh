@@ -29,7 +29,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -50,7 +50,7 @@ echo "**********************"
 echo ""
 echo "M4 ${M4_VER}..."
 
-if ! "${WGET}" -q -O "$M4_TAR" --ca-certificate="${LETS_ENCRYPT_ROOT}" \
+if ! "${WGET}" -q -O "$M4_TAR"  \
      "https://ftp.gnu.org/gnu/m4/$M4_TAR"
 then
     echo "Failed to download M4"
