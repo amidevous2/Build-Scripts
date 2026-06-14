@@ -146,7 +146,7 @@ fi
 
 
 MAKE_FLAGS=()
-MAKE_FLAGS+=("-f" "Makefile")
+MAKE_FLAGS+=("bzip2recover")
 MAKE_FLAGS+=("-j" "${INSTX_JOBS}")
 MAKE_FLAGS+=("CC=${CC}")
 MAKE_FLAGS+=("CPPFLAGS=${CPPFLAGS} -I.")
