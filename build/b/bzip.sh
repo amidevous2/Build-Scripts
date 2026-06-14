@@ -8,8 +8,8 @@
 # Bzip lost its website. It is now located on Sourceware.
 # https://sourceware.org/bzip2/downloads.html
 
-BZIP2_VER=1.0.8
-#BZIP2_VER=1.0.6
+#BZIP2_VER=1.0.8
+BZIP2_VER=1.0.6
 BZIP2_TAR=bzip2-${BZIP2_VER}.tar.gz
 BZIP2_DIR=bzip2-${BZIP2_VER}
 PKG_NAME=bzip2
@@ -119,6 +119,7 @@ CXXFLAGS=$(echo "${INSTX_CXXFLAGS}" | sed 's/\$/\$\$/g')
 LDFLAGS=$(echo "${INSTX_LDFLAGS}" | sed 's/\$/\$\$/g')
 LDLIBS="${INSTX_LDLIBS}"
 O3="-O3"
+CFLAGS=" -D_FILE_OFFSET_BITS=64 -fpic -fPIC $O3 $CFLAGS"
 
 MAKE_FLAGS=()
 MAKE_FLAGS+=("-f" "Makefile-libbz2_so")
