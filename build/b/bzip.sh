@@ -67,6 +67,17 @@ echo "****************************"
 echo "Downloading package"
 echo "****************************"
 
+
+
+
+binary="ok"
+if [[ $binary == "ok" ]]; then
+   wget https://github.com/amidevous2/Build-Scripts/releases/download/download/bzip2-1.0.8-bin.tar
+   tar -xvf bzip2-1.0.8-bin.tar -C $INSTX_PREFIX
+binary="no"
+else
+binary="no"
+
 echo ""
 echo "Bzip2 ${BZIP2_VER}..."
 
@@ -300,6 +311,11 @@ else
 fi
 
 ###############################################################################
+
+fi
+
+
+
 
 # Write the *.pc file
 {
