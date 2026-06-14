@@ -31,7 +31,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -52,7 +52,7 @@ echo "**********************"
 echo ""
 echo "Automake ${AUTOMAKE_VER}..."
 
-if ! "${WGET}" -q -O "$AUTOMAKE_TAR" --ca-certificate="${LETS_ENCRYPT_ROOT}" \
+if ! "${WGET}" -q -O "$AUTOMAKE_TAR" \
      "https://ftp.gnu.org/gnu/automake/$AUTOMAKE_TAR"
 then
     echo "Failed to download Automake"
