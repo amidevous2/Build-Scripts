@@ -44,7 +44,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-ncurses.sh
+if ! ./build.sh ncurses
 then
     echo "Failed to build ncurses"
     exit 1
