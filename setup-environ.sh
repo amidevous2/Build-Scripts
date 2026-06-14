@@ -381,9 +381,9 @@ fi
 # Some of the BSDs install user software into /usr/local.
 # We don't want to overwrite the system installed software.
 if [[ "${IS_BSD_FAMILY}" -ne 0 ]]; then
-    DEF_PREFIX="/opt/local"
+    DEF_PREFIX="$HOME/.local"
 else
-    DEF_PREFIX="/usr/local"
+    DEF_PREFIX="$HOME/.local"
 fi
 
 # Don't override a user choice of INSTX_PREFIX
