@@ -73,7 +73,7 @@ if [[ -e ../patch/autoconf-$AUTOCONF_VER.patch ]]; then
     patch -u -p1 < ../patch/autoconf-$AUTOCONF_VER.patch
 fi
 
-
+hash -r
 # Fix sys_lib_dlsearch_path_spec
 bash "${INSTX_TOPDIR}/fix-configure.sh"
 
