@@ -70,7 +70,7 @@ if [[ -e ../patch/autoconf-$AUTOCONF_VER.patch ]]; then
     echo "Patching package"
     echo "***************************"
 
-    patch -u -p0 < ../patch/autoconf-$AUTOCONF_VER.patch
+    patch -u -p1 < ../patch/autoconf-$AUTOCONF_VER.patch
 fi
 
 
