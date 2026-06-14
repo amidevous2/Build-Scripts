@@ -14,8 +14,8 @@ Once you clone the repo you should perform a one-time setup. The setup installs 
 $ ./setup-cacerts.sh
 ...
 
-$ ./setup-wget.sh
 ...
+$ ./setup-wget.sh
 ```
 
 You can verify Wget bootstrap with the following commands.
