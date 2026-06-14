@@ -4,7 +4,7 @@
 # This script builds autoconf from sources. A separate
 # script is available for Autotools for brave souls.
 
-AUTOCONF_VER=2.71
+AUTOCONF_VER=2.69
 AUTOCONF_TAR=autoconf-${AUTOCONF_VER}.tar.gz
 AUTOCONF_DIR=autoconf-${AUTOCONF_VER}
 PKG_NAME=autoconf
