@@ -87,7 +87,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-unistr.sh
+if ! ./build.sh unistr
 then
     echo "Failed to build Unistring"
     exit 1
