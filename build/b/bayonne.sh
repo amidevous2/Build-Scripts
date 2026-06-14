@@ -30,7 +30,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -38,7 +38,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-libexosip2-rc.sh
+if ! ./build.sh libexosip2-rc
 then
     echo "Failed to build libosip2"
     exit 1
@@ -46,7 +46,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-ucommon.sh
+if ! ./build.sh ucommon
 then
     echo "Failed to build ucommon"
     exit 1
@@ -65,7 +65,7 @@ echo "**********************"
 echo ""
 echo "SIP Witch ${SIPW_VER}..."
 
-if ! "${WGET}" -q -O "$SIPW_TAR" --ca-certificate="${LETS_ENCRYPT_ROOT}" \
+if ! "${WGET}" -q -O "$SIPW_TAR" \
      "https://ftp.gnu.org/gnu/sipwitch/$SIPW_TAR"
 then
     echo "Failed to download SIP Witch"
