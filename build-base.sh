@@ -63,7 +63,7 @@ export INSTX_DISABLE_GETTEXT_CHECK=1
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
