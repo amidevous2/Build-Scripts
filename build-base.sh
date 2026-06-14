@@ -78,13 +78,16 @@ then
 fi
 
 ###############################################################################
+echo "build Ncurses and Readline work"
+sleep 10
 
 if ! ./build.sh iconv-gettext
 then
     echo "Failed to build iConv and GetText"
     exit 1
 fi
-
+echo "build iConv and GetText work"
+sleep 10
 ###############################################################################
 
 if ! ./build.sh unistr
@@ -93,6 +96,8 @@ then
     exit 1
 fi
 
+echo "build Unistring work"
+sleep 10
 ###############################################################################
 
 if ! ./build.sh libxml2
@@ -100,7 +105,8 @@ then
     echo "Failed to build libxml2"
     exit 1
 fi
-
+echo "build libxml2 work"
+sleep 10
 ###############################################################################
 
 # GetText is checked in build-gettext-final.sh
@@ -111,7 +117,8 @@ then
     echo "Failed to build GetText final"
     exit 1
 fi
-
+echo "build GetText final work"
+sleep 10
 ###############################################################################
 
 # Trigger a rebuild of PCRE2
@@ -124,6 +131,8 @@ then
     exit 1
 fi
 
+echo "build pcre2 work"
+sleep 10
 ###############################################################################
 
 # Trigger a rebuild of IDN2
@@ -136,9 +145,9 @@ then
     exit 1
 fi
 
+echo "build idn2 work"
+sleep 10
 ###############################################################################
-
-# Trigger a rebuild of IDN2
 
 if ! ./build.sh wget
 
@@ -147,9 +156,9 @@ then
     exit 1
 fi
 
+echo "build wget work"
+sleep 10
 ###############################################################################
-
-# Trigger a rebuild of IDN2
 
 if ! ./build.sh bash
 
@@ -158,6 +167,9 @@ then
     exit 1
 fi
 
+
+echo "build bash work"
+sleep 10
 ###############################################################################
 
 
