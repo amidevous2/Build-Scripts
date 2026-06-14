@@ -8,8 +8,8 @@
 # Bzip lost its website. It is now located on Sourceware.
 # https://sourceware.org/bzip2/downloads.html
 
-#BZIP2_VER=1.0.8
-BZIP2_VER=1.0.5
+BZIP2_VER=1.0.8
+#BZIP2_VER=1.0.5
 BZIP2_TAR=bzip2-${BZIP2_VER}.tar.gz
 BZIP2_DIR=bzip2-${BZIP2_VER}
 PKG_NAME=bzip2
@@ -93,18 +93,17 @@ cd "$BZIP2_DIR" || exit 1
 #fi
 
 # Now, patch them for this script.
-#if [[ -e ../patch/bzip.patch ]]; then
-#    echo ""
-#    echo "****************************"
-#    echo "Patching package"
-#    echo "****************************"
-
-#    patch -u -p0 < ../patch/bzip.patch
-#fi
+if [[ -e ../patch/bzip-$BZIP2_VER.patch ]]; then
+    echo ""
+    echo "****************************"
+    echo "Patching package"
+    echo "****************************"
+    patch -u -p0 < ./patch/bzip-$BZIP2_VER.patch
+fi
 
 # Escape dollar sign for $ORIGIN in makefiles. Required so
 # $ORIGIN works in both configure tests and makefiles.
-bash "${INSTX_TOPDIR}/fix-makefiles.sh"
+#bash "${INSTX_TOPDIR}/fix-makefiles.sh"
 
 echo ""
 echo "****************************"
