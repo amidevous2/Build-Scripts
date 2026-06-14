@@ -91,7 +91,7 @@ if [[ -e ../patch/acl-$ACL_VER.patch ]]; then
     echo "Patching package"
     echo "**************************"
 
-    patch -u -p0 < ../patch/acl-$ACL_VER.patch
+    patch -p1 < ../patch/acl-$ACL_VER.patch
 fi
 
 # Fix sys_lib_dlsearch_path_spec
