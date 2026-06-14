@@ -65,15 +65,7 @@ fi
 
 ###############################################################################
 
-if [[ -e ./build-cacerts.sh ]]; then
-    BUILD_CACERTS=./build-cacerts.sh
-elif [[ -e ../build-cacerts.sh ]]; then
-    BUILD_CACERTS=../build-cacerts.sh
-elif [[ -e ../../build-cacerts.sh ]]; then
-    BUILD_CACERTS=../../build-cacerts.sh
-fi
-
-if ! ${BUILD_CACERTS}
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -110,7 +102,7 @@ echo "Patchelf ${PATCHELF_VER}..."
 
 rm -rf "$PATCHELF_DIR" && mkdir -p "$PATCHELF_DIR" && cd "$PATCHELF_DIR" || exit 1
 
-if ! "${WGET}" -q -O "${PATCHELF_TAR}" --ca-certificate="${GITHUB_CA_ZOO}" \
+if ! "${WGET}" -q -O "${PATCHELF_TAR}" \
      "https://github.com/NixOS/patchelf/releases/download/${PATCHELF_VER}/patchelf-${PATCHELF_VER}-${PATCHELF_ARCH}.tar.gz"
 then
     echo "Failed to download patchelf"
