@@ -40,7 +40,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -48,7 +48,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-zlib.sh
+if ! ./build.sh zlib
 then
     echo "Failed to build zLib"
     exit 1
@@ -58,7 +58,7 @@ fi
 
 # libxml2 only uses iConvert
 
-if ! ./build-iconv-gettext.sh
+if ! ./build.sh iconv-gettext
 then
     echo "Failed to build iConv and GetText"
     exit 1
@@ -68,7 +68,7 @@ fi
 
 if [[ ! -f "${INSTX_PREFIX}/bin/xz" ]]
 then
-    if ! ./build-xz.sh
+    if ! ./build.sh xz
     then
         echo "Failed to build XZ"
         exit 1
