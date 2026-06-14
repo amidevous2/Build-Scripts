@@ -30,7 +30,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -38,7 +38,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-m4.sh
+if ! ./build.sh m4
 then
     echo "Failed to build M4"
     exit 1
@@ -46,7 +46,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-autoconf.sh
+if ! ./build.sh autoconf
 then
     echo "Failed to build Autoconf"
     exit 1
@@ -54,7 +54,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-automake.sh
+if ! ./build.sh automake
 then
     echo "Failed to build Automake"
     exit 1
@@ -62,7 +62,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-libtool.sh
+if ! ./build.sh libtool
 then
     echo "Failed to build Libtool"
     exit 1
