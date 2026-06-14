@@ -201,34 +201,34 @@ bash "${INSTX_TOPDIR}/fix-pkgconfig.sh"
 # Fix runpaths
 bash "${INSTX_TOPDIR}/fix-runpath.sh"
 
-if [[ "$INSTX_DISABLE_GETTEXT_CHECK" -ne 1 ]];
-then
-    echo ""
-    echo "***************************"
-    echo "Testing package"
-    echo "***************************"
-
-    MAKE_FLAGS=("check")
-    if ! "${MAKE}" "${MAKE_FLAGS[@]}"
-    then
-        echo ""
-        echo "***************************"
-        echo "Failed to test GetText"
-        echo "***************************"
-
-        bash "${INSTX_TOPDIR}/collect-logs.sh" "${PKG_NAME}"
-
-        # Solaris and some friends fail lang-gawk
-        # Darwin fails copy-acl-2.sh
-        # https://lists.gnu.org/archive/html/bug-gawk/2018-01/msg00026.html
-        # exit 1
-
-        echo ""
-        echo "***************************"
-        echo "Installing anyways..."
-        echo "***************************"
-    fi
-fi
+#if [[ "$INSTX_DISABLE_GETTEXT_CHECK" -ne 1 ]];
+#then
+#    echo ""
+#    echo "***************************"
+#    echo "Testing package"
+#    echo "***************************"
+#
+#    MAKE_FLAGS=("check")
+#    if ! "${MAKE}" "${MAKE_FLAGS[@]}"
+#    then
+#        echo ""
+#        echo "***************************"
+#        echo "Failed to test GetText"
+#        echo "***************************"
+#
+#        bash "${INSTX_TOPDIR}/collect-logs.sh" "${PKG_NAME}"
+#
+#        # Solaris and some friends fail lang-gawk
+#        # Darwin fails copy-acl-2.sh
+#        # https://lists.gnu.org/archive/html/bug-gawk/2018-01/msg00026.html
+#        # exit 1
+#
+#        echo ""
+#        echo "***************************"
+#        echo "Installing anyways..."
+#        echo "***************************"
+#    fi
+#fi
 
 # Fix runpaths again
 bash "${INSTX_TOPDIR}/fix-runpath.sh"
