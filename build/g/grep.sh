@@ -37,7 +37,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -53,7 +53,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-pcre.sh
+if ! ./build.sh pcre
 then
     echo "Failed to build PCRE"
     exit 1
@@ -61,14 +61,14 @@ fi
 
 ###############################################################################
 
-if [[ ! -f "${INSTX_PREFIX}/bin/xz" ]]
-then
-    if ! ./build-xz.sh
+#if [[ ! -f "${INSTX_PREFIX}/bin/xz" ]]
+#then
+    if ! ./build.sh xz
     then
         echo "Failed to build XZ"
         exit 1
     fi
-fi
+#fi
 
 ###############################################################################
 
@@ -85,7 +85,7 @@ echo "************************"
 echo ""
 echo "Grep ${GREP_VER}..."
 
-if ! "${WGET}" -q -O "$GREP_XZ" --ca-certificate="${LETS_ENCRYPT_ROOT}" \
+if ! "${WGET}" -q -O "$GREP_XZ" \
      "https://ftp.gnu.org/gnu/grep/$GREP_XZ"
 then
     echo "Failed to download Grep"
