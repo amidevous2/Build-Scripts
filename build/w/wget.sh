@@ -40,7 +40,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -48,7 +48,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-zlib.sh
+if ! ./build.sh zlib
 then
     echo "Failed to build zLib"
     exit 1
@@ -56,7 +56,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-bzip.sh
+if ! ./build.sh bzip
 then
     echo "Failed to build Bzip"
     exit 1
@@ -72,7 +72,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-unistr.sh
+if ! ./build.sh unistr
 then
     echo "Failed to build Unistring"
     exit 1
@@ -80,7 +80,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-idn2.sh
+if ! ./build.sh idn2
 then
     echo "Failed to build IDN2"
     exit 1
@@ -88,7 +88,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-pcre2.sh
+if ! ./build.sh pcre2
 then
     echo "Failed to build PCRE2"
     exit 1
@@ -96,7 +96,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-perl.sh
+if ! ./build.sh perl
 then
     echo "Failed to build OpenSSL"
     exit 1
@@ -104,7 +104,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-openssl.sh
+if ! ./build.sh openssl
 then
     echo "Failed to build OpenSSL"
     exit 1
