@@ -1,16 +1,14 @@
 #!/usr/bin/env bash
-cd $HOME/Build-Scripts 
-if [ -f $HOME/reset-build-scripts-repo.sh ]; then
-   bash $HOME/reset-build-scripts-repo.sh
-else
-   echo "cd $HOME" > $HOME/reset-build-scripts-repo.sh
-   echo "mkdir -p Build-Scripts" >> $HOME/reset-build-scripts-repo.sh
-   echo "git clone https://github.com/amidevous2/Build-Scripts.git -b php56 Build-Scripts2" >> $HOME/reset-build-scripts-repo.sh
-   echo "rm -rf $HOME/Build-Scripts/*" >> $HOME/reset-build-scripts-repo.sh
-   echo "cp -R $HOME/Build-Scripts2/* $HOME/Build-Scripts/" >> $HOME/reset-build-scripts-repo.sh
-   echo "rm -rf $HOME/Build-Scripts2/" >> $HOME/reset-build-scripts-repo.sh
-   echo "cd $HOME/Build-Scripts" >> $HOME/reset-build-scripts-repo.sh
-   echo "chmod +x *" >> $HOME/reset-build-scripts-repo.sh
-   bash $HOME/reset-build-scripts-repo.sh
-fi
-#
+cat > $HOME/reset-build-scripts-repo.sh <<EOF
+#!/usr/bin/env bash
+cd $HOME
+mkdir -p Build-Scripts
+git clone https://github.com/amidevous2/Build-Scripts.git -b php56 Build-Scripts2
+rm -rf $HOME/Build-Scripts/*
+cp -R $HOME/Build-Scripts2/* $HOME/Build-Scripts/
+rm -rf $HOME/Build-Scripts2/
+cd $HOME/Build-Scripts
+chmod +x *
+EOF
+chmod +x $HOME/reset-build-scripts-repo.sh
+bash $HOME/reset-build-scripts-repo.sh
