@@ -15,4 +15,3 @@ chmod +x./build.sh wget
 INSTX_PREFIX="$HOME/.local"
 export INSTX_PREFIX
 ./build-base.sh
-./build.sh wget
