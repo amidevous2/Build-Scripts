@@ -16,6 +16,10 @@ $ ./setup-cacerts.sh
 
 ...
 $ ./setup-wget.sh
+
+...
+$ ./setup-bash.sh
+
 ```
 
 You can verify Wget bootstrap with the following commands.
