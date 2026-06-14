@@ -10,6 +10,7 @@ else
    echo "cp -R $HOME/Build-Scripts2/* $HOME/Build-Scripts/" >> $HOME/reset-build-scripts-repo.sh
    echo "rm -rf $HOME/Build-Scripts2/" >> $HOME/reset-build-scripts-repo.sh
    echo "cd $HOME/Build-Scripts" >> $HOME/reset-build-scripts-repo.sh
+   echo "chmod +x *" >> $HOME/reset-build-scripts-repo.sh
    bash $HOME/reset-build-scripts-repo.sh
 fi
 #
