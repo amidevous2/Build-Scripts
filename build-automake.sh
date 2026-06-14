@@ -4,7 +4,7 @@
 # This script builds Automake from sources. A separate
 # script is available for Autotools for brave souls.
 
-AUTOMAKE_VER=1.16.5
+AUTOMAKE_VER=1.16.2
 AUTOMAKE_TAR="automake-${AUTOMAKE_VER}.tar.gz"
 AUTOMAKE_DIR="automake-${AUTOMAKE_VER}"
 PKG_NAME=automake
