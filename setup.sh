@@ -6,8 +6,7 @@ chmod +x ./setup-wget.sh
 ./setup-wget.sh
 chmod +x ./setup-bash.sh
 ./setup-bash.sh
-chmod +x 
-
-chmod +x 
-
-chmod +x 
+chmod +x ./build-base.sh
+chmod +x./build.sh wget
+INSTX_PREFIX="$HOME/.local" ./build-base.sh
+INSTX_PREFIX="$HOME/.local" ./build.sh wget
