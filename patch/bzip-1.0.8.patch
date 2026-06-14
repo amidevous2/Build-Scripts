@@ -1,0 +1,60 @@
+diff -up bzip2-1.0.6/Makefile-libbz2_so.pom bzip2-1.0.6/Makefile-libbz2_so
+--- bzip2-1.0.6/Makefile-libbz2_so.pom	2010-09-11 01:07:52.000000000 +0200
++++ bzip2-1.0.6/Makefile-libbz2_so	2010-09-22 10:31:46.000000000 +0200
+@@ -35,7 +35,7 @@ OBJS= blocksort.o  \
+       bzlib.o
+ 
+ all: $(OBJS)
+-	$(CC) -shared -Wl,-soname -Wl,libbz2.so.1.0 -o libbz2.so.1.0.8 $(OBJS)
++	$(CC) -shared -Wl,-soname -Wl,libbz2.so.1 -o libbz2.so.1.0.8 $(OBJS)
+ 	$(CC) $(CFLAGS) -o bzip2-shared bzip2.c libbz2.so.1.0.8
+ 	rm -f libbz2.so.1.0
+ 	ln -s libbz2.so.1.0.8 libbz2.so.1.0
+
+  diff -up bzip2-1.0.6/Makefile-libbz2_so.pom bzip2-1.0.6/Makefile-libbz2_so
+--- bzip2-1.0.6/Makefile-libbz2_so.pom	2010-09-22 10:36:24.000000000 +0200
++++ bzip2-1.0.6/Makefile-libbz2_so	2010-09-22 10:36:58.000000000 +0200
+@@ -35,7 +35,7 @@ OBJS= blocksort.o  \
+       bzlib.o
+ 
+ all: $(OBJS)
+-	$(CC) -shared -Wl,-soname -Wl,libbz2.so.1 -o libbz2.so.1.0.8 $(OBJS)
++	$(CC) $(CFLAGS) -shared -Wl,-soname -Wl,libbz2.so.1 -o libbz2.so.1.0.8 $(OBJS)
+ 	$(CC) $(CFLAGS) -o bzip2-shared bzip2.c libbz2.so.1.0.8
+ 	rm -f libbz2.so.1.0
+ 	ln -s libbz2.so.1.0.8 libbz2.so.1.0
+
+  diff -up bzip2-1.0.6/Makefile-libbz2_so.pom bzip2-1.0.6/Makefile-libbz2_so
+--- bzip2-1.0.6/Makefile-libbz2_so.pom	2010-09-22 10:36:24.000000000 +0200
++++ bzip2-1.0.6/Makefile-libbz2_so	2010-09-22 10:36:58.000000000 +0200
+@@ -35,7 +35,7 @@ OBJS= blocksort.o  \
+       bzlib.o
+ 
+ all: $(OBJS)
+-	$(CC) -shared -Wl,-soname -Wl,libbz2.so.1 -o libbz2.so.1.0.8 $(OBJS)
++	$(CC) $(CFLAGS) -shared -Wl,-soname -Wl,libbz2.so.1 -o libbz2.so.1.0.8 $(OBJS)
+ 	$(CC) $(CFLAGS) -o bzip2-shared bzip2.c libbz2.so.1.0.8
+ 	rm -f libbz2.so.1.0
+ 	ln -s libbz2.so.1.0.8 libbz2.so.1.0
+
+
+--- ./bzip2-1.0.8/bzip2.1	2019-07-13 19:50:05.000000000 +0200
++++ ./bzip2-1.0.8/bzip2.1.new	2021-01-29 11:51:04.091430407 +0100
+@@ -170,6 +170,17 @@
+ to try to recover data from
+ damaged files.
+ 
++Unlike 
++.I GNU gzip,
++.I bzip2 
++will not create a cascade of
++.I .bz2 
++suffixes even when using the 
++.I --force
++option:
++
++       filename.bz2    dose not become   filename.bz2.bz2
++
+ Return values: 0 for a normal exit, 1 for environmental problems (file
+ not found, invalid flags, I/O errors, &c), 2 to indicate a corrupt
+ compressed file, 3 for an internal consistency error (eg, bug) which
