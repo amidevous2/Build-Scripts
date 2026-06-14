@@ -36,7 +36,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -52,7 +52,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-unistr.sh
+if ! ./build.sh unistr
 then
     echo "Failed to build Unistring"
     exit 1
