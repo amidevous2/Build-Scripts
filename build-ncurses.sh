@@ -104,7 +104,7 @@ cd "$NCURSES_DIR" || exit 1
 if false; then
 
 # https://invisible-island.net/ncurses/ncurses.faq.html#applying_patches
-if "${WGET}" -q -O dev-patches.zip --ca-certificate="${LETS_ENCRYPT_ROOT}" \
+if "${WGET}" -q -O dev-patches.zip \
    "ftp://ftp.invisible-island.net/ncurses/${NCURSES_VER}/dev-patches.zip"
 then
     if unzip dev-patches.zip -d .
