@@ -159,13 +159,13 @@ rm -rf "$CURL_DIR" &>/dev/null
 gzip -d < "$CURL_TAR" | tar xf -
 cd "$CURL_DIR" || exit 1
 
-if [[ -e ../patch/curl.patch ]]; then
+if [[ -e ../patch/curl-$CURL_VER.patch ]]; then
     echo ""
     echo "**********************"
     echo "Patching package"
     echo "**********************"
 
-    patch -u -p0 < ../patch/curl.patch
+    patch -p1 < ../patch/curl-$CURL_VER.patch
 fi
 
 # Fix sys_lib_dlsearch_path_spec
