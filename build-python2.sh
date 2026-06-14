@@ -31,7 +31,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
  echo "Failed to install CA Certs"
  exit 1
@@ -39,7 +39,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-libexpat.sh
+if ! ./build.sh libexpat
 then
  echo "Failed to install Expat"
  exit 1
@@ -47,7 +47,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-gdbm.sh
+if ! ./build.sh gdbm
 then
  echo "Failed to install GDBM"
  exit 1
@@ -65,7 +65,7 @@ echo "*************************"
 echo "Downloading package"
 echo "*************************"
 
-if ! "${WGET}" -q -O "$PYTHON_TAR" --ca-certificate="${DIGICERT_ROOT}"
+if ! "${WGET}" -q -O "$PYTHON_TAR" "
  "https://www.python.org/ftp/python/$PYTHON_VER/$PYTHON_TAR"
 then
     echo "Failed to download Python 2.7"
