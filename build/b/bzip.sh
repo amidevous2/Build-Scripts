@@ -121,6 +121,41 @@ LDLIBS="${INSTX_LDLIBS}"
 O3="-O3"
 
 MAKE_FLAGS=()
+MAKE_FLAGS+=("-f" "Makefile-libbz2_so")
+MAKE_FLAGS+=("-j" "${INSTX_JOBS}")
+MAKE_FLAGS+=("CC=${CC}")
+MAKE_FLAGS+=("CPPFLAGS=${CPPFLAGS} -I.")
+MAKE_FLAGS+=("ASFLAGS=${ASFLAGS}")
+MAKE_FLAGS+=("CFLAGS=${CFLAGS}")
+MAKE_FLAGS+=("CXXFLAGS=${CXXFLAGS}")
+MAKE_FLAGS+=("LDFLAGS=${LDFLAGS}")
+MAKE_FLAGS+=("LIBS=${LDLIBS}")
+MAKE_FLAGS+=("03=${03}")
+
+
+if ! "${MAKE}" "${MAKE_FLAGS[@]}"
+then
+    echo ""
+    echo "****************************"
+    echo "Failed to build Bzip archive"
+    echo "****************************"
+
+    bash "${INSTX_TOPDIR}/collect-logs.sh" "${PKG_NAME}"
+    exit 1
+fi
+
+
+# Since we call the makefile directly, we need to escape dollar signs.
+PKG_CONFIG_PATH="${INSTX_PKGCONFIG}"
+CPPFLAGS=$(echo "${INSTX_CPPFLAGS}" | sed 's/\$/\$\$/g')
+ASFLAGS=$(echo "${INSTX_ASFLAGS}" | sed 's/\$/\$\$/g')
+CFLAGS=$(echo "${INSTX_CFLAGS}" | sed 's/\$/\$\$/g')
+CXXFLAGS=$(echo "${INSTX_CXXFLAGS}" | sed 's/\$/\$\$/g')
+LDFLAGS=$(echo "${INSTX_LDFLAGS}" | sed 's/\$/\$\$/g')
+LDLIBS="${INSTX_LDLIBS}"
+O3="-O3"
+
+MAKE_FLAGS=()
 MAKE_FLAGS+=("-f" "Makefile")
 MAKE_FLAGS+=("-j" "${INSTX_JOBS}")
 MAKE_FLAGS+=("CC=${CC}")
@@ -143,6 +178,11 @@ then
     bash "${INSTX_TOPDIR}/collect-logs.sh" "${PKG_NAME}"
     exit 1
 fi
+
+
+
+
+
 
 # Fix flags in *.pc files
 bash "${INSTX_TOPDIR}/fix-pkgconfig.sh"
