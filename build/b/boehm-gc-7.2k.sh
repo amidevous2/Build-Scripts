@@ -38,7 +38,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -59,7 +59,7 @@ echo "**********************"
 echo ""
 echo "Boehm GC ${BGC_VER}..."
 
-if ! "${WGET}" -q -O "$BGC_TAR" --ca-certificate="${GITHUB_CA_ZOO}" \
+if ! "${WGET}" -q -O "$BGC_TAR" \
      "https://github.com/ivmai/bdwgc/releases/download/v${BGC_VER}/$BGC_TAR"
 then
     echo "Failed to download Boehm GC"
