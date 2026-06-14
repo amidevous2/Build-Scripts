@@ -5,6 +5,7 @@
 # It may be needed on old machines, like Fedora 1 and Ubuntu 4.
 
 BASH_VER=5.1
+BASH_SUM="d41d8cd98f00b204e9800998ecf8427e  bash-5.1.tar.gz"
 BASH_TAR="bash-${BASH_VER}.tar.gz"
 BASH_DIR="bash-${BASH_VER}"
 PKG_NAME=bash
@@ -52,12 +53,22 @@ echo "**********************"
 echo ""
 echo "Bash ${BASH_VER}..."
 
-if ! "${WGET}" -q -O "$BASH_TAR" \
+#if ! "${WGET}" -q -O "$BASH_TAR" \
+#     "https://ftp.gnu.org/gnu/bash/$BASH_TAR"
+#then
+#    echo "Failed to download Bash"
+#    exit 1
+#fi
+
+${WGET}" -q -O "$BASH_TAR" \
      "https://ftp.gnu.org/gnu/bash/$BASH_TAR"
-then
+
+if [[ "$(md5sum $BASH_TAR)" != "$BASH_SUM" ]]; then
     echo "Failed to download Bash"
     exit 1
 fi
+
+
 
 rm -rf "$BASH_DIR" &>/dev/null
 gzip -d < "$BASH_TAR" | tar xf -
