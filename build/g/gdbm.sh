@@ -36,7 +36,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -52,14 +52,14 @@ fi
 
 ###############################################################################
 
-if [[ ! -f "${INSTX_PREFIX}/bin/bison" ]]
-then
-    if ! ./build-bison.sh
+#if [[ ! -f "${INSTX_PREFIX}/bin/bison" ]]
+#then
+    if ! ./build.sh bison
     then
         echo "Failed to build Bison"
         exit 1
     fi
-fi
+#fi
 
 ###############################################################################
 
@@ -76,7 +76,7 @@ echo "************************"
 echo ""
 echo "GDBM ${GDBM_VER}..."
 
-if ! "${WGET}" -q -O "$GDBM_TAR" --ca-certificate="${LETS_ENCRYPT_ROOT}" \
+if ! "${WGET}" -q -O "$GDBM_TAR" \
      "https://ftp.gnu.org/gnu/gdbm/$GDBM_TAR"
 then
     echo "Failed to download GDBM"
