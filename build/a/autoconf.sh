@@ -63,6 +63,17 @@ rm -rf "$AUTOCONF_DIR" &>/dev/null
 gzip -d < "$AUTOCONF_TAR" | tar xf -
 cd "$AUTOCONF_DIR" || exit 1
 
+# Patches are created with 'diff -u' from the pkg root directory.
+if [[ -e ../patch/autoconf-$AUTOCONF_VER.patch ]]; then
+    echo ""
+    echo "***************************"
+    echo "Patching package"
+    echo "***************************"
+
+    patch -u -p0 < ../patch/autoconf-$AUTOCONF_VER.patch
+fi
+
+
 # Fix sys_lib_dlsearch_path_spec
 bash "${INSTX_TOPDIR}/fix-configure.sh"
 
