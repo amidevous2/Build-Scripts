@@ -36,7 +36,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -52,7 +52,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-attr.sh
+if ! ./build.sh attr
 then
     echo "Failed to build libattr"
     exit 1
@@ -73,7 +73,7 @@ echo "**************************"
 echo ""
 echo "libacl ${ACL_VER}..."
 
-if ! "${WGET}" -q -O "$ACL_TAR" --ca-certificate="${LETS_ENCRYPT_ROOT}" \
+if ! "${WGET}" -q -O "$ACL_TAR" \
      "https://download.savannah.nongnu.org/releases/acl/$ACL_TAR"
 then
     echo "Failed to download libacl"
