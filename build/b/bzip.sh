@@ -118,6 +118,7 @@ CFLAGS=$(echo "${INSTX_CFLAGS}" | sed 's/\$/\$\$/g')
 CXXFLAGS=$(echo "${INSTX_CXXFLAGS}" | sed 's/\$/\$\$/g')
 LDFLAGS=$(echo "${INSTX_LDFLAGS}" | sed 's/\$/\$\$/g')
 LDLIBS="${INSTX_LDLIBS}"
+export O3=""
 
 MAKE_FLAGS=()
 MAKE_FLAGS+=("-f" "Makefile")
@@ -129,6 +130,8 @@ MAKE_FLAGS+=("CFLAGS=${CFLAGS}")
 MAKE_FLAGS+=("CXXFLAGS=${CXXFLAGS}")
 MAKE_FLAGS+=("LDFLAGS=${LDFLAGS}")
 MAKE_FLAGS+=("LIBS=${LDLIBS}")
+MAKE_FLAGS+=("03=${03}")
+
 
 if ! "${MAKE}" "${MAKE_FLAGS[@]}"
 then
