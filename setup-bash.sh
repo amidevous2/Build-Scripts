@@ -63,12 +63,15 @@ echo "Bash ${BASH_VER}..."
 ${WGET}" -q -O "$BASH_TAR" \
      "https://ftp.gnu.org/gnu/bash/$BASH_TAR"
 
-if [[ "$(md5sum $BASH_TAR)" != "$BASH_SUM" ]]; then
+if [ "$(md5sum $BASH_TAR)" != "$BASH_SUM" ]; then
     echo "Failed to download Bash"
     exit 1
 fi
 
-
+#if [[ "$(md5sum $BASH_TAR)" != "$BASH_SUM" ]]; then
+#    echo "Failed to download Bash"
+#    exit 1
+#fi
 
 rm -rf "$BASH_DIR" &>/dev/null
 gzip -d < "$BASH_TAR" | tar xf -
