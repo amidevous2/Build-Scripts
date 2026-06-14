@@ -130,7 +130,7 @@ fi
 
 rm -f "${INSTX_PKG_CACHE}/idn2"
 
-if ! ./build-idn2.sh
+if ! ./build.sh idn2
 then
     echo "Failed to build IDN2"
     exit 1
