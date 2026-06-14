@@ -30,7 +30,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -51,7 +51,7 @@ echo "**********************"
 echo ""
 echo "BC ${BC_VER}..."
 
-if ! "${WGET}" -q -O "$BC_TAR" --ca-certificate="${LETS_ENCRYPT_ROOT}" \
+if ! "${WGET}" -q -O "$BC_TAR" \
      "https://ftp.gnu.org/gnu/bc/$BC_TAR"
 then
     echo "Failed to download BC"
