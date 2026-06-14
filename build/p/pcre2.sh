@@ -44,7 +44,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-bzip.sh
+if ! ./build bzip
 then
     echo "Failed to build Bzip2"
     exit 1
