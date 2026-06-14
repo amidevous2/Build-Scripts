@@ -182,59 +182,59 @@ echo "build unistr work"
 sleep 10
 ###############################################################################
 
-if ! ./build.sh bison
+#if ! ./build.sh bison
 
-then
-    echo "Failed to build bison"
-    exit 1
-fi
+#then
+#    echo "Failed to build bison"
+#    exit 1
+#fi
 
-echo "build bison work"
-sleep 10
+#echo "build bison work"
+#sleep 10
 ###############################################################################
 
-if ! ./build.sh gdbm
+#if ! ./build.sh gdbm
 
-then
-    echo "Failed to build gdbm"
-    exit 1
-fi
+#then
+#    echo "Failed to build gdbm"
+#    exit 1
+#fi
 
-echo "build gdbm work"
-sleep 10
+#echo "build gdbm work"
+#sleep 10
 ###############################################################################
 
-if ! ./build.sh bdb
+#if ! ./build.sh bdb
 
-then
-    echo "Failed to build bdb"
-    exit 1
-fi
+#then
+#    echo "Failed to build bdb"
+#    exit 1
+#fi
 
-echo "build bdb work"
-sleep 10
+#echo "build bdb work"
+#sleep 10
 ###############################################################################
 
-if ! ./build.sh sed
+#if ! ./build.sh sed
 
-then
-    echo "Failed to build sed"
-    exit 1
-fi
+#then
+#    echo "Failed to build sed"
+#    exit 1
+#fi
 
-echo "build sed work"
-sleep 10
-###############################################################################
+#echo "build sed work"
+#sleep 10
+################################################################################
 
-if ! ./build.sh perl
+#if ! ./build.sh perl
 
-then
-    echo "Failed to build perl"
-    exit 1
-fi
+#then
+#    echo "Failed to build perl"
+#    exit 1
+#fi
 
-echo "build perl work"
-sleep 10
+#echo "build perl work"
+#sleep 10
 ###############################################################################
 
 if ! ./build.sh openssl
