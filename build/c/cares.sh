@@ -38,7 +38,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -59,7 +59,7 @@ echo "**************************"
 echo ""
 echo "C-ares ${CARES_VER}..."
 
-if ! "${WGET}" -q -O "$CARES_TAR" --ca-certificate="${LETS_ENCRYPT_ROOT}" \
+if ! "${WGET}" -q -O "$CARES_TAR" \
      "https://c-ares.haxx.se/download/$CARES_TAR"
 then
     echo "Failed to download c-ares"
