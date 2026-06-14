@@ -4,8 +4,8 @@
 # This script builds Readline from sources. Ncurses should
 # be built first.
 
-READLN_TAR=readline-8.2.tar.gz
-READLN_DIR=readline-8.2
+READLN_TAR=readline-8.1.tar.gz
+READLN_DIR=readline-8.1
 PKG_NAME=readline
 
 ###############################################################################
