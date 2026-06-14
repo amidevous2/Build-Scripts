@@ -1,7 +1,7 @@
 # Written and placed in public domain by Jeffrey Walton.
 # This patch fixes some issues with Bzip2.
---- bzip2recover.c
-+++ bzip2recover.c
+--- a/bzip2recover.c
++++ b/bzip2recover.c
 @@ -36,8 +36,13 @@
     the 512MB limitation.
  */
@@ -16,8 +16,8 @@
  #else
  #ifdef _MSC_VER
     typedef  unsigned __int64  MaybeUInt64;
---- bzip2.c
-+++ bzip2.c
+--- a/bzip2.c
++++ a/bzip2.c
 @@ -44,6 +44,15 @@
  
  /*---------------------------------------------*/
