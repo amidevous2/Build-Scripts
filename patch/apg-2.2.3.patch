@@ -1,5 +1,5 @@
---- apg.c
-+++ apg.c
+--- a/apg.c
++++ b/apg.c
 @@ -571,7 +571,7 @@
   char * seq;
   UINT32 prom[2] = { 0L, 0L };
@@ -9,8 +9,8 @@
   seq = (char *)getpass("(eg. your old password):>");
   if (strlen(seq) < sizeof(prom))
    (void)memcpy((void *)&prom[0], (void *)seq, (int)strlen(seq));
---- Makefile
-+++ Makefile
+--- a/Makefile
++++ b/Makefile
 @@ -1,19 +1,9 @@
  ##################################################################
 -# You can modify CC variable if you have compiler other than GCC
