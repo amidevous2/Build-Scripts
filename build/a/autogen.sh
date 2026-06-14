@@ -30,7 +30,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -38,7 +38,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-libxml2.sh
+if ! ./build.sh libxml2
 then
     echo "Failed to build libxml2"
     exit 1
@@ -59,7 +59,7 @@ echo "**********************"
 echo ""
 echo "Autogen ${AUTOGEN_VER}..."
 
-if ! "${WGET}" -q -O "$AUTOGEN_TAR" --ca-certificate="${LETS_ENCRYPT_ROOT}" \
+if ! "${WGET}" -q -O "$AUTOGEN_TAR" \
      "https://ftp.gnu.org/gnu/autogen/rel${AUTOGEN_VER}/$AUTOGEN_TAR"
 then
     echo "Failed to download Autogen"
