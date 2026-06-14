@@ -80,7 +80,7 @@ if [[ -e ../patch/apg-$APG_VER.patch ]]; then
     echo "Patching package"
     echo "***********************"
 
-    patch -u -p0 < ../patch/apg-$APG_VER.patch
+    patch -p1 < ../patch/apg-$APG_VER.patch
 fi
 
 echo ""
