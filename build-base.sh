@@ -79,7 +79,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-iconv-gettext.sh
+if ! ./build.sh iconv-gettext
 then
     echo "Failed to build iConv and GetText"
     exit 1
