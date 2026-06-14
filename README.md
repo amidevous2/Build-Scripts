@@ -46,10 +46,13 @@ Examples of running the scripts and changing variables are shown below:
 
 ```
 # Build and install using the directories described above
-./build-wget.sh
+./build-base.sh
+./build.sh wget
+
 
 # Build and install in a temp directory
-INSTX_PREFIX="$HOME/tmp" ./build-wget.sh
+INSTX_PREFIX="$HOME/tmp" ./build-base.sh
+INSTX_PREFIX="$HOME/tmp" ./build.sh wget
 ```
 
 ## Runtime Paths
