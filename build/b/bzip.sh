@@ -9,7 +9,7 @@
 # https://sourceware.org/bzip2/downloads.html
 
 #BZIP2_VER=1.0.8
-BZIP2_VER=1.0.6
+BZIP2_VER=1.0.1
 BZIP2_TAR=bzip2-${BZIP2_VER}.tar.gz
 BZIP2_DIR=bzip2-${BZIP2_VER}
 PKG_NAME=bzip2
