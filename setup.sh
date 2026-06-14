@@ -4,8 +4,8 @@ chmod +x ./setup-cacerts.sh
 ./setup-cacerts.sh
 chmod +x ./setup-wget.sh
 ./setup-wget.sh
-chmod +x 
-
+chmod +x ./setup-bash.sh
+./setup-bash.sh
 chmod +x 
 
 chmod +x 
