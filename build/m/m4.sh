@@ -38,11 +38,11 @@ fi
 ###############################################################################
 
 
-if ! ./build.sh perl
-then
-    echo "Failed to build perl dans m4"
-    exit 1
-fi
+#if ! ./build.sh perl
+#then
+#    echo "Failed to build perl dans m4"
+#    exit 1
+#fi
 
 ###############################################################################
 
