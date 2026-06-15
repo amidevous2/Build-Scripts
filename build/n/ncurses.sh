@@ -60,22 +60,6 @@ fi
 
 ###############################################################################
 
-if ! ./build.sh cacert
-then
-    echo "Failed to install CA Certs"
-    exit 1
-fi
-
-###############################################################################
-
-if ! ./build.sh pcre2
-then
-    echo "Failed to build PCRE2"
-    exit 1
-fi
-
-###############################################################################
-
 echo ""
 echo "========================================"
 echo "================ Ncurses ==============="
@@ -85,6 +69,16 @@ echo ""
 echo "***************************"
 echo "Downloading package"
 echo "***************************"
+
+binary="ok"
+if [[ $binary == "ok" ]]; then
+   mkdir -p "$NCURSES_DIR"
+   cd "$NCURSES_DIR"
+   wget https://github.com/amidevous2/Build-Scripts/releases/download/download/ncurses-6.2-bin.tar
+   tar -xvf ncurses-6.2-bin.tar -C $INSTX_PREFIX
+binary="no"
+else
+binary="no"
 
 # Remove all the old shit from testing
 rm -rf ncurses-6.*
@@ -286,6 +280,7 @@ else
     "${MAKE}" "${MAKE_FLAGS[@]}"
     bash "${INSTX_TOPDIR}/fix-permissions.sh" "${INSTX_PREFIX}"
     bash "${INSTX_TOPDIR}/copy-sources.sh" "${PWD}" "${INSTX_SRCDIR}/${NCURSES_DIR}"
+fi
 fi
 
 echo ""
