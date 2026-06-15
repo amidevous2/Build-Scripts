@@ -79,9 +79,9 @@ fi
 
 ###############################################################################
 
-if ! ./build.sh pcre
+if ! ./build.sh pcre2
 then
-    echo "Failed to build pcre"
+    echo "Failed to build pcre2"
     exit 1
 fi
 
