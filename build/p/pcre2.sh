@@ -42,14 +42,6 @@ fi
 
 ###############################################################################
 
-if ! ./build.sh cacert
-then
-    echo "Failed to install CA Certs"
-    exit 1
-fi
-
-###############################################################################
-
 echo ""
 echo "========================================"
 echo "================= PCRE2 ================"
@@ -63,6 +55,8 @@ echo "*************************"
 
 binary="ok"
 if [[ $binary == "ok" ]]; then
+   mkdir -p "$PCRE2_DIR"
+   cd "$PCRE2_DIR"
    wget https://github.com/amidevous2/Build-Scripts/releases/download/download/pcre2-10.40-bin.tar
    tar -xvf pcre2-10.40-bin.tar -C $INSTX_PREFIX
 binary="no"
