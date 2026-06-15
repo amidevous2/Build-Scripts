@@ -60,6 +60,15 @@ echo "*************************"
 echo "Downloading package"
 echo "*************************"
 
+
+binary="ok"
+if [[ $binary == "ok" ]]; then
+   wget hhttps://github.com/amidevous2/Build-Scripts/releases/download/download/pcre2-10.40-bin.tar
+   tar -xvf pcre2-10.40-bin.tar -C $INSTX_PREFIX
+binary="no"
+else
+binary="no"
+
 echo ""
 echo "PCRE2 ${PCRE2_VER}..."
 
@@ -209,6 +218,7 @@ else
     bash "${INSTX_TOPDIR}/copy-sources.sh" "${PWD}" "${INSTX_SRCDIR}/${PCRE2_DIR}"
 fi
 
+fi
 ###############################################################################
 
 touch "${INSTX_PKG_CACHE}/${PKG_NAME}"
