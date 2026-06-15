@@ -63,7 +63,7 @@ echo "*************************"
 
 binary="ok"
 if [[ $binary == "ok" ]]; then
-   wget hhttps://github.com/amidevous2/Build-Scripts/releases/download/download/pcre2-10.40-bin.tar
+   wget https://github.com/amidevous2/Build-Scripts/releases/download/download/pcre2-10.40-bin.tar
    tar -xvf pcre2-10.40-bin.tar -C $INSTX_PREFIX
 binary="no"
 else
