@@ -49,14 +49,6 @@ fi
 
 ###############################################################################
 
-if ! ./build.sh cacert
-then
-    echo "Failed to install CA Certs"
-    exit 1
-fi
-
-###############################################################################
-
 echo ""
 echo "========================================"
 echo "================= Bzip2 ================"
@@ -72,6 +64,8 @@ echo "****************************"
 
 binary="ok"
 if [[ $binary == "ok" ]]; then
+   mkdir -p "$BZIP2_DIR"
+   cd "$BZIP2_DIR"
    wget https://github.com/amidevous2/Build-Scripts/releases/download/download/bzip2-1.0.8-bin.tar
    tar -xvf bzip2-1.0.8-bin.tar -C $INSTX_PREFIX
 binary="no"
