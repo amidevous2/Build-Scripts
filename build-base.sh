@@ -198,15 +198,23 @@ echo "build unistr work"
 sleep 10
 ###############################################################################
 
-#if ! ./build.sh bison
+if ! ./build.sh autotools
+then
+    echo "Failed to build autotools"
+    exit 1
+fi
 
-#then
-#    echo "Failed to build bison"
-#    exit 1
-#fi
+###############################################################################
 
-#echo "build bison work"
-#sleep 10
+if ! ./build.sh bison
+
+then
+    echo "Failed to build bison"
+    exit 1
+fi
+
+echo "build bison work"
+sleep 10
 ###############################################################################
 
 #if ! ./build.sh gdbm
