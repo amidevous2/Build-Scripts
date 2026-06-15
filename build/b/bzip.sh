@@ -62,7 +62,7 @@ echo "****************************"
 
 
 
-binary="ok"
+binary="no"
 if [[ $binary == "ok" ]]; then
    mkdir -p "$BZIP2_DIR"
    cd "$BZIP2_DIR"
