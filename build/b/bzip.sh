@@ -316,31 +316,46 @@ fi
 
 
 
+mkdir -p "${INSTX_PKGCONFIG}"
+cat > "${INSTX_PKGCONFIG}/libbz2.pc" <<EOF
+prefix=${INSTX_PREFIX}
+exec_prefix=\${prefix}
+libdir=${INSTX_LIBDIR}
+sharedlibdir=\${libdir}
+includedir=\${prefix}/include
 
+Name: Bzip2
+Description: Bzip2 compression library
+Version: $BZIP2_VER
+
+Requires:
+Libs: -L\${libdir} -lbz2
+Cflags: -I\${includedir}
+EOF
 # Write the *.pc file
-{
-    echo ""
-    echo "prefix=${INSTX_PREFIX}"
-    echo "exec_prefix=\${prefix}"
-    echo "libdir=${INSTX_LIBDIR}"
-    echo "sharedlibdir=\${libdir}"
-    echo "includedir=\${prefix}/include"
-    echo ""
-    echo "Name: Bzip2"
-    echo "Description: Bzip2 compression library"
-    echo "Version: $BZIP2_VER"
-    echo ""
-    echo "Requires:"
-    echo "Libs: -L\${libdir} -lbz2"
-    echo "Cflags: -I\${includedir}"
-} > libbz2.pc
+#{
+#    echo ""
+#    echo "prefix=${INSTX_PREFIX}"
+#    echo "exec_prefix=\${prefix}"
+#    echo "libdir=${INSTX_LIBDIR}"
+#    echo "sharedlibdir=\${libdir}"
+#    echo "includedir=\${prefix}/include"
+#    echo ""
+#    echo "Name: Bzip2"
+#    echo "Description: Bzip2 compression library"
+#    echo "Version: $BZIP2_VER"
+#    echo ""
+#    echo "Requires:"
+#    echo "Libs: -L\${libdir} -lbz2"
+#    echo "Cflags: -I\${includedir}"
+#} > libbz2.pc
 
 if [[ -n "${SUDO_PASSWORD}" ]]
 then
-    printf "%s\n" "${SUDO_PASSWORD}" | sudo ${SUDO_ENV_OPT} -S cp ./libbz2.pc "${INSTX_PKGCONFIG}"
+#    printf "%s\n" "${SUDO_PASSWORD}" | sudo ${SUDO_ENV_OPT} -S cp ./libbz2.pc "${INSTX_PKGCONFIG}"
     printf "%s\n" "${SUDO_PASSWORD}" | sudo ${SUDO_ENV_OPT} -S chmod u=rw,go=r "${INSTX_PKGCONFIG}/libbz2.pc"
 else
-    cp ./libbz2.pc "${INSTX_PKGCONFIG}"
+#    cp ./libbz2.pc "${INSTX_PKGCONFIG}"
     chmod u=rw,go=r "${INSTX_PKGCONFIG}/libbz2.pc"
 fi
 
