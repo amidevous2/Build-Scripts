@@ -39,11 +39,11 @@ fi
 
 ###############################################################################
 
-if ! ./build.sh perl
-then
-    echo "Failed to build perl dans autoconf"
-    exit 1
-fi
+#if ! ./build.sh perl
+#then
+#    echo "Failed to build perl dans autoconf"
+#    exit 1
+#fi
 
 ###############################################################################
 
