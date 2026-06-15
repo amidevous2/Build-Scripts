@@ -71,6 +71,22 @@ fi
 
 ###############################################################################
 
+if ! ./build.sh bzip
+then
+    echo "Failed to build Bzip2"
+    exit 1
+fi
+
+###############################################################################
+
+if ! ./build.sh pcre
+then
+    echo "Failed to build pcre"
+    exit 1
+fi
+
+###############################################################################
+
 if ! ./build.sh ncurses-readline
 then
     echo "Failed to build Ncurses and Readline"
