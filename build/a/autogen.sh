@@ -30,19 +30,19 @@ fi
 
 ###############################################################################
 
-if ! ./build.sh cacert
-then
-    echo "Failed to install CA Certs"
-    exit 1
-fi
+#if ! ./build.sh cacert
+#then
+#    echo "Failed to install CA Certs"
+#    exit 1
+#fi
 
 ###############################################################################
 
-if ! ./build.sh libxml2
-then
-    echo "Failed to build libxml2"
-    exit 1
-fi
+#if ! ./build.sh libxml2
+#then
+#    echo "Failed to build libxml2"
+#    exit 1
+#fi
 
 ###############################################################################
 
