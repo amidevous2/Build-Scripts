@@ -199,9 +199,9 @@ fi
     LIBS="${opt_libm} ${INSTX_LDLIBS}" \
 ./Configure \
   -des \
-  -Dprefix="$PREFIX" \
-  -Dsiteprefix="$PREFIX" \
-  -Dvendorprefix="$PREFIX" \
+  -Dprefix="${INSTX_PREFIX}" \
+  -Dsiteprefix="${INSTX_PREFIX}" \
+  -Dvendorprefix="${INSTX_PREFIX}" \
   -Duseshrplib \
   -Duseperlio \
   -Dcc=${CC} \
