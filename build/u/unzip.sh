@@ -90,33 +90,28 @@ echo "*************************"
 #    bison_cxxflags="${INSTX_CXXFLAGS}"
 #fi
 
-#    PKG_CONFIG_PATH="${INSTX_PKGCONFIG}" \
-#    CPPFLAGS="${INSTX_CPPFLAGS}" \
-#    ASFLAGS="${INSTX_ASFLAGS}" \
-#    CFLAGS="${bison_cflags}" \
-#    CXXFLAGS="${bison_cxxflags}" \
-#    LDFLAGS="${INSTX_LDFLAGS}" \
-#    LDLIBS="${INSTX_LDLIBS}" \
-#    LIBS="${INSTX_LDLIBS}" \
-#./configure \
-#    --build="${AUTOCONF_BUILD}" \
-#    --prefix="${INSTX_PREFIX}" \
-#    --libdir="${INSTX_LIBDIR}" \
-#    --with-libiconv-prefix="${INSTX_PREFIX}" \
-#    --with-libintl-prefix="${INSTX_PREFIX}" \
-#    --with-libreadline-prefix="${INSTX_PREFIX}" \
-#    --with-libtextstyle-prefix="${INSTX_PREFIX}" \
-#    --disable-assert
-#
-#if [[ "$?" -ne 0 ]]; then
-#    echo ""
-#    echo "*************************"
-#    echo "Failed to configure Unzip"
-#    echo "*************************"
-#
-#    bash "${INSTX_TOPDIR}/collect-logs.sh" "${PKG_NAME}"
-#    exit 1
-#fi
+    PKG_CONFIG_PATH="${INSTX_PKGCONFIG}" \
+    CPPFLAGS="${INSTX_CPPFLAGS}" \
+    ASFLAGS="${INSTX_ASFLAGS}" \
+    CFLAGS="${INSTX_CFLAGS}" \
+    CXXFLAGS="${INSTX_CXXFLAGS" \
+    LDFLAGS="${INSTX_LDFLAGS}" \
+    LDLIBS="${INSTX_LDLIBS}" \
+    LIBS="${INSTX_LDLIBS}" \
+unix/configure \
+    --build="${AUTOCONF_BUILD}" \
+    --prefix="${INSTX_PREFIX}" \
+    --libdir="${INSTX_LIBDIR}" 
+
+if [[ "$?" -ne 0 ]]; then
+    echo ""
+    echo "*************************"
+    echo "Failed to configure Unzip"
+    echo "*************************"
+
+    bash "${INSTX_TOPDIR}/collect-logs.sh" "${PKG_NAME}"
+    exit 1
+fi
 
 # Escape dollar sign for $ORIGIN in makefiles. Required so
 # $ORIGIN works in both configure tests and makefiles.
@@ -127,7 +122,7 @@ echo "*************************"
 echo "Building package"
 echo "*************************"
 
-MAKE_FLAGS=("-f unix/Makefile MAKEINFO=true" "HELP2MAN=true" "-j" "${INSTX_JOBS}" "V=1")
+MAKE_FLAGS=("-f unix/Makefile" "-j" "${INSTX_JOBS}" "V=1")
 if ! "${MAKE}" "${MAKE_FLAGS[@]}"
 then
     echo ""
