@@ -98,7 +98,7 @@ echo "*************************"
     LDFLAGS="${INSTX_LDFLAGS}" \
     LDLIBS="${INSTX_LDLIBS}" \
     LIBS="${INSTX_LDLIBS}" \
-unix/configure \
+    unix/configure \
     --build="${AUTOCONF_BUILD}" \
     --prefix="${INSTX_PREFIX}" \
     --libdir="${INSTX_LIBDIR}" 
@@ -180,7 +180,7 @@ fi
 
 echo ""
 echo "*****************************************************************************"
-echo "Please run Bash's 'hash -r' to update program cache in the current shell"
+echo "Please run Bashs 'hash -r' to update program cache in the current shell"
 echo "*****************************************************************************"
 
 ###############################################################################
