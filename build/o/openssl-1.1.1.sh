@@ -8,11 +8,14 @@
 # require Perl 5.10 or higher. If we have Perl 5.10 then
 # we can use OpenSSL 1.1.1.
 
+
+PKG_NAME=openssl
 OPENSSL_MAJ=1.1
-OPENSSL_VER=1.1.1w
+PKG_VER=1.1.1w
 OPENSSL_TAR=openssl-${OPENSSL_VER}.tar.gz
 OPENSSL_DIR=openssl-${OPENSSL_VER}
-PKG_NAME=openssl
+PKG_VERSION_URL="${PKG_VER//./_}"
+PKG_URL=https://github.com/openssl/openssl/releases/download/OpenSSL_$PKG_VERSION_URL"
 
 ###############################################################################
 
@@ -109,7 +112,7 @@ echo ""
 echo "OpenSSL ${OPENSSL_VER}..."
 
 if ! "${WGET}" -q -O "$OPENSSL_TAR" \
-     "https://www.openssl.org/source/$OPENSSL_TAR"
+     "$PKG_URL/$OPENSSL_TAR"
 then
     echo "Failed to download OpenSSL"
     exit 1
