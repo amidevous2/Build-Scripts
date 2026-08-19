@@ -234,38 +234,38 @@ echo "******************************"
 # Thanks to @tonycoz on the Perl bug tracker.
 # https://github.com/Perl/perl5/issues/18466
 
-origin_good=$(echo '$$ORIGIN/' | sed -e 's/[\/&]/\\&/g')
-origin_bad=$(echo 'ABCDE_ORIGIN_VWXYZ/' | sed -e 's/[\/&]/\\&/g')
+#origin_good=$(echo '$$ORIGIN/' | sed -e 's/[\/&]/\\&/g')
+#origin_bad=$(echo 'ABCDE_ORIGIN_VWXYZ/' | sed -e 's/[\/&]/\\&/g')
 
-miniperl_good=$(echo '$(miniperl_objs) $(libs)')
-miniperl_bad=$(echo '$(miniperl_objs) $(libs)')
+#miniperl_good=$(echo '$(miniperl_objs) $(libs)')
+#miniperl_bad=$(echo '$(miniperl_objs) $(libs)')
 
-IFS= find "./" \( -name 'config.sh' -o -name 'Makefile' \) -print | while read -r file
-do
+#IFS= find "./" \( -name 'config.sh' -o -name 'Makefile' \) -print | while read -r file
+#do
     # Display filename, strip leading "./"
-    echo "$file" | tr -s '/' | cut -c 3-
+#    echo "$file" | tr -s '/' | cut -c 3-
 
-    touch -a -m -r "$file" "$file.timestamp"
-    chmod a+w "$file"
+#    touch -a -m -r "$file" "$file.timestamp"
+#    chmod a+w "$file"
 
-    sed -e "s/$origin_bad/$origin_good/g" \
-        -e "s/$miniperl_bad/$miniperl_good/g" \
-        -e "s/ -no-cpp-precomp//g" \
-        "$file" > "$file.fixed" && \
-    mv "$file.fixed" "$file"
+#    sed -e "s/$origin_bad/$origin_good/g" \
+#        -e "s/$miniperl_bad/$miniperl_good/g" \
+#        -e "s/ -no-cpp-precomp//g" \
+#        "$file" > "$file.fixed" && \
+#    mv "$file.fixed" "$file"
 
     # Need a subshell. Regenerate the Makefile
-    (
-        cd "$(dirname "${file}")"
-        if [[ -f Makefile ]]; then
-            ${MAKE} Makefile 2>/dev/null
-        fi
-    )
+ #   (
+ #       cd "$(dirname "${file}")"
+ #       if [[ -f Makefile ]]; then
+ #           ${MAKE} Makefile 2>/dev/null
+ #       fi
+ #   )
 
-    chmod go-w "$file"
-    touch -a -m -r "$file.timestamp" "$file"
-    rm "$file.timestamp"
-done
+ #   chmod go-w "$file"
+ #   touch -a -m -r "$file.timestamp" "$file"
+ #   rm "$file.timestamp"
+#done
 
 # Escape dollar sign for $ORIGIN in makefiles. Required so
 # $ORIGIN works in both configure tests and makefiles.
