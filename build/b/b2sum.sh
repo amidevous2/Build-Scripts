@@ -41,7 +41,7 @@ fi
 # BLAKE2 only has benchmarks for Intel machines
 if [ "$IS_IA32" -ne 0 ]
 then
-    if ! ./build-openssl.sh
+    if ! ./build.sh openssl
     then
         echo "Failed to build OpenSSL"
         exit 1

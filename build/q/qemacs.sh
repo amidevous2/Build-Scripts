@@ -45,7 +45,7 @@ fi
 
 ###############################################################################
 
-#if ! ./build-readline.sh
+#if ! ./build.sh readline
 #then
 #    echo "Failed to build Readline"
 #    exit 1

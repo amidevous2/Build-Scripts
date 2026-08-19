@@ -36,7 +36,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -44,7 +44,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-openssl.sh
+if ! ./build.sh openssl
 then
     echo "Failed to build OpenSSL"
     exit 1
@@ -52,7 +52,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-unbound.sh
+if ! ./build.sh unbound
 then
     echo "Failed to build Unbound"
     exit 1

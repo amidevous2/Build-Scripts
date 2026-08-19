@@ -50,7 +50,7 @@ fi
 
 if [[ "$ENABLE_CARES" -eq 1 ]]
 then
-    if ! ./build-cares.sh
+    if ! ./build.sh cares
     then
         echo "Failed to build c-ares"
         exit 1
@@ -66,7 +66,7 @@ then
     ver=$(python -V 2>&1 | sed 's/.* \([0-9]\).\([0-9]\).*/\1\2/')
     if [ "$ver" -ge 27 ]
     then
-        if ! ./build-libpsl.sh
+        if ! ./build.sh libpsl
         then
             echo "Failed to build Public Suffix List library"
             exit 1

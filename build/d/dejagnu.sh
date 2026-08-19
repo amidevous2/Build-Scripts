@@ -36,7 +36,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -44,7 +44,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-expect.sh
+if ! ./build.sh expect
 then
     echo "Failed to build Expect"
     exit 1

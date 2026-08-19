@@ -29,7 +29,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -37,7 +37,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-ncurses-readline.sh
+if ! ./build.sh ncurses-readline
 then
     echo "Failed to build Ncurses and Readline"
     exit 1

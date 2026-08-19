@@ -37,7 +37,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -45,7 +45,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-zlib.sh
+if ! ./build.sh zlib
 then
     echo "Failed to build zLib"
     exit 1

@@ -36,7 +36,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -44,7 +44,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-gpgerror.sh
+if ! ./build.sh gpgerror
 then
     echo "Failed to build libgpg-error"
     exit 1

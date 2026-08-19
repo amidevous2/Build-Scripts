@@ -29,7 +29,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -196,7 +196,7 @@ if true; then
         rm -rf "$artifact"
     done
 
-    # ./build-froller.sh 2>&1 | tee build-froller.log
+    # ./build.sh froller 2>&1 | tee build-froller.log
     if [[ -e build-froller.log ]]; then
         rm -f build-froller.log
     fi

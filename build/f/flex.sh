@@ -30,7 +30,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -38,7 +38,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-lzip.sh
+if ! ./build.sh lzip
 then
     echo "Failed to build Lzip"
     exit 1

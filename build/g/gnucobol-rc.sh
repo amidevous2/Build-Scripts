@@ -39,7 +39,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -55,7 +55,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-gmp.sh
+if ! ./build.sh gmp
 then
     echo "Failed to build GMP"
     exit 1
@@ -63,7 +63,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-libxml2.sh
+if ! ./build.sh libxml2
 then
     echo "Failed to build libxml2"
     exit 1
@@ -71,7 +71,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-bdb.sh
+if ! ./build.sh bdb
 then
     echo "Failed to build Berkeley DB"
     exit 1

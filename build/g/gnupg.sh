@@ -31,7 +31,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -39,7 +39,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-zlib.sh
+if ! ./build.sh zlib
 then
     echo "Failed to build zLib"
     exit 1
@@ -47,7 +47,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-bzip.sh
+if ! ./build.sh bzip
 then
     echo "Failed to build Bzip2"
     exit 1
@@ -63,7 +63,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-libtasn1.sh
+if ! ./build.sh libtasn1
 then
     echo "Failed to build libtasn1"
     exit 1
@@ -71,7 +71,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-gpgerror.sh
+if ! ./build.sh gpgerror
 then
     echo "Failed to build Libgpg-error"
     exit 1
@@ -79,7 +79,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-libksba.sh
+if ! ./build.sh libksba
 then
     echo "Failed to build Libksba"
     exit 1
@@ -87,7 +87,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-libassuan.sh
+if ! ./build.sh libassuan
 then
     echo "Failed to build Libassuan"
     exit 1
@@ -95,7 +95,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-libgcrypt.sh
+if ! ./build.sh libgcrypt
 then
     echo "Failed to build Libgcrypt"
     exit 1
@@ -103,7 +103,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-ntbTLS.sh
+if ! ./build.sh ntbTLS
 then
     echo "Failed to build ntbTLS"
     exit 1
@@ -111,7 +111,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-nPth.sh
+if ! ./build.sh nPth
 then
     echo "Failed to build nPth"
     exit 1

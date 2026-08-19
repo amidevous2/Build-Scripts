@@ -30,7 +30,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -46,7 +46,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-mpfr.sh
+if ! ./build.sh mpfr
 then
     echo "Failed to build MPFR"
     exit 1
@@ -54,7 +54,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-gmp.sh
+if ! ./build.sh gmp
 then
     echo "Failed to build GMP"
     exit 1

@@ -37,7 +37,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA certs"
     exit 1
@@ -45,7 +45,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-bzip.sh
+if ! ./build.sh bzip
 then
     echo "Failed to build Bzip2"
     exit 1
@@ -61,7 +61,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-libtasn1.sh
+if ! ./build.sh libtasn1
 then
     echo "Failed to build libtasn1"
     exit 1
@@ -69,7 +69,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-idn2.sh
+if ! ./build.sh idn2
 then
     echo "Failed to build IDN2"
     exit 1
@@ -77,7 +77,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-libexpat.sh
+if ! ./build.sh libexpat
 then
     echo "Failed to build Expat"
     exit 1
@@ -85,7 +85,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-nettle.sh
+if ! ./build.sh nettle
 then
     echo "Failed to build Nettle"
     exit 1
@@ -93,7 +93,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-unbound.sh
+if ! ./build.sh unbound
 then
     echo "Failed to build Unbound"
     exit 1
@@ -101,7 +101,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-p11kit.sh
+if ! ./build.sh p11kit
 then
     echo "Failed to build P11-Kit"
     exit 1
@@ -111,7 +111,7 @@ fi
 
 if [[ ! -f "${INSTX_PREFIX}/bin/xz" ]]
 then
-    if ! ./build-xz.sh
+    if ! ./build.sh xz
     then
         echo "Failed to build XZ"
         exit 1
@@ -122,7 +122,7 @@ fi
 
 if [[ "${IS_LINUX}" -eq 1 ]]
 then
-    if ! ./build-datefudge.sh
+    if ! ./build.sh datefudge
     then
         echo "Failed to build datefudge"
         exit 1

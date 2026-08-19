@@ -31,7 +31,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -39,7 +39,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-parigp.sh
+if ! ./build.sh parigp
 then
     echo "Failed to build PARI/GP"
     exit 1

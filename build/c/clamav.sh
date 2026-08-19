@@ -55,7 +55,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-openssl.sh
+if ! ./build.sh openssl
 then
     echo "Failed to build OpenSSL"
     exit 1
@@ -63,7 +63,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-pcre2.sh
+if ! ./build.sh pcre2
 then
     echo "Failed to build PCRE2"
     exit 1

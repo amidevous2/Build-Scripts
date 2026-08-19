@@ -31,7 +31,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -49,7 +49,7 @@ fi
 
 if [[ ! -f "${INSTX_PREFIX}/bin/xz" ]]
 then
-    if ! ./build-xz.sh
+    if ! ./build.sh xz
     then
         echo "Failed to build XZ"
         exit 1

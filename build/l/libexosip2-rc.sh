@@ -48,7 +48,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -56,7 +56,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-openssl.sh
+if ! ./build.sh openssl
 then
     echo "Failed to build OpenSSL"
     exit 1
@@ -66,7 +66,7 @@ fi
 
 if [[ "$ENABLE_CARES" -eq 1 ]]
 then
-    if ! ./build-cares.sh
+    if ! ./build.sh cares
     then
         echo "Failed to build c-ares"
         exit 1
@@ -75,7 +75,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-ucommon.sh
+if ! ./build.sh ucommon
 then
     echo "Failed to build uCommon"
     exit 1
@@ -83,7 +83,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-libosip2-rc.sh
+if ! ./build.sh libosip2-rc
 then
     echo "Failed to build libosip2"
     exit 1

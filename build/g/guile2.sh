@@ -55,7 +55,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-cacert.sh
+if ! ./build.sh cacert
 then
     echo "Failed to install CA Certs"
     exit 1
@@ -71,7 +71,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-unistr.sh
+if ! ./build.sh unistr
 then
     echo "Failed to build Unistring"
     exit 1
@@ -79,7 +79,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-gmp.sh
+if ! ./build.sh gmp
 then
     echo "Failed to build GMP"
     exit 1
@@ -89,7 +89,7 @@ fi
 
 # Solaris is missing the Boehm GC. We have to build it. Ugh...
 if [[ "$IS_SOLARIS" -eq 1 ]]; then
-    if ! ./build-boehm-gc.sh
+    if ! ./build.sh boehm-gc
     then
         echo "Failed to build Boehm GC"
         exit 1
@@ -98,7 +98,7 @@ fi
 
 ###############################################################################
 
-if ! ./build-libffi.sh
+if ! ./build.sh libffi
 then
     echo "Failed to build libffi"
     exit 1
