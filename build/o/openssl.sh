@@ -81,7 +81,7 @@ PERL_MAJ=$(echo "${PERL_MAJ}" | awk -F '.' '{print $1}')
 PERL_MIN=$(echo "${PERL_MIN}" | awk -F '.' '{print $1}')
 
 # OpenSSL 1.1.1 needs Perl 5.10 or above.
-if [[ "$PERL_MAJ" -lt 5 || ("$PERL_MAJ" -eq 5 && "$PERL_MIN" -lt 10) ]]
+if [[ "$PERL_MAJ" -lt 5 || ("$PERL_MAJ" -eq 5 && "$PERL_MIN" -lt 9) ]]
 then
 
     printf "\nFound PERL_MAJ=%d, PERL_MIN=%d, using OpenSSL 1.0.2\n" "${PERL_MAJ}" "${PERL_MIN}"
