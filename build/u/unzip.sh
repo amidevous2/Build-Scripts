@@ -94,7 +94,7 @@ echo "*************************"
     CPPFLAGS="${INSTX_CPPFLAGS}" \
     ASFLAGS="${INSTX_ASFLAGS}" \
     CFLAGS="${INSTX_CFLAGS}" \
-    CXXFLAGS="${INSTX_CXXFLAGS" \
+    CXXFLAGS="${INSTX_CXXFLAGS}" \
     LDFLAGS="${INSTX_LDFLAGS}" \
     LDLIBS="${INSTX_LDLIBS}" \
     LIBS="${INSTX_LDLIBS}" \
