@@ -8,11 +8,13 @@
 # require Perl 5.10 or higher. If we have Perl 5.10 then
 # we use OpenSSL 3.1.
 
+
+PKG_NAME=openssl
 OPENSSL_MAJ=3.1
 OPENSSL_VER=3.1.4
-OPENSSL_TAR=openssl-${OPENSSL_VER}.tar.gz
-OPENSSL_DIR=openssl-${OPENSSL_VER}
-PKG_NAME=openssl
+OPENSSL_TAR=${PKG_NAME}-${OPENSSL_VER}.tar.gz
+OPENSSL_DIR=${PKG_NAME}-${OPENSSL_VER}
+PKG_URL="https://www.openssl.org/source"
 
 ###############################################################################
 
@@ -25,11 +27,15 @@ if [[ "${SETUP_ENVIRON_DONE}" != "yes" ]]; then
     fi
 fi
 
+###############################################################################
+
 if [[ -e "${INSTX_PKG_CACHE}/${PKG_NAME}" ]]; then
     echo ""
     echo "$PKG_NAME is already installed."
     exit 0
 fi
+
+###############################################################################
 
 # The password should die when this subshell goes out of scope
 if [[ "${SUDO_PASSWORD_DONE}" != "yes" ]]; then
@@ -42,17 +48,25 @@ fi
 
 ###############################################################################
 
-if ! ./build.sh cacert
+if ! ./build.sh zlib
 then
-    echo "Failed to install CA Certs"
+    echo "Failed to build zLib"
     exit 1
 fi
 
 ###############################################################################
 
-if ! ./build.sh zlib
+if ! ./build.sh perl-5.10
 then
-    echo "Failed to build zLib"
+    echo "Failed to build perl v5.10"
+    exit 1
+fi
+
+###############################################################################
+
+if ! ./build.sh perl-5.10-module-Text-Template
+then
+    echo "Failed to build perl-5.10 Text-Template v1.45"
     exit 1
 fi
 
@@ -92,8 +106,8 @@ echo "***************************"
 echo ""
 echo "OpenSSL ${OPENSSL_VER}..."
 
-if ! "${WGET}" -q -O "$OPENSSL_TAR" --ca-certificate="${LETS_ENCRYPT_ROOT}" \
-     "https://www.openssl.org/source/$OPENSSL_TAR"
+if ! "${WGET}" -q -O "$OPENSSL_TAR" \
+     "$PKG_URL/$OPENSSL_TAR"
 then
     echo "Failed to download OpenSSL"
     exit 1
