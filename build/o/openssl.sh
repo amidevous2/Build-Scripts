@@ -38,6 +38,24 @@ if [[ "${SUDO_PASSWORD_DONE}" != "yes" ]]; then
     fi
 fi
 
+if ! ./build.sh zlib
+then
+    echo "Failed to build zLib"
+    exit 1
+fi
+
+if ! ./build.sh perl-5.10
+then
+    echo "Failed to build perl v5.10"
+    exit 1
+fi
+
+if ! ./build.sh perl-5.10-module-Text-Template
+then
+    echo "Failed to build perl-5.10 Text-Template v1.45"
+    exit 1
+fi
+
 ###############################################################################
 
 if [[ -n "$(command -v perl 2>/dev/null)" ]]; then
