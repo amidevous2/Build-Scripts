@@ -119,8 +119,9 @@ echo "*************************"
 echo "Building package"
 echo "*************************"
 
-MAKE_FLAGS=("-f unix/Makefile generic")
-if ! "${MAKE}" "${MAKE_FLAGS[@]}"
+#MAKE_FLAGS=("-f unix/Makefile generic")
+#if ! "${MAKE}" "${MAKE_FLAGS[@]}"
+if ! "make" "-f unix/Makefile generic"
 then
     echo ""
     echo "*************************"
@@ -162,16 +163,17 @@ echo "*************************"
 echo "Installing package"
 echo "*************************"
 
-MAKE_FLAGS=("-f unix/Makefile install")
-if [[ -n "${SUDO_PASSWORD}" ]]; then
-    printf "%s\n" "${SUDO_PASSWORD}" | sudo ${SUDO_ENV_OPT} -S "${MAKE}" "${MAKE_FLAGS[@]}"
-    printf "%s\n" "${SUDO_PASSWORD}" | sudo ${SUDO_ENV_OPT} -S bash "${INSTX_TOPDIR}/fix-permissions.sh" "${INSTX_PREFIX}"
-    printf "%s\n" "${SUDO_PASSWORD}" | sudo ${SUDO_ENV_OPT} -S bash "${INSTX_TOPDIR}/copy-sources.sh" "${PWD}" "${INSTX_SRCDIR}/${UNZIP_DIR}"
-else
-    "${MAKE}" "${MAKE_FLAGS[@]}"
+#MAKE_FLAGS=("-f unix/Makefile install")
+#if [[ -n "${SUDO_PASSWORD}" ]]; then
+#    printf "%s\n" "${SUDO_PASSWORD}" | sudo ${SUDO_ENV_OPT} -S "${MAKE}" "${MAKE_FLAGS[@]}"
+#    printf "%s\n" "${SUDO_PASSWORD}" | sudo ${SUDO_ENV_OPT} -S bash "${INSTX_TOPDIR}/fix-permissions.sh" "${INSTX_PREFIX}"
+#    printf "%s\n" "${SUDO_PASSWORD}" | sudo ${SUDO_ENV_OPT} -S bash "${INSTX_TOPDIR}/copy-sources.sh" "${PWD}" "${INSTX_SRCDIR}/${UNZIP_DIR}"
+#else
+#    "${MAKE}" "${MAKE_FLAGS[@]}"
+make -f unix/Makefile install
     bash "${INSTX_TOPDIR}/fix-permissions.sh" "${INSTX_PREFIX}"
     bash "${INSTX_TOPDIR}/copy-sources.sh" "${PWD}" "${INSTX_SRCDIR}/${UNZIP_DIR}"
-fi
+#fi
 
 ###############################################################################
 
