@@ -15,7 +15,7 @@ PKG_VER=1.1.1w
 OPENSSL_TAR=openssl-${OPENSSL_VER}.tar.gz
 OPENSSL_DIR=openssl-${OPENSSL_VER}
 PKG_VERSION_URL="${PKG_VER//./_}"
-PKG_URL=https://github.com/openssl/openssl/releases/download/OpenSSL_$PKG_VERSION_URL"
+PKG_URL="https://github.com/openssl/openssl/releases/download/OpenSSL_$PKG_VERSION_URL"
 
 ###############################################################################
 
