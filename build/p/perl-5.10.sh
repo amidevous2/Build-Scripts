@@ -170,7 +170,7 @@ export ORIGIN="ABCDE_ORIGIN_VWXYZ"
 # Don't use Perl versions of zLib or Bzip2. Perl versions are old and
 # have outstanding CVEs. Our versions are new and hardened. Also see
 # http://www.linuxfromscratch.org/lfs/view/development/chapter08/perl.html
-export BUILD_ZLIB=0 BUILD_BZIP2=0
+export BUILD_ZLIB=1 BUILD_BZIP2=1
 
 # And more broken Perl shit on OS X.
 # https://stackoverflow.com/q/32280732
@@ -197,24 +197,45 @@ fi
     LDFLAGS="${INSTX_LDFLAGS}" \
     LDLIBS="${opt_libm} ${INSTX_LDLIBS}" \
     LIBS="${opt_libm} ${INSTX_LDLIBS}" \
-./Configure -des \
-    -Dprefix="${INSTX_PREFIX}" \
-    -Dlibdir="${INSTX_LIBDIR}" \
-    -Dlocincpth="${INSTX_PREFIX}/include" \
-    -Dloclibpth="${INSTX_LIBDIR}" \
-    -Dpkgconfig="${INSTX_PKGCONFIG}" \
-    -Dcc="${CC}" \
-    -Dcxx="${CXX}" \
-    -Acppflags="${INSTX_CPPFLAGS}" \
-    -Aasflags="${INSTX_ASFLAGS}" \
-    -Accflags="${INSTX_CPPFLAGS} ${INSTX_CFLAGS}" \
-    -Acxxflags="${INSTX_CPPFLAGS} ${INSTX_CXXFLAGS}" \
-    -Aldflags="${INSTX_LDFLAGS}" \
-    -Aldlibs="${opt_libm} ${INSTX_LDLIBS}" \
-    -Alibs="${opt_libm} ${INSTX_LDLIBS}" \
-    -Duseshrplib \
-    -Dusethreads \
-    -Dextras="FindBin Text::* Util::* ExtUtils::* Term::* Test::* HTTP::*"
+./Configure \
+  -des \
+  -Dprefix="$PREFIX" \
+  -Dsiteprefix="$PREFIX" \
+  -Dvendorprefix="$PREFIX" \
+  -Duseshrplib \
+  -Duseperlio \
+  -Dcc=${CC} \
+  -Doptimize="-O2 -fPIC" \
+  -Dccflags="-O2 -fPIC -fno-strict-aliasing -pipe"
+
+
+
+
+#./Configure -des \
+#    -Dprefix="${INSTX_PREFIX}" \
+#    -Dlibdir="${INSTX_LIBDIR}" \
+#    -Dlocincpth="${INSTX_PREFIX}/include" \
+#    -Dloclibpth="${INSTX_LIBDIR}" \
+#    -Dpkgconfig="${INSTX_PKGCONFIG}" \
+#    -Dcc="${CC}" \
+#    -Dcxx="${CXX}" \
+#    -Acppflags="${INSTX_CPPFLAGS}" \
+#    -Aasflags="${INSTX_ASFLAGS}" \
+#    -Accflags="${INSTX_CPPFLAGS} ${INSTX_CFLAGS}" \
+#    -Acxxflags="${INSTX_CPPFLAGS} ${INSTX_CXXFLAGS}" \
+#    -Aldflags="${INSTX_LDFLAGS}" \
+#    -Aldlibs="${opt_libm} ${INSTX_LDLIBS}" \
+#    -Alibs="${opt_libm} ${INSTX_LDLIBS}" \
+#    -Duseshrplib \
+#    -Dusethreads \
+#    -Dextras="FindBin Text::* Util::* ExtUtils::* Term::* Test::* HTTP::*"
+
+
+
+
+
+
+    
     # -Dextras="FindBin Text::Template Test::More HTTP::Daemon HTTP::Request"
 
 if [[ "$?" -ne 0 ]]; then
