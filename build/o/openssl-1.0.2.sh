@@ -12,10 +12,13 @@
 # December 2019. But it is better than the OpenSSL gear on
 # an old platform, which can sometimes be OpenSSL 0.9.8.
 
-OPENSSL_VER=1.0.2u
-OPENSSL_TAR=openssl-${OPENSSL_VER}.tar.gz
-OPENSSL_DIR=openssl-${OPENSSL_VER}
 PKG_NAME=openssl
+OPENSSL_MAJ=1.1
+PKG_VER=1.0.2u
+OPENSSL_TAR=${PKG_NAME}-${PKG_VER}.tar.gz
+OPENSSL_DIR=${PKG_NAME}-${PKG_VER}
+PKG_VERSION_URL="${PKG_VER//./_}"
+PKG_URL="https://github.com/openssl/openssl/releases/download/OpenSSL_$PKG_VERSION_URL"
 
 ###############################################################################
 
@@ -95,7 +98,7 @@ echo ""
 echo "OpenSSL ${OPENSSL_VER}..."
 
 if ! "${WGET}" -q -O "$OPENSSL_TAR" \
-     "https://www.openssl.org/source/$OPENSSL_TAR"
+     "$PKG_URL/$OPENSSL_TAR"
 then
     echo "Failed to download OpenSSL"
     exit 1
