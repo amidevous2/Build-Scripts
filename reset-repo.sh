@@ -3,10 +3,12 @@ cat > $HOME/reset-build-scripts-repo.sh <<EOF
 #!/usr/bin/env bash
 cd $HOME
 mkdir -p Build-Scripts
-git clone https://github.com/amidevous2/Build-Scripts.git -b php56 Build-Scripts2
+wget https://github.com/amidevous2/Build-Scripts/archive/refs/heads/php56.tar.gz -O Build-Scripts.targ.gz
+tar -xvf Build-Scripts.targ.gz
+#git clone https://github.com/amidevous2/Build-Scripts.git -b php56 Build-Scripts2
 rm -rf $HOME/Build-Scripts/*
-cp -R $HOME/Build-Scripts2/* $HOME/Build-Scripts/
-rm -rf $HOME/Build-Scripts2/
+cp -R $HOME/Build-Scripts-php56/* $HOME/Build-Scripts/
+rm -rf $HOME/Build-Scripts-php56/ Build-Scripts.targ.gz
 cd $HOME/Build-Scripts
 chmod +x *
 EOF
