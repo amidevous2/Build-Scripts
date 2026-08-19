@@ -98,9 +98,7 @@ echo "*************************"
     LDFLAGS="${INSTX_LDFLAGS}" \
     LDLIBS="${INSTX_LDLIBS}" \
     LIBS="${INSTX_LDLIBS}" \
-    unix/configure \
-    --prefix="${INSTX_PREFIX}" \
-    --libdir="${INSTX_LIBDIR}" 
+    unix/configure
 
 if [[ "$?" -ne 0 ]]; then
     echo ""
