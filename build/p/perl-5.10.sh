@@ -46,6 +46,19 @@ if [[ "${SUDO_PASSWORD_DONE}" != "yes" ]]; then
     fi
 fi
 
+if ! ./build.sh bzip
+then
+    echo "Failed to install bzip"
+    exit 1
+fi
+
+
+if ! ./build.sh zlib
+then
+    echo "Failed to install zlib"
+    exit 1
+fi
+
 ###############################################################################
 
 echo ""
