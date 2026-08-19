@@ -119,7 +119,7 @@ echo "*************************"
 echo "Building package"
 echo "*************************"
 
-MAKE_FLAGS=("-f unix/Makefile" "-j" "${INSTX_JOBS}" "V=1")
+MAKE_FLAGS=("-f unix/Makefile generic")
 if ! "${MAKE}" "${MAKE_FLAGS[@]}"
 then
     echo ""
