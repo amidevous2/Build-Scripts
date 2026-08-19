@@ -13,7 +13,7 @@
 # an old platform, which can sometimes be OpenSSL 0.9.8.
 
 PKG_NAME=openssl
-OPENSSL_MAJ=1.1
+OPENSSL_MAJ=1.0
 PKG_VER=1.0.2u
 OPENSSL_TAR=${PKG_NAME}-${PKG_VER}.tar.gz
 OPENSSL_DIR=${PKG_NAME}-${PKG_VER}
