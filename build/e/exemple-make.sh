@@ -381,6 +381,6 @@ cd "${CURR_DIR}" || exit 1
 echo "${PKG_NAME} ${PKG_VER} ${PKG_URL} ${PKG_TAR} ${PKG_DIR}"
 
 # Set to false to retain artifacts
-rm -rf "${PKG_TAR}" "${PKG_DIR}"fi
+rm -rf "${PKG_NAME}-${PKG_VER}" "${PKG_TAR}"
 
 exit 0
