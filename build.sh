@@ -16,9 +16,9 @@ echo -e "${rougefonce}**********************************************************
 hash -r
 
 Nombre=0
-while [ $Nombre -le 5 ]
+while [ $Nombre -le 2 ]
 do
-    echo -e "${neutre}Please Wait : $Nombre minute on 5"
+    echo -e "${neutre}Please Wait : $Nombre minute on 2"
     sleep 1m
     ((Nombre++))
 done
