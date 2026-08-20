@@ -13,13 +13,12 @@ echo -e "${rougefonce}**********************************************************
 echo -e "${rougefonce}****************************Build $script finished"
 echo -e "${rougefonce}**Please run Bash's 'hash -r' to update program cache in the current shell"
 echo -e "${rougefonce}*****************************************************************************"
-echo -e "${neutre}."
 hash -r
 
 Nombre=0
 while [ $Nombre -le 5 ]
 do
-    echo "Please Wait : $Nombre minute on 5"
+    echo -e "${neutre}Please Wait : $Nombre minute on 5"
     sleep 1m
     ((Nombre++))
 done
