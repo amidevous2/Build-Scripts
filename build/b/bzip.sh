@@ -124,7 +124,7 @@ CXXFLAGS=$(echo "${INSTX_CXXFLAGS}" | sed 's/\$/\$\$/g')
 LDFLAGS=$(echo "${INSTX_LDFLAGS}" | sed 's/\$/\$\$/g')
 LDLIBS="${INSTX_LDLIBS}"
 #O3="-O3"
-CFLAGS="$(rpm --eval '%{optflags}') -D_FILE_OFFSET_BITS=64 -fpic -fPIC $CFLAGS"
+#CFLAGS="$(rpm --eval '%{optflags}') -D_FILE_OFFSET_BITS=64 -fpic -fPIC $CFLAGS"
 
 MAKE_FLAGS=()
 MAKE_FLAGS+=("-f" "Makefile")
