@@ -126,6 +126,8 @@ LDLIBS="${INSTX_LDLIBS}"
 #O3="-O3"
 #CFLAGS="$(rpm --eval '%{optflags}') -D_FILE_OFFSET_BITS=64 -fpic -fPIC $CFLAGS"
 
+echo "make -f Makefile-libbz2_so"
+
 MAKE_FLAGS=()
 MAKE_FLAGS+=("-f" "Makefile-libbz2_so")
 MAKE_FLAGS+=("-j" "${INSTX_JOBS}")
@@ -149,6 +151,9 @@ then
     exit 1
 fi
 
+
+
+echo "make bzip2recover"
 
 MAKE_FLAGS=()
 MAKE_FLAGS+=("bzip2recover")
