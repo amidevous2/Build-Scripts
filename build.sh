@@ -13,6 +13,7 @@ echo -e "${rougefonce}**********************************************************
 echo -e "${rougefonce}****************************Build $script finished"
 echo -e "${rougefonce}**Please run Bash's 'hash -r' to update program cache in the current shell"
 echo -e "${rougefonce}*****************************************************************************"
+echo -e "${neutre}*****************************************************************************"
 hash -r
 
 Nombre=0
