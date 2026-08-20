@@ -223,10 +223,6 @@ echo ""
 echo "****************************"
 echo "Installing package"
 echo "****************************"
-
-
-
-
 chmod 644 bzlib.h
 mkdir -p ${INSTX_PREFIX}/bin,/lib/pkgconfig,/include}
 cp -p bzlib.h ${INSTX_PREFIX}/include
