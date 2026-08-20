@@ -127,7 +127,7 @@ LDLIBS="${INSTX_LDLIBS}"
 #CFLAGS="$(rpm --eval '%{optflags}') -D_FILE_OFFSET_BITS=64 -fpic -fPIC $CFLAGS"
 
 MAKE_FLAGS=()
-MAKE_FLAGS+=("-f" "Makefile")
+MAKE_FLAGS+=("-f" "Makefile-libbz2_so")
 MAKE_FLAGS+=("-j" "${INSTX_JOBS}")
 MAKE_FLAGS+=("CC=${CC}")
 MAKE_FLAGS+=("CPPFLAGS=${CPPFLAGS} -I.")
