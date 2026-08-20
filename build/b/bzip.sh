@@ -87,23 +87,23 @@ gzip -d < "$BZIP2_TAR" | tar xf -
 cd "$BZIP2_DIR" || exit 1
 
 # The Makefiles needed so much work it was easier to rewrite them.
-if [[ -e ../patch/bzip-makefiles.zip ]]; then
-    echo ""
-    echo "****************************"
-    echo "Updating makefiles"
-    echo "****************************"
+#if [[ -e ../patch/bzip-makefiles.zip ]]; then
+#    echo ""
+#    echo "****************************"
+#    echo "Updating makefiles"
+#    echo "****************************"
 
-    cp ../patch/bzip-makefiles.zip .
-    unzip -oq bzip-makefiles.zip
-fi
+#    cp ../patch/bzip-makefiles.zip .
+#    unzip -oq bzip-makefiles.zip
+#fi
 
 # Now, patch them for this script.
-if [[ -e ../patch/bzip.patch ]]; then
+if [[ -e ../patch/bzip-1.0.8.patch ]]; then
     echo ""
     echo "****************************"
     echo "Patching package"
     echo "****************************"
-    patch -p1 < ../patch/bzip.patch
+    patch -p1 < ../patch/bzip-1.0.8.patch
 fi
 
 # Escape dollar sign for $ORIGIN in makefiles. Required so
