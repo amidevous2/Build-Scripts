@@ -77,8 +77,8 @@ diff -up bzip2-1.0.6/Makefile-libbz2_so.jx bzip2-1.0.6/Makefile-libbz2_so
 #https://src.fedoraproject.org/rpms/bzip2/raw/rawhide/f/man_gzipdiff.patch
 
 
---- /bzip2-1.0.8/bzip2.1	2019-07-13 19:50:05.000000000 +0200
-+++ /bzip2-1.0.8/bzip2.1.new	2021-01-29 11:51:04.091430407 +0100
+--- bzip2-1.0.8/bzip2.1	2019-07-13 19:50:05.000000000 +0200
++++ bzip2-1.0.8/bzip2.1.new	2021-01-29 11:51:04.091430407 +0100
 @@ -170,6 +170,17 @@
  to try to recover data from
  damaged files.
