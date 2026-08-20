@@ -5,11 +5,11 @@
 
 
 PKG_NAME=openvpn
-OPENVPN_VER=2.5.5
-OPENVPN_TAR=${PKG_NAME}-${OPENVPN_VER}.tar.gz
-OPENVPN_DIR=${PKG_NAME}-${OPENVPN_VER}
+PKG_VER=2.5.5
+PKG_TAR=${PKG_NAME}-${PKG_VER}.tar.gz
+PKG_DIR=${PKG_NAME}-${PKG_VER}
 PKG_URL="https://swupdate.openvpn.org/community/releases"
-
+echo "${PKG_NAME} ${PKG_VER} ${PKG_URL} ${PKG_TAR} ${PKG_DIR}"
 ###############################################################################
 
 # Get the environment as needed.
@@ -58,24 +58,30 @@ fi
 
 echo ""
 echo "========================================"
-echo "================ OpenVPN ==============="
+echo "====== ${PKG_NAME} v${PKG_VER}  ====="
 echo "========================================"
+
+echo "${PKG_NAME} ${PKG_VER} ${PKG_URL} ${PKG_TAR} ${PKG_DIR}"
+
 
 echo ""
 echo "**********************"
 echo "Downloading package"
 echo "**********************"
 
-if ! "${WGET}" -q -O "$OPENVPN_TAR" \
-     "$PKG_URL/$OPENVPN_TAR"
+if ! "${WGET}" -q -O "${PKG_TAR}" \
+     "$PKG_URL/${PKG_TAR}"
 then
     echo "Failed to download OpenVPN"
     exit 1
 fi
 
-rm -rf "$OPENVPN_DIR" &>/dev/null
-gzip -d < "$OPENVPN_TAR" | tar xf -
-cd "$OPENVPN_DIR"
+echo "${PKG_NAME} ${PKG_VER} ${PKG_URL} ${PKG_TAR} ${PKG_DIR}"
+
+
+rm -rf "${PKG_DIR}" &>/dev/null
+gzip -d < "${PKG_TAR}" | tar xf -
+cd "${PKG_DIR}"
 
 if [[ -e ../patch/openvpn.patch ]]; then
     patch -u -p0 < ../patch/openvpn.patch
@@ -155,14 +161,9 @@ touch "${INSTX_PKG_CACHE}/${PKG_NAME}"
 cd "${CURR_DIR}" || exit 1
 
 ###############################################################################
+echo "${PKG_NAME} ${PKG_VER} ${PKG_URL} ${PKG_TAR} ${PKG_DIR}"
 
 # Set to false to retain artifacts
-if true;
-then
-    ARTIFACTS=("$TUNTAP_TAR" "$TUNTAP_DIR" "$OPENVPN_TAR" "$OPENVPN_DIR")
-    for artifact in "${ARTIFACTS[@]}"; do
-        rm -rf "$artifact"
-    done
-fi
+rm -rf "${PKG_NAME}-${PKG_VER}" "${PKG_TAR}"
 
 exit 0
