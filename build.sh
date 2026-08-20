@@ -17,8 +17,9 @@ echo -e "${neutre}."
 hash -r
 
 Nombre=0
-while [ $Nombre -le 5000 ]
+while [ $Nombre -le 5 ]
 do
-    echo "Please Wait : $Nombre seconds total 5000 seconds"
+    echo "Please Wait : $Nombre minute on 5"
+    sleep 1m
     ((Nombre++))
 done
