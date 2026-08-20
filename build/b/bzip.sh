@@ -224,29 +224,25 @@ echo "****************************"
 echo "Installing package"
 echo "****************************"
 
-if [[ -n "${SUDO_PASSWORD}" ]]
-then
-    echo "Installing static archive..."
-    MAKE_FLAGS=("-f" "Makefile" installdirs
-                PREFIX="${INSTX_PREFIX}" LIBDIR="${INSTX_LIBDIR}")
-    printf "%s\n" "${SUDO_PASSWORD}" | sudo ${SUDO_ENV_OPT} -S "${MAKE}" "${MAKE_FLAGS[@]}"
 
-    MAKE_FLAGS=("-f" "Makefile" install
-                PREFIX="${INSTX_PREFIX}" LIBDIR="${INSTX_LIBDIR}")
-    printf "%s\n" "${SUDO_PASSWORD}" | sudo ${SUDO_ENV_OPT} -S "${MAKE}" "${MAKE_FLAGS[@]}"
-else
-    echo "Installing static archive..."
-    MAKE_FLAGS=("-f" "Makefile" installdirs
-                PREFIX="${INSTX_PREFIX}" LIBDIR="${INSTX_LIBDIR}")
-    "${MAKE}" "${MAKE_FLAGS[@]}"
 
-    MAKE_FLAGS=("-f" "Makefile" install
-                PREFIX="${INSTX_PREFIX}" LIBDIR="${INSTX_LIBDIR}")
-    "${MAKE}" "${MAKE_FLAGS[@]}"
-fi
 
-# Clean old artifacts
-"${MAKE}" clean 2>/dev/null
+chmod 644 bzlib.h
+mkdir -p ${INSTX_PREFIX}/bin,/lib/pkgconfig,/include}
+cp -p bzlib.h ${INSTX_PREFIX}/include
+install -m 755 libbz2.so.%{library_version} ${INSTX_PREFIX}/lib
+install -m 644 libbz2.a ${INSTX_PREFIX}/lib
+install -m 644 bzip2.pc ${INSTX_PREFIX}/lib/pkgconfig/bzip2.pc
+install -m 755 bzip2-shared  ${INSTX_PREFIX}/bin/bzip2
+install -m 755 bzip2recover bzgrep bzdiff bzmore  ${INSTX_PREFIX}/bin
+ln -s bzip2 ${INSTX_PREFIX}/bin/bunzip2
+ln -s bzip2 ${INSTX_PREFIX}/bin/bzcat
+ln -s bzdiff ${INSTX_PREFIX}/bin/bzcmp
+ln -s bzmore ${INSTX_PREFIX}/bin/bzless
+ln -s bzgrep ${INSTX_PREFIX}/bin/bzegrep
+ln -s bzgrep ${INSTX_PREFIX}/bin/bzfgrep
+ln -s libbz2.so.1.0.8 ${INSTX_PREFIX}/bin/libbz2.so.1
+ln -s libbz2.so.1 ${INSTX_PREFIX}/bin/libbz2.so
 
 ###############################################################################
 
