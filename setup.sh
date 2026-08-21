@@ -29,7 +29,7 @@ EOF
 rm -rf $HOME/.build-scripts/
 ./setup-cacerts.sh
 ./setup-wget.sh
-./setup-bash.sh
+#./setup-bash.sh
 INSTX_PREFIX="$HOME/.local"
 export INSTX_PREFIX
 PATH=$HOME/.build-scripts/wget/bin:$HOME/.local/bin
