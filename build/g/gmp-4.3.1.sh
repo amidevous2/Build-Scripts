@@ -7,7 +7,7 @@ trap 'echo "ERREUR : $BASH_SOURCE:$LINENO : commande échouée : $BASH_COMMAND" 
 # This script builds GMP from sources.
 
 
-PKG_NAME=gmp-4.3.1
+PKG_NAME=gmp
 PKG_VER=4.3.1
 PKG_TAR="${PKG_NAME}-${PKG_VER}.tar.bz2"
 PKG_DIR="${PKG_NAME}-${PKG_VER}"
@@ -24,7 +24,7 @@ if [[ "${SETUP_ENVIRON_DONE}" != "yes" ]]; then
     fi
 fi
 
-if [[ -e "${INSTX_PKG_CACHE}/${PKG_NAME}" ]]; then
+if [[ -e "${INSTX_PKG_CACHE}/gmp-4.3.1" ]]; then
     echo ""
     echo "$PKG_NAME is already installed."
     exit 0
@@ -220,7 +220,7 @@ fi
 
 ###############################################################################
 
-touch "${INSTX_PKG_CACHE}/${PKG_NAME}"
+touch "${INSTX_PKG_CACHE}/gmp-4.3.1"
 
 cd "${CURR_DIR}" || exit 1
 
