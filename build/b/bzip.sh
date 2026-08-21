@@ -178,19 +178,27 @@ echo "****************************"
 chmod 644 bzlib.h
 mkdir -p ${INSTX_PREFIX}/bin,/lib/pkgconfig,/include}
 cp -p bzlib.h ${INSTX_PREFIX}/include
-install -m 755 libbz2.so.%{library_version} ${INSTX_PREFIX}/lib
+install -m 755 libbz2.so.1.0.8 ${INSTX_PREFIX}/lib
 install -m 644 libbz2.a ${INSTX_PREFIX}/lib
 install -m 644 bzip2.pc ${INSTX_PREFIX}/lib/pkgconfig/bzip2.pc
 install -m 755 bzip2-shared  ${INSTX_PREFIX}/bin/bzip2
 install -m 755 bzip2recover bzgrep bzdiff bzmore  ${INSTX_PREFIX}/bin
+rm -f ${INSTX_PREFIX}/bin/bunzip2
 ln -s bzip2 ${INSTX_PREFIX}/bin/bunzip2
+rm -f ${INSTX_PREFIX}/bin/bzcat
 ln -s bzip2 ${INSTX_PREFIX}/bin/bzcat
+rm -f ${INSTX_PREFIX}/bin/bzcmp
 ln -s bzdiff ${INSTX_PREFIX}/bin/bzcmp
+rm -f ${INSTX_PREFIX}/bin/bzless
 ln -s bzmore ${INSTX_PREFIX}/bin/bzless
+rm -rf ${INSTX_PREFIX}/bin/bzegrep
 ln -s bzgrep ${INSTX_PREFIX}/bin/bzegrep
+rm -f ${INSTX_PREFIX}/bin/bzfgrep
 ln -s bzgrep ${INSTX_PREFIX}/bin/bzfgrep
+rm -f ${INSTX_PREFIX}/bin/libbz2.so.1
 ln -s libbz2.so.1.0.8 ${INSTX_PREFIX}/bin/libbz2.so.1
-ln -s libbz2.so.1 ${INSTX_PREFIX}/bin/libbz2.so
+rm -f ${INSTX_PREFIX}/bin/libbz2.so
+ln -s libbz2.so.1.0.8 ${INSTX_PREFIX}/bin/libbz2.so
 
 echo "y a une erreur ici"
 sleep 30
