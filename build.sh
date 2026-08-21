@@ -11,6 +11,7 @@ echo -e "${neutre}**************************************************************
 
 if ! "build/$minfolder/$script.sh"; then
     echo -e "${rougefonce}**************************** Build $script FAILED ****************************"
+    echo -e "${neutre}."
     exit 1
 fi
 
