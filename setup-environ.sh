@@ -491,10 +491,10 @@ INSTX_CXX14="${INSTX_CXX14:-0}"
 export INSTX_CXX11 INSTX_CXX11_ATOMIC INSTX_CXX14
 
 # For the benefit of the programs and libraries. Make them run faster.
-cc_result=$(${TEST_CC} -march=native -o "${outfile}" "${infile}" 2>&1 | wc -w)
-if [[ "$cc_result" -eq 0 ]]; then
-    opt_native="-march=native"
-fi
+#cc_result=$(${TEST_CC} -march=native -o "${outfile}" "${infile}" 2>&1 | wc -w)
+#if [[ "$cc_result" -eq 0 ]]; then
+#    opt_native="-march=native"
+#fi
 
 # PowerMac's with 128-bit long double. Gnulib and GetText expect 64-bit long double.
 cc_result=$(${TEST_CC} -o "${outfile}" programs/test-128bit-double.c 2>&1 | wc -w)
