@@ -5,7 +5,7 @@
 # This Wget is crippled, but allows bootstrapping a full Wget build.
 
 # Binaries
-WGET_TAR=wget-1.21.3.tar.gz
+WGET_TAR=wget-1.25.0.tar.gz
 UNISTR_TAR=libunistring-1.1.tar.gz
 SSL_TAR=openssl-1.0.2u.tar.gz
 
@@ -13,7 +13,7 @@ SSL_TAR=openssl-1.0.2u.tar.gz
 BOOTSTRAP_DIR=$(pwd)
 PATCH_DIR="$(pwd)/../patch"
 
-WGET_DIR=wget-1.21.3
+WGET_DIR=wget-1.25.0
 UNISTR_DIR=libunistring-1.1
 SSL_DIR=openssl-1.0.2u
 
@@ -57,6 +57,11 @@ fi
 ############################## Misc ##############################
 
 if [[ -z "$(command -v patch 2>/dev/null)" ]]
+then
+    echo "Please install patch program"
+    exit 1
+fi
+if [[ -z "$(command -v perl 2>/dev/null)" ]]
 then
     echo "Please install patch program"
     exit 1
