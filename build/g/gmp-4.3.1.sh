@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -Eeuo pipefail
+trap 'echo "ERREUR : $BASH_SOURCE:$LINENO : commande échouée : $BASH_COMMAND" >&2; exit 1' ERR
+
 # Written and placed in public domain by Jeffrey Walton
 # This script builds GMP from sources.
 
@@ -9,7 +12,7 @@ PKG_VER=4.3.1
 PKG_TAR="${PKG_NAME}-${PKG_VER}.tar.bz2"
 PKG_DIR="${PKG_NAME}-${PKG_VER}"
 PKG_URL="https://ftp.gnu.org/gnu/gmp"
-echo "${PKG_NAME} ${PKG_VER} ${PKG_TAR} ${PKG_DIR} ${PKG_URL}"
+
 ###############################################################################
 
 # Get the environment as needed.
@@ -223,7 +226,7 @@ cd "${CURR_DIR}" || exit 1
 
 ###############################################################################
 
-echo "${PKG_NAME} ${PKG_VER} ${PKG_TAR} ${PKG_DIR} ${PKG_URL}"
+
 rm -rf "${PKG_DIR}" "${PKG_TAR}"
 
 
