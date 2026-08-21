@@ -1,0 +1,5322 @@
+# security cve patch by RHEL 8/9 for libxml2 2.9.13
+#patch list
+#Patch0:         libxml2-multilib.patch
+# workaround for #877567 - Very weird bug gzip decompression bug in "recent" libxml2 versions
+#Patch1:         libxml2-2.9.0-do-not-check-crc.patch
+# In python3.6 _PyVerify_fd is no more
+#  http://bugs.python.org/issue23524
+#Patch2:         libxml2-2.9.4-remove-pyverify_fd.patch
+# https://codereview.chromium.org/2539003002
+#Patch3:         libxml2-CVE-2016-9597.patch
+# Fix some crashes under Python 3
+# https://bugzilla.gnome.org/show_bug.cgi?id=789714
+#Patch4:         libxml2-python3-unicode-errors.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1565322
+#Patch5:         libxml2-CVE-2018-9251.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1595989
+#Patch6:         libxml2-CVE-2018-14404.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1793001
+#Patch7:         libxml2-CVE-2019-19956.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1799786
+#Patch8:         libxml2-2.9.7-CVE-2020-7595.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1810058
+#Patch9:         libxml2-2.9.7-CVE-2019-20388.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1878252
+#Patch10:        libxml2-2.9.7-CVE-2020-24977.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1956976
+#Patch11:        libxml2-2.9.7-CVE-2021-3516.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1957001
+#Patch12:        libxml2-2.9.7-CVE-2021-3517.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1957028
+#Patch13:        libxml2-2.9.7-CVE-2021-3518.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1957284
+#Patch14:        libxml2-2.9.7-CVE-2021-3537.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1958783
+#Patch15:        libxml2-2.9.7-CVE-2021-3541.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=2057664
+#Patch16:        libxml2-2.9.7-CVE-2022-23308.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=2082298
+#Patch17:        libxml2-2.9.7-CVE-2022-29824.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=2120781
+#Patch18:        libxml2-2.9.7-CVE-2016-3709.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=2136563
+#Patch19:        libxml2-2.9.7-CVE-2022-40303.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=2136568
+#Patch20:        libxml2-2.9.7-CVE-2022-40304.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=2186692
+#Patch21:         libxml2-2.9.13-CVE-2023-28484.patch
+#Patch22:         libxml2-2.9.13-CVE-2023-28484.2.patch
+#Patch23:         libxml2-2.9.7-CVE-2023-29469.patch
+# https://issues.redhat.com/browse/RHEL-5179
+#Patch24:         libxml2-2.11.0-fix-CVE-2023-39615.patch
+# https://issues.redhat.com/browse/RHEL-31056
+#Patch25:         libxml2-2.9.7-CVE-2024-25062.patch
+# https://issues.redhat.com/browse/RHEL-76289
+#Patch26:         libxml2-2.9.13-CVE-2022-49043.patch
+# https://issues.redhat.com/browse/RHEL-80122
+#Patch27:        libxml2-2.9.13-CVE-2024-56171.patch
+# https://issues.redhat.com/browse/RHEL-80137
+#Patch28:        libxml2-2.9.13-CVE-2025-24928.patch
+# https://issues.redhat.com/browse/RHEL-88198
+#Patch29:         libxml2-2.9.13-CVE-2025-32414.patch
+# https://issues.redhat.com/browse/RHEL-74345
+#Patch30:         libxml2-clamp-output-bytes-overflow.patch
+# https://issues.redhat.com/browse/RHEL-96498
+#Patch31:         libxml2-2.9.13-CVE-2025-6021.patch
+# https://issues.redhat.com/browse/RHEL-96398
+# https://issues.redhat.com/browse/RHEL-96424
+#Patch32:        libxml2-2.9.13-CVE-2025-49794.patch
+# https://issues.redhat.com/browse/RHEL-102797
+#Patch33:        libxml2-2.9.7-CVE-2025-7425.patch
+# https://issues.redhat.com/browse/RHEL-100177
+#Patch34:         libxml2-2.12.5-CVE-2025-32415.patch
+# https://issues.redhat.com/browse/RHEL-119279
+#Patch35:         libxml2-2.9.7-CVE-2025-9714.patch
+# https://redhat.atlassian.net/browse/RHEL-36405
+#Patch36:         libxml2-2.9.13-CVE-2024-34459.patch
+# https://gitlab.gnome.org/GNOME/libxml2/-/merge_requests/321
+# https://redhat.atlassian.net/browse/RHEL-182012
+#Patch37:         libxml2-2.12.5-CVE-2025-6170.patch
+
+*** XML/xml2-config.in.orig	2006-06-06 16:35:56.000000000 +0200
+--- XML/xml2-config.in	2006-06-06 16:36:24.000000000 +0200
+***************
+*** 3,9 ****
+  prefix=@prefix@
+  exec_prefix=@exec_prefix@
+  includedir=@includedir@
+! libdir=@libdir@
+  
+  usage()
+  {
+--- 3,14 ----
+  prefix=@prefix@
+  exec_prefix=@exec_prefix@
+  includedir=@includedir@
+! if [ "`ldd /bin/sh | grep lib64`" = "" ]
+! then
+!     libdir=${exec_prefix}/lib
+! else
+!     libdir=${exec_prefix}/lib64
+! fi
+  
+  usage()
+  {
+diff -up libxml2-2.9.0/xzlib.c.do-not-check-crc libxml2-2.9.0/xzlib.c
+--- libxml2-2.9.0/xzlib.c.do-not-check-crc	2012-09-11 05:52:46.000000000 +0200
++++ libxml2-2.9.0/xzlib.c	2012-11-19 19:28:42.431700534 +0100
+@@ -552,17 +552,20 @@ xz_decomp(xz_statep state)
+ #ifdef HAVE_ZLIB_H
+         if (state->how == GZIP) {
+             if (gz_next4(state, &crc) == -1 || gz_next4(state, &len) == -1) {
+-                xz_error(state, LZMA_DATA_ERROR, "unexpected end of file");
+-                return -1;
+-            }
+-            if (crc != state->zstrm.adler) {
+-                xz_error(state, LZMA_DATA_ERROR, "incorrect data check");
+-                return -1;
+-            }
+-            if (len != (state->zstrm.total_out & 0xffffffffL)) {
+-                xz_error(state, LZMA_DATA_ERROR, "incorrect length check");
+-                return -1;
+-            }
++                /*
++               xz_error(state, LZMA_DATA_ERROR, "unexpected end of file");
++               return -1;
++                */
++            } else {
++               if (crc != state->zstrm.adler) {
++                   xz_error(state, LZMA_DATA_ERROR, "incorrect data check");
++                   return -1;
++               }
++               if (len != (state->zstrm.total_out & 0xffffffffL)) {
++                   xz_error(state, LZMA_DATA_ERROR, "incorrect length check");
++                   return -1;
++               }
++           }
+             state->strm.avail_in = 0;
+             state->strm.next_in = NULL;
+             state->strm.avail_out = 0;
+diff -Nur libxml2-2.9.4.orig/python/types.c libxml2-2.9.4/python/types.c
+--- libxml2-2.9.4.orig/python/types.c	2016-02-09 03:17:33.000000000 -0700
++++ libxml2-2.9.4/python/types.c	2016-12-21 12:34:06.755650986 -0700
+@@ -31,8 +31,6 @@
+     const char *mode;
+ 
+     fd = PyObject_AsFileDescriptor(f);
+-    if (!_PyVerify_fd(fd))
+-        return(NULL);
+     /*
+      * Get the flags on the fd to understand how it was opened
+      */
+Make the XML entity recursion check more precise.
+
+libxml doesn't detect entity recursion specifically but has a variety
+of related checks, such as entities not expanding too deeply or
+producing exponential blow-ups in content.
+
+Because entity declarations are parsed in a separate context with
+their own element recursion budget, a recursive entity can overflow
+the stack using a lot of open elements (but within the per-context
+limit) as it slowly consumes (but does not exhaust) the entity depth
+budget.
+
+This adds a specific, precise check for recursive entities that
+detects entity recursion specifically and fails immediately.
+
+The existing entity expansion depth checks are still relevant for long
+chains of different entities.
+
+BUG=628581
+
+Review-Url: https://codereview.chromium.org/2539003002
+Cr-Commit-Position: refs/heads/master@{#436899}
+
+
+Index: libxml2-2.9.4/entities.c
+===================================================================
+--- libxml2-2.9.4.orig/entities.c
++++ libxml2-2.9.4/entities.c
+@@ -159,6 +159,7 @@ xmlCreateEntity(xmlDictPtr dict, const x
+     memset(ret, 0, sizeof(xmlEntity));
+     ret->type = XML_ENTITY_DECL;
+     ret->checked = 0;
++    ret->guard = XML_ENTITY_NOT_BEING_CHECKED;
+ 
+     /*
+      * fill the structure.
+@@ -931,6 +932,7 @@ xmlCopyEntity(xmlEntityPtr ent) {
+ 	cur->orig = xmlStrdup(ent->orig);
+     if (ent->URI != NULL)
+ 	cur->URI = xmlStrdup(ent->URI);
++    cur->guard = 0;
+     return(cur);
+ }
+ 
+Index: libxml2-2.9.4/include/libxml/entities.h
+===================================================================
+--- libxml2-2.9.4.orig/include/libxml/entities.h
++++ libxml2-2.9.4/include/libxml/entities.h
+@@ -30,6 +30,11 @@ typedef enum {
+     XML_INTERNAL_PREDEFINED_ENTITY = 6
+ } xmlEntityType;
+ 
++typedef enum {
++  XML_ENTITY_NOT_BEING_CHECKED,
++  XML_ENTITY_BEING_CHECKED              /* entity check is in progress */
++} xmlEntityRecursionGuard;
++
+ /*
+  * An unit of storage for an entity, contains the string, the value
+  * and the linkind data needed for the linking in the hash table.
+@@ -60,6 +65,7 @@ struct _xmlEntity {
+ 					/* this is also used to count entities
+ 					 * references done from that entity
+ 					 * and if it contains '<' */
++     xmlEntityRecursionGuard guard;
+ };
+ 
+ /*
+Index: libxml2-2.9.4/parser.c
+===================================================================
+--- libxml2-2.9.4.orig/parser.c
++++ libxml2-2.9.4/parser.c
+@@ -133,6 +133,10 @@ xmlParserEntityCheck(xmlParserCtxtPtr ct
+     if (ctxt->lastError.code == XML_ERR_ENTITY_LOOP)
+         return (1);
+ 
++	if ((ent != NULL) && (ent->guard == XML_ENTITY_BEING_CHECKED)) {
++        xmlFatalErr(ctxt, XML_ERR_ENTITY_LOOP, NULL);
++        return (1);
++    }
+     /*
+      * This may look absurd but is needed to detect
+      * entities problems
+@@ -143,12 +147,14 @@ xmlParserEntityCheck(xmlParserCtxtPtr ct
+ 	unsigned long oldnbent = ctxt->nbentities;
+ 	xmlChar *rep;
+ 
++    ent->guard = XML_ENTITY_BEING_CHECKED;
+ 	ent->checked = 1;
+ 
+         ++ctxt->depth;
+ 	rep = xmlStringDecodeEntities(ctxt, ent->content,
+ 				  XML_SUBSTITUTE_REF, 0, 0, 0);
+         --ctxt->depth;
++	ent->guard = XML_ENTITY_NOT_BEING_CHECKED;
+ 	if (ctxt->errNo == XML_ERR_ENTITY_LOOP) {
+ 	    ent->content[0] = 0;
+ 	}
+@@ -7337,23 +7343,28 @@ xmlParseReference(xmlParserCtxtPtr ctxt)
+ 	 * if its replacement text matches the production labeled
+ 	 * content.
+ 	 */
+-	if (ent->etype == XML_INTERNAL_GENERAL_ENTITY) {
+-	    ctxt->depth++;
+-	    ret = xmlParseBalancedChunkMemoryInternal(ctxt, ent->content,
+-	                                              user_data, &list);
+-	    ctxt->depth--;
+-
+-	} else if (ent->etype == XML_EXTERNAL_GENERAL_PARSED_ENTITY) {
+-	    ctxt->depth++;
+-	    ret = xmlParseExternalEntityPrivate(ctxt->myDoc, ctxt, ctxt->sax,
+-	                                   user_data, ctxt->depth, ent->URI,
+-					   ent->ExternalID, &list);
+-	    ctxt->depth--;
+-	} else {
+-	    ret = XML_ERR_ENTITY_PE_INTERNAL;
+-	    xmlErrMsgStr(ctxt, XML_ERR_INTERNAL_ERROR,
+-			 "invalid entity type found\n", NULL);
+-	}
++    if (ent->guard == XML_ENTITY_BEING_CHECKED) {
++        ret = XML_ERR_ENTITY_LOOP;
++    } else {
++        ent->guard = XML_ENTITY_BEING_CHECKED;
++        if (ent->etype == XML_INTERNAL_GENERAL_ENTITY) {
++            ctxt->depth++;
++            ret = xmlParseBalancedChunkMemoryInternal(ctxt, ent->content,
++                                                      user_data, &list);
++            ctxt->depth--;
++        } else if (ent->etype == XML_EXTERNAL_GENERAL_PARSED_ENTITY) {
++            ctxt->depth++;
++            ret = xmlParseExternalEntityPrivate(ctxt->myDoc, ctxt, ctxt->sax,
++                                           user_data, ctxt->depth, ent->URI,
++                                           ent->ExternalID, &list);
++            ctxt->depth--;
++        } else {
++            ret = XML_ERR_ENTITY_PE_INTERNAL;
++            xmlErrMsgStr(ctxt, XML_ERR_INTERNAL_ERROR,
++                         "invalid entity type found\n", NULL);
++        }
++        ent->guard = XML_ENTITY_NOT_BEING_CHECKED;
++    }
+ 
+ 	/*
+ 	 * Store the number of entities needing parsing for this entity
+@@ -7456,23 +7467,29 @@ xmlParseReference(xmlParserCtxtPtr ctxt)
+ 	    else
+ 		user_data = ctxt->userData;
+ 
+-	    if (ent->etype == XML_INTERNAL_GENERAL_ENTITY) {
+-		ctxt->depth++;
+-		ret = xmlParseBalancedChunkMemoryInternal(ctxt,
+-				   ent->content, user_data, NULL);
+-		ctxt->depth--;
+-	    } else if (ent->etype ==
+-		       XML_EXTERNAL_GENERAL_PARSED_ENTITY) {
+-		ctxt->depth++;
+-		ret = xmlParseExternalEntityPrivate(ctxt->myDoc, ctxt,
+-			   ctxt->sax, user_data, ctxt->depth,
+-			   ent->URI, ent->ExternalID, NULL);
+-		ctxt->depth--;
+-	    } else {
+-		ret = XML_ERR_ENTITY_PE_INTERNAL;
+-		xmlErrMsgStr(ctxt, XML_ERR_INTERNAL_ERROR,
+-			     "invalid entity type found\n", NULL);
+-	    }
++        if (ent->guard == XML_ENTITY_BEING_CHECKED) {
++            ret = XML_ERR_ENTITY_LOOP;
++        } else {
++            ent->guard = XML_ENTITY_BEING_CHECKED;
++            if (ent->etype == XML_INTERNAL_GENERAL_ENTITY) {
++                ctxt->depth++;
++                ret = xmlParseBalancedChunkMemoryInternal(ctxt,
++                                   ent->content, user_data, NULL);
++                ctxt->depth--;
++            } else if (ent->etype ==
++                       XML_EXTERNAL_GENERAL_PARSED_ENTITY) {
++                ctxt->depth++;
++                ret = xmlParseExternalEntityPrivate(ctxt->myDoc, ctxt,
++                           ctxt->sax, user_data, ctxt->depth,
++                           ent->URI, ent->ExternalID, NULL);
++                ctxt->depth--;
++            } else {
++                ret = XML_ERR_ENTITY_PE_INTERNAL;
++                xmlErrMsgStr(ctxt, XML_ERR_INTERNAL_ERROR,
++                             "invalid entity type found\n", NULL);
++            }
++            ent->guard = XML_ENTITY_NOT_BEING_CHECKED;
++        }
+ 	    if (ret == XML_ERR_ENTITY_LOOP) {
+ 		xmlFatalErr(ctxt, XML_ERR_ENTITY_LOOP, NULL);
+ 		return;
+Index: libxml2-2.9.5/python/libxml.c
+===================================================================
+--- libxml2-2.9.5.orig/python/libxml.c
++++ libxml2-2.9.5/python/libxml.c
+@@ -1620,6 +1620,7 @@ libxml_xmlErrorFuncHandler(ATTRIBUTE_UNU
+     PyObject *message;
+     PyObject *result;
+     char str[1000];
++    unsigned char *ptr = (unsigned char *)str;
+ 
+ #ifdef DEBUG_ERROR
+     printf("libxml_xmlErrorFuncHandler(%p, %s, ...) called\n", ctx, msg);
+@@ -1636,12 +1637,20 @@ libxml_xmlErrorFuncHandler(ATTRIBUTE_UNU
+ 	    str[999] = 0;
+         va_end(ap);
+ 
++#if PY_MAJOR_VERSION >= 3
++        /* Ensure the error string doesn't start at UTF8 continuation. */
++        while (*ptr && (*ptr & 0xc0) == 0x80)
++            ptr++;
++#endif
++
+         list = PyTuple_New(2);
+         PyTuple_SetItem(list, 0, libxml_xmlPythonErrorFuncCtxt);
+         Py_XINCREF(libxml_xmlPythonErrorFuncCtxt);
+-        message = libxml_charPtrConstWrap(str);
++        message = libxml_charPtrConstWrap(ptr);
+         PyTuple_SetItem(list, 1, message);
+         result = PyEval_CallObject(libxml_xmlPythonErrorFuncHandler, list);
++        /* Forget any errors caused in the error handler. */
++        PyErr_Clear();
+         Py_XDECREF(list);
+         Py_XDECREF(result);
+     }
+From 2240fbf5912054af025fb6e01e26375100275e74 Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Mon, 30 Jul 2018 13:14:11 +0200
+Subject: [PATCH] Fix infinite loop in LZMA decompression
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Check the liblzma error code more thoroughly to avoid infinite loops.
+
+Closes: https://gitlab.gnome.org/GNOME/libxml2/issues/13
+Closes: https://bugzilla.gnome.org/show_bug.cgi?id=794914
+
+This is CVE-2018-9251 and CVE-2018-14567.
+
+Thanks to Dongliang Mu and Simon Wörner for the reports.
+---
+ xzlib.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/xzlib.c b/xzlib.c
+index a839169e..0ba88cfa 100644
+--- a/xzlib.c
++++ b/xzlib.c
+@@ -562,6 +562,10 @@ xz_decomp(xz_statep state)
+                          "internal error: inflate stream corrupt");
+                 return -1;
+             }
++            /*
++             * FIXME: Remapping a couple of error codes and falling through
++             * to the LZMA error handling looks fragile.
++             */
+             if (ret == Z_MEM_ERROR)
+                 ret = LZMA_MEM_ERROR;
+             if (ret == Z_DATA_ERROR)
+@@ -587,6 +591,11 @@ xz_decomp(xz_statep state)
+             xz_error(state, LZMA_PROG_ERROR, "compression error");
+             return -1;
+         }
++        if ((state->how != GZIP) &&
++            (ret != LZMA_OK) && (ret != LZMA_STREAM_END)) {
++            xz_error(state, ret, "lzma error");
++            return -1;
++        }
+     } while (strm->avail_out && ret != LZMA_STREAM_END);
+ 
+     /* update available output and crc check value */
+-- 
+
+From a436374994c47b12d5de1b8b1d191a098fa23594 Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Mon, 30 Jul 2018 12:54:38 +0200
+Subject: [PATCH] Fix nullptr deref with XPath logic ops
+
+If the XPath stack is corrupted, for example by a misbehaving extension
+function, the "and" and "or" XPath operators could dereference NULL
+pointers. Check that the XPath stack isn't empty and optimize the
+logic operators slightly.
+
+Closes: https://gitlab.gnome.org/GNOME/libxml2/issues/5
+
+Also see
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=901817
+https://bugzilla.redhat.com/show_bug.cgi?id=1595985
+
+This is CVE-2018-14404.
+
+Thanks to Guy Inbar for the report.
+---
+ xpath.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/xpath.c b/xpath.c
+index 3fae0bf4..5e3bb9ff 100644
+--- a/xpath.c
++++ b/xpath.c
+@@ -13234,9 +13234,8 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+ 		return(0);
+ 	    }
+             xmlXPathBooleanFunction(ctxt, 1);
+-            arg1 = valuePop(ctxt);
+-            arg1->boolval &= arg2->boolval;
+-            valuePush(ctxt, arg1);
++            if (ctxt->value != NULL)
++                ctxt->value->boolval &= arg2->boolval;
+ 	    xmlXPathReleaseObject(ctxt->context, arg2);
+             return (total);
+         case XPATH_OP_OR:
+@@ -13252,9 +13251,8 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+ 		return(0);
+ 	    }
+             xmlXPathBooleanFunction(ctxt, 1);
+-            arg1 = valuePop(ctxt);
+-            arg1->boolval |= arg2->boolval;
+-            valuePush(ctxt, arg1);
++            if (ctxt->value != NULL)
++                ctxt->value->boolval |= arg2->boolval;
+ 	    xmlXPathReleaseObject(ctxt->context, arg2);
+             return (total);
+         case XPATH_OP_EQUAL:
+-- 
+From 5a02583c7e683896d84878bd90641d8d9b0d0549 Mon Sep 17 00:00:00 2001
+From: Zhipeng Xie <xiezhipeng1@huawei.com>
+Date: Wed, 7 Aug 2019 17:39:17 +0800
+Subject: [PATCH] Fix memory leak in xmlParseBalancedChunkMemoryRecover
+
+When doc is NULL, namespace created in xmlTreeEnsureXMLDecl
+is bind to newDoc->oldNs, in this case, set newDoc->oldNs to
+NULL and free newDoc will cause a memory leak.
+
+Found with libFuzzer.
+
+Closes #82.
+---
+ parser.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/parser.c b/parser.c
+index 1ce1ccf1..26d9f4e3 100644
+--- a/parser.c
++++ b/parser.c
+@@ -13894,7 +13894,8 @@ xmlParseBalancedChunkMemoryRecover(xmlDocPtr doc, xmlSAXHandlerPtr sax,
+     xmlFreeParserCtxt(ctxt);
+     newDoc->intSubset = NULL;
+     newDoc->extSubset = NULL;
+-    newDoc->oldNs = NULL;
++    if(doc != NULL)
++	newDoc->oldNs = NULL;
+     xmlFreeDoc(newDoc);
+ 
+     return(ret);
+-- 
+
+From 7ffcd44d7e6c46704f8af0321d9314cd26e0e18a Mon Sep 17 00:00:00 2001
+From: Zhipeng Xie <xiezhipeng1@huawei.com>
+Date: Tue, 20 Aug 2019 16:33:06 +0800
+Subject: [PATCH] Fix memory leak in xmlSchemaValidateStream
+
+When ctxt->schema is NULL, xmlSchemaSAXPlug->xmlSchemaPreRun
+alloc a new schema for ctxt->schema and set vctxt->xsiAssemble
+to 1. Then xmlSchemaVStart->xmlSchemaPreRun initialize
+vctxt->xsiAssemble to 0 again which cause the alloced schema
+can not be freed anymore.
+
+Found with libFuzzer.
+
+Signed-off-by: Zhipeng Xie <xiezhipeng1@huawei.com>
+---
+ xmlschemas.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/xmlschemas.c b/xmlschemas.c
+index 301c8449..39d92182 100644
+--- a/xmlschemas.c
++++ b/xmlschemas.c
+@@ -28090,7 +28090,6 @@ xmlSchemaPreRun(xmlSchemaValidCtxtPtr vctxt) {
+     vctxt->nberrors = 0;
+     vctxt->depth = -1;
+     vctxt->skipDepth = -1;
+-    vctxt->xsiAssemble = 0;
+     vctxt->hasKeyrefs = 0;
+ #ifdef ENABLE_IDC_NODE_TABLES_TEST
+     vctxt->createIDCNodeTables = 1;
+-- 
+
+From 50f06b3efb638efb0abd95dc62dca05ae67882c2 Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Fri, 7 Aug 2020 21:54:27 +0200
+Subject: [PATCH] Fix out-of-bounds read with 'xmllint --htmlout'
+
+Make sure that truncated UTF-8 sequences don't cause an out-of-bounds
+array access.
+
+Thanks to @SuhwanSong and the Agency for Defense Development (ADD) for
+the report.
+
+Fixes #178.
+---
+ xmllint.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/xmllint.c b/xmllint.c
+index f6a8e4636..c647486f3 100644
+--- a/xmllint.c
++++ b/xmllint.c
+@@ -528,6 +528,12 @@ static void
+ xmlHTMLEncodeSend(void) {
+     char *result;
+ 
++    /*
++     * xmlEncodeEntitiesReentrant assumes valid UTF-8, but the buffer might
++     * end with a truncated UTF-8 sequence. This is a hack to at least avoid
++     * an out-of-bounds read.
++     */
++    memset(&buffer[sizeof(buffer)-4], 0, 4);
+     result = (char *) xmlEncodeEntitiesReentrant(NULL, BAD_CAST buffer);
+     if (result) {
+ 	xmlGenericError(xmlGenericErrorContext, "%s", result);
+-- 
+
+From 1358d157d0bd83be1dfe356a69213df9fac0b539 Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Wed, 21 Apr 2021 13:23:27 +0200
+Subject: [PATCH] Fix use-after-free with `xmllint --html --push`
+
+Call htmlCtxtUseOptions to make sure that names aren't stored in
+dictionaries.
+
+Note that this issue only affects xmllint using the HTML push parser.
+
+Fixes #230.
+---
+ xmllint.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/xmllint.c b/xmllint.c
+index 6ca1bf54..dbef273a 100644
+--- a/xmllint.c
++++ b/xmllint.c
+@@ -2213,7 +2213,7 @@ static void parseAndPrintFile(char *filename, xmlParserCtxtPtr rectxt) {
+             if (res > 0) {
+                 ctxt = htmlCreatePushParserCtxt(NULL, NULL,
+                             chars, res, filename, XML_CHAR_ENCODING_NONE);
+-                xmlCtxtUseOptions(ctxt, options);
++                htmlCtxtUseOptions(ctxt, options);
+                 while ((res = fread(chars, 1, pushsize, f)) > 0) {
+                     htmlParseChunk(ctxt, chars, res, 0);
+                 }
+-- 
+
+From bf22713507fe1fc3a2c4b525cf0a88c2dc87a3a2 Mon Sep 17 00:00:00 2001
+From: Joel Hockey <joel.hockey@gmail.com>
+Date: Sun, 16 Aug 2020 17:19:35 -0700
+Subject: [PATCH] Validate UTF8 in xmlEncodeEntities
+
+Code is currently assuming UTF-8 without validating. Truncated UTF-8
+input can cause out-of-bounds array access.
+
+Adds further checks to partial fix in 50f06b3e.
+
+Fixes #178
+---
+ entities.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/entities.c b/entities.c
+index 37b99a56..1a8f86f0 100644
+--- a/entities.c
++++ b/entities.c
+@@ -704,11 +704,25 @@ xmlEncodeEntitiesInternal(xmlDocPtr doc, const xmlChar *input, int attr) {
+ 	    } else {
+ 		/*
+ 		 * We assume we have UTF-8 input.
++		 * It must match either:
++		 *   110xxxxx 10xxxxxx
++		 *   1110xxxx 10xxxxxx 10xxxxxx
++		 *   11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
++		 * That is:
++		 *   cur[0] is 11xxxxxx
++		 *   cur[1] is 10xxxxxx
++		 *   cur[2] is 10xxxxxx if cur[0] is 111xxxxx
++		 *   cur[3] is 10xxxxxx if cur[0] is 1111xxxx
++		 *   cur[0] is not 11111xxx
+ 		 */
+ 		char buf[11], *ptr;
+ 		int val = 0, l = 1;
+ 
+-		if (*cur < 0xC0) {
++		if (((cur[0] & 0xC0) != 0xC0) ||
++		    ((cur[1] & 0xC0) != 0x80) ||
++		    (((cur[0] & 0xE0) == 0xE0) && ((cur[2] & 0xC0) != 0x80)) ||
++		    (((cur[0] & 0xF0) == 0xF0) && ((cur[3] & 0xC0) != 0x80)) ||
++		    (((cur[0] & 0xF8) == 0xF8))) {
+ 		    xmlEntitiesErr(XML_CHECK_NOT_UTF8,
+ 			    "xmlEncodeEntities: input not UTF-8");
+ 		    if (doc != NULL)
+-- 
+
+From 752e5f71d7cea2ca5a7e7c0b8f72ed04ce654be4 Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Wed, 10 Jun 2020 16:34:52 +0200
+Subject: [PATCH 1/2] Don't recurse into xi:include children in
+ xmlXIncludeDoProcess
+
+Otherwise, nested xi:include nodes might result in a use-after-free
+if XML_PARSE_NOXINCNODE is specified.
+
+Found with libFuzzer and ASan.
+---
+ result/XInclude/fallback3.xml     |  8 ++++++++
+ result/XInclude/fallback3.xml.err |  0
+ result/XInclude/fallback3.xml.rdr | 25 +++++++++++++++++++++++++
+ result/XInclude/fallback4.xml     | 10 ++++++++++
+ result/XInclude/fallback4.xml.err |  0
+ result/XInclude/fallback4.xml.rdr | 29 +++++++++++++++++++++++++++++
+ test/XInclude/docs/fallback3.xml  |  9 +++++++++
+ test/XInclude/docs/fallback4.xml  |  7 +++++++
+ xinclude.c                        | 24 ++++++++++--------------
+ 9 files changed, 98 insertions(+), 14 deletions(-)
+ create mode 100644 result/XInclude/fallback3.xml
+ create mode 100644 result/XInclude/fallback3.xml.err
+ create mode 100644 result/XInclude/fallback3.xml.rdr
+ create mode 100644 result/XInclude/fallback4.xml
+ create mode 100644 result/XInclude/fallback4.xml.err
+ create mode 100644 result/XInclude/fallback4.xml.rdr
+ create mode 100644 test/XInclude/docs/fallback3.xml
+ create mode 100644 test/XInclude/docs/fallback4.xml
+
+diff --git a/result/XInclude/fallback3.xml b/result/XInclude/fallback3.xml
+new file mode 100644
+index 00000000..b4235514
+--- /dev/null
++++ b/result/XInclude/fallback3.xml
+@@ -0,0 +1,8 @@
++<?xml version="1.0"?>
++<a>
++    <doc xml:base="../ents/something.xml">
++<p>something</p>
++<p>really</p>
++<p>simple</p>
++</doc>
++</a>
+diff --git a/result/XInclude/fallback3.xml.err b/result/XInclude/fallback3.xml.err
+new file mode 100644
+index 00000000..e69de29b
+diff --git a/result/XInclude/fallback3.xml.rdr b/result/XInclude/fallback3.xml.rdr
+new file mode 100644
+index 00000000..aa2f1374
+--- /dev/null
++++ b/result/XInclude/fallback3.xml.rdr
+@@ -0,0 +1,25 @@
++0 1 a 0 0
++1 14 #text 0 1 
++    
++1 1 doc 0 0
++2 14 #text 0 1 
++
++2 1 p 0 0
++3 3 #text 0 1 something
++2 15 p 0 0
++2 14 #text 0 1 
++
++2 1 p 0 0
++3 3 #text 0 1 really
++2 15 p 0 0
++2 14 #text 0 1 
++
++2 1 p 0 0
++3 3 #text 0 1 simple
++2 15 p 0 0
++2 14 #text 0 1 
++
++1 15 doc 0 0
++1 14 #text 0 1 
++
++0 15 a 0 0
+diff --git a/result/XInclude/fallback4.xml b/result/XInclude/fallback4.xml
+new file mode 100644
+index 00000000..9883fd54
+--- /dev/null
++++ b/result/XInclude/fallback4.xml
+@@ -0,0 +1,10 @@
++<?xml version="1.0"?>
++<a>
++    
++            <doc xml:base="../ents/something.xml">
++<p>something</p>
++<p>really</p>
++<p>simple</p>
++</doc>
++        
++</a>
+diff --git a/result/XInclude/fallback4.xml.err b/result/XInclude/fallback4.xml.err
+new file mode 100644
+index 00000000..e69de29b
+diff --git a/result/XInclude/fallback4.xml.rdr b/result/XInclude/fallback4.xml.rdr
+new file mode 100644
+index 00000000..628b9513
+--- /dev/null
++++ b/result/XInclude/fallback4.xml.rdr
+@@ -0,0 +1,29 @@
++0 1 a 0 0
++1 14 #text 0 1 
++    
++1 14 #text 0 1 
++            
++1 1 doc 0 0
++2 14 #text 0 1 
++
++2 1 p 0 0
++3 3 #text 0 1 something
++2 15 p 0 0
++2 14 #text 0 1 
++
++2 1 p 0 0
++3 3 #text 0 1 really
++2 15 p 0 0
++2 14 #text 0 1 
++
++2 1 p 0 0
++3 3 #text 0 1 simple
++2 15 p 0 0
++2 14 #text 0 1 
++
++1 15 doc 0 0
++1 14 #text 0 1 
++        
++1 14 #text 0 1 
++
++0 15 a 0 0
+diff --git a/test/XInclude/docs/fallback3.xml b/test/XInclude/docs/fallback3.xml
+new file mode 100644
+index 00000000..0c8b6c9e
+--- /dev/null
++++ b/test/XInclude/docs/fallback3.xml
+@@ -0,0 +1,9 @@
++<a>
++    <xi:include href="../ents/something.xml" xmlns:xi="http://www.w3.org/2001/XInclude">
++        <xi:fallback>
++            <xi:include href="c.xml">
++                <xi:fallback>There is no c.xml ... </xi:fallback>
++            </xi:include>
++        </xi:fallback>
++    </xi:include>
++</a>
+diff --git a/test/XInclude/docs/fallback4.xml b/test/XInclude/docs/fallback4.xml
+new file mode 100644
+index 00000000..b500a635
+--- /dev/null
++++ b/test/XInclude/docs/fallback4.xml
+@@ -0,0 +1,7 @@
++<a>
++    <xi:include href="c.xml" xmlns:xi="http://www.w3.org/2001/XInclude">
++        <xi:fallback>
++            <xi:include href="../ents/something.xml"/>
++        </xi:fallback>
++    </xi:include>
++</a>
+diff --git a/xinclude.c b/xinclude.c
+index ba850fa5..f260c1a7 100644
+--- a/xinclude.c
++++ b/xinclude.c
+@@ -2392,21 +2392,19 @@ xmlXIncludeDoProcess(xmlXIncludeCtxtPtr ctxt, xmlDocPtr doc, xmlNodePtr tree) {
+      * First phase: lookup the elements in the document
+      */
+     cur = tree;
+-    if (xmlXIncludeTestNode(ctxt, cur) == 1)
+-	xmlXIncludePreProcessNode(ctxt, cur);
+     while ((cur != NULL) && (cur != tree->parent)) {
+ 	/* TODO: need to work on entities -> stack */
+-	if ((cur->children != NULL) &&
+-	    (cur->children->type != XML_ENTITY_DECL) &&
+-	    (cur->children->type != XML_XINCLUDE_START) &&
+-	    (cur->children->type != XML_XINCLUDE_END)) {
+-	    cur = cur->children;
+-	    if (xmlXIncludeTestNode(ctxt, cur))
+-		xmlXIncludePreProcessNode(ctxt, cur);
+-	} else if (cur->next != NULL) {
++        if (xmlXIncludeTestNode(ctxt, cur) == 1) {
++            xmlXIncludePreProcessNode(ctxt, cur);
++        } else if ((cur->children != NULL) &&
++                   (cur->children->type != XML_ENTITY_DECL) &&
++                   (cur->children->type != XML_XINCLUDE_START) &&
++                   (cur->children->type != XML_XINCLUDE_END)) {
++            cur = cur->children;
++            continue;
++        }
++	if (cur->next != NULL) {
+ 	    cur = cur->next;
+-	    if (xmlXIncludeTestNode(ctxt, cur))
+-		xmlXIncludePreProcessNode(ctxt, cur);
+ 	} else {
+ 	    if (cur == tree)
+ 	        break;
+@@ -2416,8 +2414,6 @@ xmlXIncludeDoProcess(xmlXIncludeCtxtPtr ctxt, xmlDocPtr doc, xmlNodePtr tree) {
+ 		    break; /* do */
+ 		if (cur->next != NULL) {
+ 		    cur = cur->next;
+-		    if (xmlXIncludeTestNode(ctxt, cur))
+-			xmlXIncludePreProcessNode(ctxt, cur);
+ 		    break; /* do */
+ 		}
+ 	    } while (cur != NULL);
+-- 
+2.31.1
+
+
+From 49cc4182543dba73216add4021994a81678763bd Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Thu, 22 Apr 2021 19:26:28 +0200
+Subject: [PATCH 2/2] Fix user-after-free with `xmllint --xinclude --dropdtd`
+
+The --dropdtd option can leave dangling pointers in entity reference
+nodes. Make sure to skip these nodes when processing XIncludes.
+
+This also avoids scanning entity declarations and even modifying
+them inadvertently during XInclude processing.
+
+Move from a block list to an allow list approach to avoid descending
+into other node types that can't contain elements.
+
+Fixes #237.
+---
+ xinclude.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/xinclude.c b/xinclude.c
+index f260c1a7..d7648529 100644
+--- a/xinclude.c
++++ b/xinclude.c
+@@ -2397,9 +2397,8 @@ xmlXIncludeDoProcess(xmlXIncludeCtxtPtr ctxt, xmlDocPtr doc, xmlNodePtr tree) {
+         if (xmlXIncludeTestNode(ctxt, cur) == 1) {
+             xmlXIncludePreProcessNode(ctxt, cur);
+         } else if ((cur->children != NULL) &&
+-                   (cur->children->type != XML_ENTITY_DECL) &&
+-                   (cur->children->type != XML_XINCLUDE_START) &&
+-                   (cur->children->type != XML_XINCLUDE_END)) {
++                   ((cur->type == XML_DOCUMENT_NODE) ||
++                    (cur->type == XML_ELEMENT_NODE))) {
+             cur = cur->children;
+             continue;
+         }
+-- 
+
+From babe75030c7f64a37826bb3342317134568bef61 Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Sat, 1 May 2021 16:53:33 +0200
+Subject: [PATCH] Propagate error in xmlParseElementChildrenContentDeclPriv
+
+Check return value of recursive calls to
+xmlParseElementChildrenContentDeclPriv and return immediately in case
+of errors. Otherwise, struct xmlElementContent could contain unexpected
+null pointers, leading to a null deref when post-validating documents
+which aren't well-formed and parsed in recovery mode.
+
+Fixes #243.
+---
+ parser.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/parser.c b/parser.c
+index b42e6043..73c27edd 100644
+--- a/parser.c
++++ b/parser.c
+@@ -6208,6 +6208,8 @@ xmlParseElementChildrenContentDeclPriv(xmlParserCtxtPtr ctxt, int inputchk,
+ 	SKIP_BLANKS;
+         cur = ret = xmlParseElementChildrenContentDeclPriv(ctxt, inputid,
+                                                            depth + 1);
++        if (cur == NULL)
++            return(NULL);
+ 	SKIP_BLANKS;
+ 	GROW;
+     } else {
+@@ -6341,6 +6343,11 @@ xmlParseElementChildrenContentDeclPriv(xmlParserCtxtPtr ctxt, int inputchk,
+ 	    SKIP_BLANKS;
+ 	    last = xmlParseElementChildrenContentDeclPriv(ctxt, inputid,
+                                                           depth + 1);
++            if (last == NULL) {
++		if (ret != NULL)
++		    xmlFreeDocElementContent(ctxt->myDoc, ret);
++		return(NULL);
++            }
+ 	    SKIP_BLANKS;
+ 	} else {
+ 	    elem = xmlParseName(ctxt);
+-- 
+
+From 8598060bacada41a0eb09d95c97744ff4e428f8e Mon Sep 17 00:00:00 2001
+From: Daniel Veillard <veillard@redhat.com>
+Date: Thu, 13 May 2021 14:55:12 +0200
+Subject: [PATCH] Patch for security issue CVE-2021-3541
+
+This is relapted to parameter entities expansion and following
+the line of the billion laugh attack. Somehow in that path the
+counting of parameters was missed and the normal algorithm based
+on entities "density" was useless.
+---
+ parser.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+diff --git a/parser.c b/parser.c
+index f5e5e169..c9312fa4 100644
+--- a/parser.c
++++ b/parser.c
+@@ -140,6 +140,7 @@ xmlParserEntityCheck(xmlParserCtxtPtr ctxt, size_t size,
+                      xmlEntityPtr ent, size_t replacement)
+ {
+     size_t consumed = 0;
++    int i;
+ 
+     if ((ctxt == NULL) || (ctxt->options & XML_PARSE_HUGE))
+         return (0);
+@@ -177,6 +178,28 @@ xmlParserEntityCheck(xmlParserCtxtPtr ctxt, size_t size,
+ 	    rep = NULL;
+ 	}
+     }
++
++    /*
++     * Prevent entity exponential check, not just replacement while
++     * parsing the DTD
++     * The check is potentially costly so do that only once in a thousand
++     */
++    if ((ctxt->instate == XML_PARSER_DTD) && (ctxt->nbentities > 10000) &&
++        (ctxt->nbentities % 1024 == 0)) {
++	for (i = 0;i < ctxt->inputNr;i++) {
++	    consumed += ctxt->inputTab[i]->consumed +
++	               (ctxt->inputTab[i]->cur - ctxt->inputTab[i]->base);
++	}
++	if (ctxt->nbentities > consumed * XML_PARSER_NON_LINEAR) {
++	    xmlFatalErr(ctxt, XML_ERR_ENTITY_LOOP, NULL);
++	    ctxt->instate = XML_PARSER_EOF;
++	    return (1);
++	}
++	consumed = 0;
++    }
++
++
++
+     if (replacement != 0) {
+ 	if (replacement < XML_MAX_TEXT_LENGTH)
+ 	    return(0);
+@@ -7963,6 +7986,9 @@ xmlParsePEReference(xmlParserCtxtPtr ctxt)
+             xmlChar start[4];
+             xmlCharEncoding enc;
+ 
++	    if (xmlParserEntityCheck(ctxt, 0, entity, 0))
++	        return;
++
+ 	    if ((entity->etype == XML_EXTERNAL_PARAMETER_ENTITY) &&
+ 	        ((ctxt->options & XML_PARSE_NOENT) == 0) &&
+ 		((ctxt->options & XML_PARSE_DTDVALID) == 0) &&
+-- 
+
+From 7f70302bfa9faeac9c9f7be8adf96d32c16acb72 Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Tue, 8 Feb 2022 03:29:24 +0100
+Subject: [PATCH] [CVE-2022-23308] Use-after-free of ID and IDREF attributes
+
+If a document is parsed with XML_PARSE_DTDVALID and without
+XML_PARSE_NOENT, the value of ID attributes has to be normalized after
+potentially expanding entities in xmlRemoveID. Otherwise, later calls
+to xmlGetID can return a pointer to previously freed memory.
+
+ID attributes which are empty or contain only whitespace after
+entity expansion are affected in a similar way. This is fixed by
+not storing such attributes in the ID table.
+
+The test to detect streaming mode when validating against a DTD was
+broken. In connection with the defects above, this could result in a
+use-after-free when using the xmlReader interface with validation.
+Fix detection of streaming mode to avoid similar issues. (This changes
+the expected result of a test case. But as far as I can tell, using the
+XML reader with XIncludes referencing the root document never worked
+properly, anyway.)
+
+All of these issues can result in denial of service. Using xmlReader
+with validation could result in disclosure of memory via the error
+channel, typically stderr. The security impact of xmlGetID returning
+a pointer to freed memory depends on the application. The typical use
+case of calling xmlGetID on an unmodified document is not affected.
+---
+ valid.c | 88 +++++++++++++++++++++++++++++++++++----------------------
+ 1 file changed, 55 insertions(+), 33 deletions(-)
+
+diff --git a/valid.c b/valid.c
+index a64b96be..5b81059f 100644
+--- a/valid.c
++++ b/valid.c
+@@ -479,6 +479,35 @@ nodeVPop(xmlValidCtxtPtr ctxt)
+     return (ret);
+ }
+ 
++/**
++ * xmlValidNormalizeString:
++ * @str: a string
++ *
++ * Normalize a string in-place.
++ */
++static void
++xmlValidNormalizeString(xmlChar *str) {
++    xmlChar *dst;
++    const xmlChar *src;
++
++    if (str == NULL)
++        return;
++    src = str;
++    dst = str;
++
++    while (*src == 0x20) src++;
++    while (*src != 0) {
++	if (*src == 0x20) {
++	    while (*src == 0x20) src++;
++	    if (*src != 0)
++		*dst++ = 0x20;
++	} else {
++	    *dst++ = *src++;
++	}
++    }
++    *dst = 0;
++}
++
+ #ifdef DEBUG_VALID_ALGO
+ static void
+ xmlValidPrintNode(xmlNodePtr cur) {
+@@ -2546,6 +2575,24 @@ xmlDumpNotationTable(xmlBufferPtr buf, xmlNotationTablePtr table) {
+ 	    (xmlDictOwns(dict, (const xmlChar *)(str)) == 0)))	\
+ 	    xmlFree((char *)(str));
+ 
++static int
++xmlIsStreaming(xmlValidCtxtPtr ctxt) {
++    xmlParserCtxtPtr pctxt;
++
++    if (ctxt == NULL)
++        return(0);
++    /*
++     * These magic values are also abused to detect whether we're validating
++     * while parsing a document. In this case, userData points to the parser
++     * context.
++     */
++    if ((ctxt->finishDtd != XML_CTXT_FINISH_DTD_0) &&
++        (ctxt->finishDtd != XML_CTXT_FINISH_DTD_1))
++        return(0);
++    pctxt = ctxt->userData;
++    return(pctxt->parseMode == XML_PARSE_READER);
++}
++
+ /**
+  * xmlFreeID:
+  * @not:  A id
+@@ -2589,7 +2636,7 @@ xmlAddID(xmlValidCtxtPtr ctxt, xmlDocPtr doc, const xmlChar *value,
+     if (doc == NULL) {
+ 	return(NULL);
+     }
+-    if (value == NULL) {
++    if ((value == NULL) || (value[0] == 0)) {
+ 	return(NULL);
+     }
+     if (attr == NULL) {
+@@ -2620,7 +2667,7 @@ xmlAddID(xmlValidCtxtPtr ctxt, xmlDocPtr doc, const xmlChar *value,
+      */
+     ret->value = xmlStrdup(value);
+     ret->doc = doc;
+-    if ((ctxt != NULL) && (ctxt->vstateNr != 0)) {
++    if (xmlIsStreaming(ctxt)) {
+ 	/*
+ 	 * Operating in streaming mode, attr is gonna disapear
+ 	 */
+@@ -2754,6 +2801,7 @@ xmlRemoveID(xmlDocPtr doc, xmlAttrPtr attr) {
+     ID = xmlNodeListGetString(doc, attr->children, 1);
+     if (ID == NULL)
+         return(-1);
++    xmlValidNormalizeString(ID);
+ 
+     id = xmlHashLookup(table, ID);
+     if (id == NULL || id->attr != attr) {
+@@ -2942,7 +2990,7 @@ xmlAddRef(xmlValidCtxtPtr ctxt, xmlDocPtr doc, const xmlChar *value,
+      * fill the structure.
+      */
+     ret->value = xmlStrdup(value);
+-    if ((ctxt != NULL) && (ctxt->vstateNr != 0)) {
++    if (xmlIsStreaming(ctxt)) {
+ 	/*
+ 	 * Operating in streaming mode, attr is gonna disapear
+ 	 */
+@@ -3962,8 +4010,7 @@ xmlValidateAttributeValue2(xmlValidCtxtPtr ctxt, xmlDocPtr doc,
+ xmlChar *
+ xmlValidCtxtNormalizeAttributeValue(xmlValidCtxtPtr ctxt, xmlDocPtr doc,
+ 	     xmlNodePtr elem, const xmlChar *name, const xmlChar *value) {
+-    xmlChar *ret, *dst;
+-    const xmlChar *src;
++    xmlChar *ret;
+     xmlAttributePtr attrDecl = NULL;
+     int extsubset = 0;
+ 
+@@ -4004,19 +4051,7 @@ xmlValidCtxtNormalizeAttributeValue(xmlValidCtxtPtr ctxt, xmlDocPtr doc,
+     ret = xmlStrdup(value);
+     if (ret == NULL)
+ 	return(NULL);
+-    src = value;
+-    dst = ret;
+-    while (*src == 0x20) src++;
+-    while (*src != 0) {
+-	if (*src == 0x20) {
+-	    while (*src == 0x20) src++;
+-	    if (*src != 0)
+-		*dst++ = 0x20;
+-	} else {
+-	    *dst++ = *src++;
+-	}
+-    }
+-    *dst = 0;
++    xmlValidNormalizeString(ret);
+     if ((doc->standalone) && (extsubset == 1) && (!xmlStrEqual(value, ret))) {
+ 	xmlErrValidNode(ctxt, elem, XML_DTD_NOT_STANDALONE,
+ "standalone: %s on %s value had to be normalized based on external subset declaration\n",
+@@ -4048,8 +4083,7 @@ xmlValidCtxtNormalizeAttributeValue(xmlValidCtxtPtr ctxt, xmlDocPtr doc,
+ xmlChar *
+ xmlValidNormalizeAttributeValue(xmlDocPtr doc, xmlNodePtr elem,
+ 			        const xmlChar *name, const xmlChar *value) {
+-    xmlChar *ret, *dst;
+-    const xmlChar *src;
++    xmlChar *ret;
+     xmlAttributePtr attrDecl = NULL;
+ 
+     if (doc == NULL) return(NULL);
+@@ -4079,19 +4113,7 @@ xmlValidNormalizeAttributeValue(xmlDocPtr doc, xmlNodePtr elem,
+     ret = xmlStrdup(value);
+     if (ret == NULL)
+ 	return(NULL);
+-    src = value;
+-    dst = ret;
+-    while (*src == 0x20) src++;
+-    while (*src != 0) {
+-	if (*src == 0x20) {
+-	    while (*src == 0x20) src++;
+-	    if (*src != 0)
+-		*dst++ = 0x20;
+-	} else {
+-	    *dst++ = *src++;
+-	}
+-    }
+-    *dst = 0;
++    xmlValidNormalizeString(ret);
+     return(ret);
+ }
+ 
+-- 
+
+From d410ac5b7ef6ecf1254606408d55f98547c22bda Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Tue, 8 Mar 2022 20:10:02 +0100
+Subject: [PATCH] [CVE-2022-29824] Fix integer overflows in xmlBuf and
+ xmlBuffer
+
+In several places, the code handling string buffers didn't check for
+integer overflow or used wrong types for buffer sizes. This could
+result in out-of-bounds writes or other memory errors when working on
+large, multi-gigabyte buffers.
+
+Thanks to Felix Wilhelm for the report.
+---
+ buf.c  | 86 +++++++++++++++++++++++-----------------------------------
+ tree.c | 72 ++++++++++++++++++------------------------------
+ 2 files changed, 61 insertions(+), 97 deletions(-)
+
+diff --git a/buf.c b/buf.c
+index 21cb9d80..f861d79b 100644
+--- a/buf.c
++++ b/buf.c
+@@ -30,6 +30,10 @@
+ #include <libxml/parserInternals.h> /* for XML_MAX_TEXT_LENGTH */
+ #include "buf.h"
+ 
++#ifndef SIZE_MAX
++#define SIZE_MAX ((size_t) -1)
++#endif
++
+ #define WITH_BUFFER_COMPAT
+ 
+ /**
+@@ -156,6 +160,8 @@ xmlBufPtr
+ xmlBufCreateSize(size_t size) {
+     xmlBufPtr ret;
+ 
++    if (size == SIZE_MAX)
++        return(NULL);
+     ret = (xmlBufPtr) xmlMalloc(sizeof(xmlBuf));
+     if (ret == NULL) {
+ 	xmlBufMemoryError(NULL, "creating buffer");
+@@ -166,8 +172,8 @@ xmlBufCreateSize(size_t size) {
+     ret->error = 0;
+     ret->buffer = NULL;
+     ret->alloc = xmlBufferAllocScheme;
+-    ret->size = (size ? size+2 : 0);         /* +1 for ending null */
+-    ret->compat_size = (int) ret->size;
++    ret->size = (size ? size + 1 : 0);         /* +1 for ending null */
++    ret->compat_size = (ret->size > INT_MAX ? INT_MAX : ret->size);
+     if (ret->size){
+         ret->content = (xmlChar *) xmlMallocAtomic(ret->size * sizeof(xmlChar));
+         if (ret->content == NULL) {
+@@ -442,23 +448,17 @@ xmlBufGrowInternal(xmlBufPtr buf, size_t len) {
+     CHECK_COMPAT(buf)
+ 
+     if (buf->alloc == XML_BUFFER_ALLOC_IMMUTABLE) return(0);
+-    if (buf->use + len < buf->size)
++    if (len < buf->size - buf->use)
+         return(buf->size - buf->use);
++    if (len > SIZE_MAX - buf->use)
++        return(0);
+ 
+-    /*
+-     * Windows has a BIG problem on realloc timing, so we try to double
+-     * the buffer size (if that's enough) (bug 146697)
+-     * Apparently BSD too, and it's probably best for linux too
+-     * On an embedded system this may be something to change
+-     */
+-#if 1
+-    if (buf->size > (size_t) len)
+-        size = buf->size * 2;
+-    else
+-        size = buf->use + len + 100;
+-#else
+-    size = buf->use + len + 100;
+-#endif
++    if (buf->size > (size_t) len) {
++        size = buf->size > SIZE_MAX / 2 ? SIZE_MAX : buf->size * 2;
++    } else {
++        size = buf->use + len;
++        size = size > SIZE_MAX - 100 ? SIZE_MAX : size + 100;
++    }
+ 
+     if (buf->alloc == XML_BUFFER_ALLOC_BOUNDED) {
+         /*
+@@ -744,7 +744,7 @@ xmlBufIsEmpty(const xmlBufPtr buf)
+ int
+ xmlBufResize(xmlBufPtr buf, size_t size)
+ {
+-    unsigned int newSize;
++    size_t newSize;
+     xmlChar* rebuf = NULL;
+     size_t start_buf;
+ 
+@@ -772,9 +772,13 @@ xmlBufResize(xmlBufPtr buf, size_t size)
+ 	case XML_BUFFER_ALLOC_IO:
+ 	case XML_BUFFER_ALLOC_DOUBLEIT:
+ 	    /*take care of empty case*/
+-	    newSize = (buf->size ? buf->size*2 : size + 10);
++            if (buf->size == 0) {
++                newSize = (size > SIZE_MAX - 10 ? SIZE_MAX : size + 10);
++            } else {
++                newSize = buf->size;
++            }
+ 	    while (size > newSize) {
+-	        if (newSize > UINT_MAX / 2) {
++	        if (newSize > SIZE_MAX / 2) {
+ 	            xmlBufMemoryError(buf, "growing buffer");
+ 	            return 0;
+ 	        }
+@@ -782,15 +786,15 @@ xmlBufResize(xmlBufPtr buf, size_t size)
+ 	    }
+ 	    break;
+ 	case XML_BUFFER_ALLOC_EXACT:
+-	    newSize = size+10;
++            newSize = (size > SIZE_MAX - 10 ? SIZE_MAX : size + 10);
+ 	    break;
+         case XML_BUFFER_ALLOC_HYBRID:
+             if (buf->use < BASE_BUFFER_SIZE)
+                 newSize = size;
+             else {
+-                newSize = buf->size * 2;
++                newSize = buf->size;
+                 while (size > newSize) {
+-                    if (newSize > UINT_MAX / 2) {
++                    if (newSize > SIZE_MAX / 2) {
+                         xmlBufMemoryError(buf, "growing buffer");
+                         return 0;
+                     }
+@@ -800,7 +804,7 @@ xmlBufResize(xmlBufPtr buf, size_t size)
+             break;
+ 
+ 	default:
+-	    newSize = size+10;
++            newSize = (size > SIZE_MAX - 10 ? SIZE_MAX : size + 10);
+ 	    break;
+     }
+ 
+@@ -866,7 +870,7 @@ xmlBufResize(xmlBufPtr buf, size_t size)
+  */
+ int
+ xmlBufAdd(xmlBufPtr buf, const xmlChar *str, int len) {
+-    unsigned int needSize;
++    size_t needSize;
+ 
+     if ((str == NULL) || (buf == NULL) || (buf->error))
+ 	return -1;
+@@ -888,8 +892,10 @@ xmlBufAdd(xmlBufPtr buf, const xmlChar *str, int len) {
+     if (len < 0) return -1;
+     if (len == 0) return 0;
+ 
+-    needSize = buf->use + len + 2;
+-    if (needSize > buf->size){
++    if ((size_t) len >= buf->size - buf->use) {
++        if ((size_t) len >= SIZE_MAX - buf->use)
++            return(-1);
++        needSize = buf->use + len + 1;
+ 	if (buf->alloc == XML_BUFFER_ALLOC_BOUNDED) {
+ 	    /*
+ 	     * Used to provide parsing limits
+@@ -1025,31 +1031,7 @@ xmlBufCat(xmlBufPtr buf, const xmlChar *str) {
+  */
+ int
+ xmlBufCCat(xmlBufPtr buf, const char *str) {
+-    const char *cur;
+-
+-    if ((buf == NULL) || (buf->error))
+-        return(-1);
+-    CHECK_COMPAT(buf)
+-    if (buf->alloc == XML_BUFFER_ALLOC_IMMUTABLE) return -1;
+-    if (str == NULL) {
+-#ifdef DEBUG_BUFFER
+-        xmlGenericError(xmlGenericErrorContext,
+-		"xmlBufCCat: str == NULL\n");
+-#endif
+-	return -1;
+-    }
+-    for (cur = str;*cur != 0;cur++) {
+-        if (buf->use  + 10 >= buf->size) {
+-            if (!xmlBufResize(buf, buf->use+10)){
+-		xmlBufMemoryError(buf, "growing buffer");
+-                return XML_ERR_NO_MEMORY;
+-            }
+-        }
+-        buf->content[buf->use++] = *cur;
+-    }
+-    buf->content[buf->use] = 0;
+-    UPDATE_COMPAT(buf)
+-    return 0;
++    return xmlBufCat(buf, (const xmlChar *) str);
+ }
+ 
+ /**
+diff --git a/tree.c b/tree.c
+index 86a8da79..fc75f962 100644
+--- a/tree.c
++++ b/tree.c
+@@ -7049,6 +7049,8 @@ xmlBufferPtr
+ xmlBufferCreateSize(size_t size) {
+     xmlBufferPtr ret;
+ 
++    if (size >= UINT_MAX)
++        return(NULL);
+     ret = (xmlBufferPtr) xmlMalloc(sizeof(xmlBuffer));
+     if (ret == NULL) {
+ 	xmlTreeErrMemory("creating buffer");
+@@ -7056,7 +7058,7 @@ xmlBufferCreateSize(size_t size) {
+     }
+     ret->use = 0;
+     ret->alloc = xmlBufferAllocScheme;
+-    ret->size = (size ? size+2 : 0);         /* +1 for ending null */
++    ret->size = (size ? size + 1 : 0);         /* +1 for ending null */
+     if (ret->size){
+         ret->content = (xmlChar *) xmlMallocAtomic(ret->size * sizeof(xmlChar));
+         if (ret->content == NULL) {
+@@ -7116,6 +7118,8 @@ xmlBufferCreateStatic(void *mem, size_t size) {
+ 
+     if ((mem == NULL) || (size == 0))
+         return(NULL);
++    if (size > UINT_MAX)
++        return(NULL);
+ 
+     ret = (xmlBufferPtr) xmlMalloc(sizeof(xmlBuffer));
+     if (ret == NULL) {
+@@ -7263,28 +7267,23 @@ xmlBufferShrink(xmlBufferPtr buf, unsigned int len) {
+  */
+ int
+ xmlBufferGrow(xmlBufferPtr buf, unsigned int len) {
+-    int size;
++    unsigned int size;
+     xmlChar *newbuf;
+ 
+     if (buf == NULL) return(-1);
+ 
+     if (buf->alloc == XML_BUFFER_ALLOC_IMMUTABLE) return(0);
+-    if (len + buf->use < buf->size) return(0);
++    if (len < buf->size - buf->use)
++        return(0);
++    if (len > UINT_MAX - buf->use)
++        return(-1);
+ 
+-    /*
+-     * Windows has a BIG problem on realloc timing, so we try to double
+-     * the buffer size (if that's enough) (bug 146697)
+-     * Apparently BSD too, and it's probably best for linux too
+-     * On an embedded system this may be something to change
+-     */
+-#if 1
+-    if (buf->size > len)
+-        size = buf->size * 2;
+-    else
+-        size = buf->use + len + 100;
+-#else
+-    size = buf->use + len + 100;
+-#endif
++    if (buf->size > (size_t) len) {
++        size = buf->size > UINT_MAX / 2 ? UINT_MAX : buf->size * 2;
++    } else {
++        size = buf->use + len;
++        size = size > UINT_MAX - 100 ? UINT_MAX : size + 100;
++    }
+ 
+     if ((buf->alloc == XML_BUFFER_ALLOC_IO) && (buf->contentIO != NULL)) {
+         size_t start_buf = buf->content - buf->contentIO;
+@@ -7406,7 +7405,10 @@ xmlBufferResize(xmlBufferPtr buf, unsigned int size)
+ 	case XML_BUFFER_ALLOC_IO:
+ 	case XML_BUFFER_ALLOC_DOUBLEIT:
+ 	    /*take care of empty case*/
+-	    newSize = (buf->size ? buf->size*2 : size + 10);
++            if (buf->size == 0)
++                newSize = (size > UINT_MAX - 10 ? UINT_MAX : size + 10);
++            else
++                newSize = buf->size;
+ 	    while (size > newSize) {
+ 	        if (newSize > UINT_MAX / 2) {
+ 	            xmlTreeErrMemory("growing buffer");
+@@ -7416,7 +7418,7 @@ xmlBufferResize(xmlBufferPtr buf, unsigned int size)
+ 	    }
+ 	    break;
+ 	case XML_BUFFER_ALLOC_EXACT:
+-	    newSize = size+10;
++	    newSize = (size > UINT_MAX - 10 ? UINT_MAX : size + 10);;
+ 	    break;
+         case XML_BUFFER_ALLOC_HYBRID:
+             if (buf->use < BASE_BUFFER_SIZE)
+@@ -7434,7 +7436,7 @@ xmlBufferResize(xmlBufferPtr buf, unsigned int size)
+             break;
+ 
+ 	default:
+-	    newSize = size+10;
++	    newSize = (size > UINT_MAX - 10 ? UINT_MAX : size + 10);;
+ 	    break;
+     }
+ 
+@@ -7520,8 +7522,10 @@ xmlBufferAdd(xmlBufferPtr buf, const xmlChar *str, int len) {
+     if (len < 0) return -1;
+     if (len == 0) return 0;
+ 
+-    needSize = buf->use + len + 2;
+-    if (needSize > buf->size){
++    if ((unsigned) len >= buf->size - buf->use) {
++        if ((unsigned) len >= UINT_MAX - buf->use)
++            return XML_ERR_NO_MEMORY;
++        needSize = buf->use + len + 1;
+         if (!xmlBufferResize(buf, needSize)){
+ 	    xmlTreeErrMemory("growing buffer");
+             return XML_ERR_NO_MEMORY;
+@@ -7634,29 +7638,7 @@ xmlBufferCat(xmlBufferPtr buf, const xmlChar *str) {
+  */
+ int
+ xmlBufferCCat(xmlBufferPtr buf, const char *str) {
+-    const char *cur;
+-
+-    if (buf == NULL)
+-        return(-1);
+-    if (buf->alloc == XML_BUFFER_ALLOC_IMMUTABLE) return -1;
+-    if (str == NULL) {
+-#ifdef DEBUG_BUFFER
+-        xmlGenericError(xmlGenericErrorContext,
+-		"xmlBufferCCat: str == NULL\n");
+-#endif
+-	return -1;
+-    }
+-    for (cur = str;*cur != 0;cur++) {
+-        if (buf->use  + 10 >= buf->size) {
+-            if (!xmlBufferResize(buf, buf->use+10)){
+-		xmlTreeErrMemory("growing buffer");
+-                return XML_ERR_NO_MEMORY;
+-            }
+-        }
+-        buf->content[buf->use++] = *cur;
+-    }
+-    buf->content[buf->use] = 0;
+-    return 0;
++    return xmlBufferCat(buf, (const xmlChar *) str);
+ }
+ 
+ /**
+-- 
+
+From c1ba6f54d32b707ca6d91cb3257ce9de82876b6f Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Sat, 15 Aug 2020 18:32:29 +0200
+Subject: [PATCH] Revert "Do not URI escape in server side includes"
+
+This reverts commit 960f0e275616cadc29671a218d7fb9b69eb35588.
+
+This commit introduced
+
+- an infinite loop, found by OSS-Fuzz, which could be easily fixed.
+- an algorithm with quadratic runtime
+- a security issue, see
+  https://bugzilla.gnome.org/show_bug.cgi?id=769760
+
+A better approach is to add an option not to escape URLs at all
+which libxml2 should have possibly done in the first place.
+---
+ HTMLtree.c | 49 +++++++++++--------------------------------------
+ 1 file changed, 11 insertions(+), 38 deletions(-)
+
+diff --git a/HTMLtree.c b/HTMLtree.c
+index 8d236bb3..cdb7f86a 100644
+--- a/HTMLtree.c
++++ b/HTMLtree.c
+@@ -706,49 +706,22 @@ htmlAttrDumpOutput(xmlOutputBufferPtr buf, xmlDocPtr doc, xmlAttrPtr cur,
+ 		 (!xmlStrcasecmp(cur->name, BAD_CAST "src")) ||
+ 		 ((!xmlStrcasecmp(cur->name, BAD_CAST "name")) &&
+ 		  (!xmlStrcasecmp(cur->parent->name, BAD_CAST "a"))))) {
++		xmlChar *escaped;
+ 		xmlChar *tmp = value;
+-		/* xmlURIEscapeStr() escapes '"' so it can be safely used. */
+-		xmlBufCCat(buf->buffer, "\"");
+ 
+ 		while (IS_BLANK_CH(*tmp)) tmp++;
+ 
+-		/* URI Escape everything, except server side includes. */
+-		for ( ; ; ) {
+-		    xmlChar *escaped;
+-		    xmlChar endChar;
+-		    xmlChar *end = NULL;
+-		    xmlChar *start = (xmlChar *)xmlStrstr(tmp, BAD_CAST "<!--");
+-		    if (start != NULL) {
+-			end = (xmlChar *)xmlStrstr(tmp, BAD_CAST "-->");
+-			if (end != NULL) {
+-			    *start = '\0';
+-			}
+-		    }
+-
+-		    /* Escape the whole string, or until start (set to '\0'). */
+-		    escaped = xmlURIEscapeStr(tmp, BAD_CAST"@/:=?;#%&,+");
+-		    if (escaped != NULL) {
+-		        xmlBufCat(buf->buffer, escaped);
+-		        xmlFree(escaped);
+-		    } else {
+-		        xmlBufCat(buf->buffer, tmp);
+-		    }
+-
+-		    if (end == NULL) { /* Everything has been written. */
+-			break;
+-		    }
+-
+-		    /* Do not escape anything within server side includes. */
+-		    *start = '<'; /* Restore the first character of "<!--". */
+-		    end += 3; /* strlen("-->") */
+-		    endChar = *end;
+-		    *end = '\0';
+-		    xmlBufCat(buf->buffer, start);
+-		    *end = endChar;
+-		    tmp = end;
++		/*
++		 * the < and > have already been escaped at the entity level
++		 * And doing so here breaks server side includes
++		 */
++		escaped = xmlURIEscapeStr(tmp, BAD_CAST"@/:=?;#%&,+<>");
++		if (escaped != NULL) {
++		    xmlBufWriteQuotedString(buf->buffer, escaped);
++		    xmlFree(escaped);
++		} else {
++		    xmlBufWriteQuotedString(buf->buffer, value);
+ 		}
+-
+-		xmlBufCCat(buf->buffer, "\"");
+ 	    } else {
+ 		xmlBufWriteQuotedString(buf->buffer, value);
+ 	    }
+-- 
+
+From 7afb666b26cfb17689e5da98bed610a417083f9d Mon Sep 17 00:00:00 2001
+From: David King <amigadave@amigadave.com>
+Date: Tue, 3 Jan 2023 09:57:28 +0000
+Subject: [PATCH 1/2] Fix CVE-2022-40303
+
+Adapted from https://gitlab.gnome.org/GNOME/libxml2/-/commit/c846986356fc149915a74972bf198abc266bc2c0
+---
+ parser.c | 232 +++++++++++++++++++++++++++++--------------------------
+ 1 file changed, 121 insertions(+), 111 deletions(-)
+
+diff --git a/parser.c b/parser.c
+index 1c5e036e..e66e4196 100644
+--- a/parser.c
++++ b/parser.c
+@@ -108,6 +108,8 @@ static void xmlHaltParser(xmlParserCtxtPtr ctxt);
+  *									*
+  ************************************************************************/
+ 
++#define XML_MAX_HUGE_LENGTH 1000000000
++
+ #define XML_PARSER_BIG_ENTITY 1000
+ #define XML_PARSER_LOT_ENTITY 5000
+ 
+@@ -532,7 +534,7 @@ xmlFatalErr(xmlParserCtxtPtr ctxt, xmlParserErrors error, const char *info)
+             errmsg = "Malformed declaration expecting version";
+             break;
+         case XML_ERR_NAME_TOO_LONG:
+-            errmsg = "Name too long use XML_PARSE_HUGE option";
++            errmsg = "Name too long";
+             break;
+ #if 0
+         case:
+@@ -3150,6 +3152,9 @@ xmlParseNameComplex(xmlParserCtxtPtr ctxt) {
+     int len = 0, l;
+     int c;
+     int count = 0;
++    int maxLength = (ctxt->options & XML_PARSE_HUGE) ?
++                    XML_MAX_TEXT_LENGTH :
++                    XML_MAX_NAME_LENGTH;
+ 
+ #ifdef DEBUG
+     nbParseNameComplex++;
+@@ -3241,13 +3246,13 @@ xmlParseNameComplex(xmlParserCtxtPtr ctxt) {
+                 if (ctxt->instate == XML_PARSER_EOF)
+                     return(NULL);
+ 	    }
+-	    len += l;
++            if (len <= INT_MAX - l)
++	        len += l;
+ 	    NEXTL(l);
+ 	    c = CUR_CHAR(l);
+ 	}
+     }
+-    if ((len > XML_MAX_NAME_LENGTH) &&
+-        ((ctxt->options & XML_PARSE_HUGE) == 0)) {
++    if (len > maxLength) {
+         xmlFatalErr(ctxt, XML_ERR_NAME_TOO_LONG, "Name");
+         return(NULL);
+     }
+@@ -3286,7 +3291,10 @@ const xmlChar *
+ xmlParseName(xmlParserCtxtPtr ctxt) {
+     const xmlChar *in;
+     const xmlChar *ret;
+-    int count = 0;
++    size_t count = 0;
++    size_t maxLength = (ctxt->options & XML_PARSE_HUGE) ?
++                       XML_MAX_TEXT_LENGTH :
++                       XML_MAX_NAME_LENGTH;
+ 
+     GROW;
+ 
+@@ -3310,8 +3318,7 @@ xmlParseName(xmlParserCtxtPtr ctxt) {
+ 	    in++;
+ 	if ((*in > 0) && (*in < 0x80)) {
+ 	    count = in - ctxt->input->cur;
+-            if ((count > XML_MAX_NAME_LENGTH) &&
+-                ((ctxt->options & XML_PARSE_HUGE) == 0)) {
++            if (count > maxLength) {
+                 xmlFatalErr(ctxt, XML_ERR_NAME_TOO_LONG, "Name");
+                 return(NULL);
+             }
+@@ -3333,6 +3340,9 @@ xmlParseNCNameComplex(xmlParserCtxtPtr ctxt) {
+     int len = 0, l;
+     int c;
+     int count = 0;
++    int maxLength = (ctxt->options & XML_PARSE_HUGE) ?
++                    XML_MAX_TEXT_LENGTH :
++                    XML_MAX_NAME_LENGTH;
+     size_t startPosition = 0;
+ 
+ #ifdef DEBUG
+@@ -3353,17 +3363,13 @@ xmlParseNCNameComplex(xmlParserCtxtPtr ctxt) {
+     while ((c != ' ') && (c != '>') && (c != '/') && /* test bigname.xml */
+ 	   (xmlIsNameChar(ctxt, c) && (c != ':'))) {
+ 	if (count++ > XML_PARSER_CHUNK_SIZE) {
+-            if ((len > XML_MAX_NAME_LENGTH) &&
+-                ((ctxt->options & XML_PARSE_HUGE) == 0)) {
+-                xmlFatalErr(ctxt, XML_ERR_NAME_TOO_LONG, "NCName");
+-                return(NULL);
+-            }
+ 	    count = 0;
+ 	    GROW;
+             if (ctxt->instate == XML_PARSER_EOF)
+                 return(NULL);
+ 	}
+-	len += l;
++        if (len <= INT_MAX - l)
++	    len += l;
+ 	NEXTL(l);
+ 	c = CUR_CHAR(l);
+ 	if (c == 0) {
+@@ -3381,8 +3387,7 @@ xmlParseNCNameComplex(xmlParserCtxtPtr ctxt) {
+ 	    c = CUR_CHAR(l);
+ 	}
+     }
+-    if ((len > XML_MAX_NAME_LENGTH) &&
+-        ((ctxt->options & XML_PARSE_HUGE) == 0)) {
++    if (len > maxLength) {
+         xmlFatalErr(ctxt, XML_ERR_NAME_TOO_LONG, "NCName");
+         return(NULL);
+     }
+@@ -3408,7 +3413,10 @@ static const xmlChar *
+ xmlParseNCName(xmlParserCtxtPtr ctxt) {
+     const xmlChar *in, *e;
+     const xmlChar *ret;
+-    int count = 0;
++    size_t count = 0;
++    size_t maxLength = (ctxt->options & XML_PARSE_HUGE) ?
++                       XML_MAX_TEXT_LENGTH :
++                       XML_MAX_NAME_LENGTH;
+ 
+ #ifdef DEBUG
+     nbParseNCName++;
+@@ -3433,8 +3441,7 @@ xmlParseNCName(xmlParserCtxtPtr ctxt) {
+ 	    goto complex;
+ 	if ((*in > 0) && (*in < 0x80)) {
+ 	    count = in - ctxt->input->cur;
+-            if ((count > XML_MAX_NAME_LENGTH) &&
+-                ((ctxt->options & XML_PARSE_HUGE) == 0)) {
++            if (count > maxLength) {
+                 xmlFatalErr(ctxt, XML_ERR_NAME_TOO_LONG, "NCName");
+                 return(NULL);
+             }
+@@ -3517,6 +3524,9 @@ xmlParseStringName(xmlParserCtxtPtr ctxt, const xmlChar** str) {
+     const xmlChar *cur = *str;
+     int len = 0, l;
+     int c;
++    int maxLength = (ctxt->options & XML_PARSE_HUGE) ?
++                    XML_MAX_TEXT_LENGTH :
++                    XML_MAX_NAME_LENGTH;
+ 
+ #ifdef DEBUG
+     nbParseStringName++;
+@@ -3552,12 +3562,6 @@ xmlParseStringName(xmlParserCtxtPtr ctxt, const xmlChar** str) {
+ 		if (len + 10 > max) {
+ 		    xmlChar *tmp;
+ 
+-                    if ((len > XML_MAX_NAME_LENGTH) &&
+-                        ((ctxt->options & XML_PARSE_HUGE) == 0)) {
+-                        xmlFatalErr(ctxt, XML_ERR_NAME_TOO_LONG, "NCName");
+-			xmlFree(buffer);
+-                        return(NULL);
+-                    }
+ 		    max *= 2;
+ 		    tmp = (xmlChar *) xmlRealloc(buffer,
+ 			                            max * sizeof(xmlChar));
+@@ -3571,14 +3575,18 @@ xmlParseStringName(xmlParserCtxtPtr ctxt, const xmlChar** str) {
+ 		COPY_BUF(l,buffer,len,c);
+ 		cur += l;
+ 		c = CUR_SCHAR(cur, l);
++                if (len > maxLength) {
++                    xmlFatalErr(ctxt, XML_ERR_NAME_TOO_LONG, "NCName");
++                    xmlFree(buffer);
++                    return(NULL);
++                }
+ 	    }
+ 	    buffer[len] = 0;
+ 	    *str = cur;
+ 	    return(buffer);
+ 	}
+     }
+-    if ((len > XML_MAX_NAME_LENGTH) &&
+-        ((ctxt->options & XML_PARSE_HUGE) == 0)) {
++    if (len > maxLength) {
+         xmlFatalErr(ctxt, XML_ERR_NAME_TOO_LONG, "NCName");
+         return(NULL);
+     }
+@@ -3605,6 +3613,9 @@ xmlParseNmtoken(xmlParserCtxtPtr ctxt) {
+     int len = 0, l;
+     int c;
+     int count = 0;
++    int maxLength = (ctxt->options & XML_PARSE_HUGE) ?
++                    XML_MAX_TEXT_LENGTH :
++                    XML_MAX_NAME_LENGTH;
+ 
+ #ifdef DEBUG
+     nbParseNmToken++;
+@@ -3656,12 +3667,6 @@ xmlParseNmtoken(xmlParserCtxtPtr ctxt) {
+ 		if (len + 10 > max) {
+ 		    xmlChar *tmp;
+ 
+-                    if ((max > XML_MAX_NAME_LENGTH) &&
+-                        ((ctxt->options & XML_PARSE_HUGE) == 0)) {
+-                        xmlFatalErr(ctxt, XML_ERR_NAME_TOO_LONG, "NmToken");
+-                        xmlFree(buffer);
+-                        return(NULL);
+-                    }
+ 		    max *= 2;
+ 		    tmp = (xmlChar *) xmlRealloc(buffer,
+ 			                            max * sizeof(xmlChar));
+@@ -3675,6 +3680,11 @@ xmlParseNmtoken(xmlParserCtxtPtr ctxt) {
+ 		COPY_BUF(l,buffer,len,c);
+ 		NEXTL(l);
+ 		c = CUR_CHAR(l);
++                if (len > maxLength) {
++                    xmlFatalErr(ctxt, XML_ERR_NAME_TOO_LONG, "NmToken");
++                    xmlFree(buffer);
++                    return(NULL);
++                }
+ 	    }
+ 	    buffer[len] = 0;
+ 	    return(buffer);
+@@ -3682,8 +3692,7 @@ xmlParseNmtoken(xmlParserCtxtPtr ctxt) {
+     }
+     if (len == 0)
+         return(NULL);
+-    if ((len > XML_MAX_NAME_LENGTH) &&
+-        ((ctxt->options & XML_PARSE_HUGE) == 0)) {
++    if (len > maxLength) {
+         xmlFatalErr(ctxt, XML_ERR_NAME_TOO_LONG, "NmToken");
+         return(NULL);
+     }
+@@ -3709,6 +3718,9 @@ xmlParseEntityValue(xmlParserCtxtPtr ctxt, xmlChar **orig) {
+     int len = 0;
+     int size = XML_PARSER_BUFFER_SIZE;
+     int c, l;
++    int maxLength = (ctxt->options & XML_PARSE_HUGE) ?
++                    XML_MAX_HUGE_LENGTH :
++                    XML_MAX_TEXT_LENGTH;
+     xmlChar stop;
+     xmlChar *ret = NULL;
+     const xmlChar *cur = NULL;
+@@ -3768,6 +3780,14 @@ xmlParseEntityValue(xmlParserCtxtPtr ctxt, xmlChar **orig) {
+ 	    GROW;
+ 	    c = CUR_CHAR(l);
+ 	}
++
++        if (len > maxLength) {
++            xmlFatalErrMsg(ctxt, XML_ERR_ENTITY_NOT_FINISHED,
++                           "entity value too long\n");
++        if (buf != NULL)
++            xmlFree(buf);
++        return(ret);
++        }
+     }
+     buf[len] = 0;
+     if (ctxt->instate == XML_PARSER_EOF)
+@@ -3855,6 +3875,9 @@ xmlParseAttValueComplex(xmlParserCtxtPtr ctxt, int *attlen, int normalize) {
+     xmlChar *rep = NULL;
+     size_t len = 0;
+     size_t buf_size = 0;
++    size_t maxLength = (ctxt->options & XML_PARSE_HUGE) ?
++                       XML_MAX_HUGE_LENGTH :
++                       XML_MAX_TEXT_LENGTH;
+     int c, l, in_space = 0;
+     xmlChar *current = NULL;
+     xmlEntityPtr ent;
+@@ -3886,16 +3909,6 @@ xmlParseAttValueComplex(xmlParserCtxtPtr ctxt, int *attlen, int normalize) {
+     while (((NXT(0) != limit) && /* checked */
+             (IS_CHAR(c)) && (c != '<')) &&
+             (ctxt->instate != XML_PARSER_EOF)) {
+-        /*
+-         * Impose a reasonable limit on attribute size, unless XML_PARSE_HUGE
+-         * special option is given
+-         */
+-        if ((len > XML_MAX_TEXT_LENGTH) &&
+-            ((ctxt->options & XML_PARSE_HUGE) == 0)) {
+-            xmlFatalErrMsg(ctxt, XML_ERR_ATTRIBUTE_NOT_FINISHED,
+-                           "AttValue length too long\n");
+-            goto mem_error;
+-        }
+ 	if (c == 0) break;
+ 	if (c == '&') {
+ 	    in_space = 0;
+@@ -4041,6 +4054,11 @@ xmlParseAttValueComplex(xmlParserCtxtPtr ctxt, int *attlen, int normalize) {
+ 	}
+ 	GROW;
+ 	c = CUR_CHAR(l);
++        if (len > maxLength) {
++            xmlFatalErrMsg(ctxt, XML_ERR_ATTRIBUTE_NOT_FINISHED,
++                           "AttValue length too long\n");
++            goto mem_error;
++        }
+     }
+     if (ctxt->instate == XML_PARSER_EOF)
+         goto error;
+@@ -4062,16 +4080,6 @@ xmlParseAttValueComplex(xmlParserCtxtPtr ctxt, int *attlen, int normalize) {
+     } else
+ 	NEXT;
+ 
+-    /*
+-     * There we potentially risk an overflow, don't allow attribute value of
+-     * length more than INT_MAX it is a very reasonnable assumption !
+-     */
+-    if (len >= INT_MAX) {
+-        xmlFatalErrMsg(ctxt, XML_ERR_ATTRIBUTE_NOT_FINISHED,
+-                       "AttValue length too long\n");
+-        goto mem_error;
+-    }
+-
+     if (attlen != NULL) *attlen = (int) len;
+     return(buf);
+ 
+@@ -4142,6 +4150,9 @@ xmlParseSystemLiteral(xmlParserCtxtPtr ctxt) {
+     int len = 0;
+     int size = XML_PARSER_BUFFER_SIZE;
+     int cur, l;
++    int maxLength = (ctxt->options & XML_PARSE_HUGE) ?
++                    XML_MAX_TEXT_LENGTH :
++                    XML_MAX_NAME_LENGTH;
+     xmlChar stop;
+     int state = ctxt->instate;
+     int count = 0;
+@@ -4169,13 +4180,6 @@ xmlParseSystemLiteral(xmlParserCtxtPtr ctxt) {
+ 	if (len + 5 >= size) {
+ 	    xmlChar *tmp;
+ 
+-            if ((size > XML_MAX_NAME_LENGTH) &&
+-                ((ctxt->options & XML_PARSE_HUGE) == 0)) {
+-                xmlFatalErr(ctxt, XML_ERR_NAME_TOO_LONG, "SystemLiteral");
+-                xmlFree(buf);
+-		ctxt->instate = (xmlParserInputState) state;
+-                return(NULL);
+-            }
+ 	    size *= 2;
+ 	    tmp = (xmlChar *) xmlRealloc(buf, size * sizeof(xmlChar));
+ 	    if (tmp == NULL) {
+@@ -4203,6 +4207,12 @@ xmlParseSystemLiteral(xmlParserCtxtPtr ctxt) {
+ 	    SHRINK;
+ 	    cur = CUR_CHAR(l);
+ 	}
++        if (len > maxLength) {
++            xmlFatalErr(ctxt, XML_ERR_NAME_TOO_LONG, "SystemLiteral");
++            xmlFree(buf);
++            ctxt->instate = (xmlParserInputState) state;
++            return(NULL);
++        }
+     }
+     buf[len] = 0;
+     ctxt->instate = (xmlParserInputState) state;
+@@ -4230,6 +4240,9 @@ xmlParsePubidLiteral(xmlParserCtxtPtr ctxt) {
+     xmlChar *buf = NULL;
+     int len = 0;
+     int size = XML_PARSER_BUFFER_SIZE;
++    int maxLength = (ctxt->options & XML_PARSE_HUGE) ?
++                    XML_MAX_TEXT_LENGTH :
++                    XML_MAX_NAME_LENGTH;
+     xmlChar cur;
+     xmlChar stop;
+     int count = 0;
+@@ -4257,12 +4270,6 @@ xmlParsePubidLiteral(xmlParserCtxtPtr ctxt) {
+ 	if (len + 1 >= size) {
+ 	    xmlChar *tmp;
+ 
+-            if ((size > XML_MAX_NAME_LENGTH) &&
+-                ((ctxt->options & XML_PARSE_HUGE) == 0)) {
+-                xmlFatalErr(ctxt, XML_ERR_NAME_TOO_LONG, "Public ID");
+-                xmlFree(buf);
+-                return(NULL);
+-            }
+ 	    size *= 2;
+ 	    tmp = (xmlChar *) xmlRealloc(buf, size * sizeof(xmlChar));
+ 	    if (tmp == NULL) {
+@@ -4289,6 +4296,11 @@ xmlParsePubidLiteral(xmlParserCtxtPtr ctxt) {
+ 	    SHRINK;
+ 	    cur = CUR;
+ 	}
++        if (len > maxLength) {
++            xmlFatalErr(ctxt, XML_ERR_NAME_TOO_LONG, "Public ID");
++            xmlFree(buf);
++            return(NULL);
++        }
+     }
+     buf[len] = 0;
+     if (cur != stop) {
+@@ -4686,6 +4698,9 @@ xmlParseCommentComplex(xmlParserCtxtPtr ctxt, xmlChar *buf,
+     int r, rl;
+     int cur, l;
+     size_t count = 0;
++    size_t maxLength = (ctxt->options & XML_PARSE_HUGE) ?
++                       XML_MAX_HUGE_LENGTH :
++                       XML_MAX_TEXT_LENGTH;
+     int inputid;
+ 
+     inputid = ctxt->input->id;
+@@ -4731,13 +4746,6 @@ xmlParseCommentComplex(xmlParserCtxtPtr ctxt, xmlChar *buf,
+ 	if ((r == '-') && (q == '-')) {
+ 	    xmlFatalErr(ctxt, XML_ERR_HYPHEN_IN_COMMENT, NULL);
+ 	}
+-        if ((len > XML_MAX_TEXT_LENGTH) &&
+-            ((ctxt->options & XML_PARSE_HUGE) == 0)) {
+-            xmlFatalErrMsgStr(ctxt, XML_ERR_COMMENT_NOT_FINISHED,
+-                         "Comment too big found", NULL);
+-            xmlFree (buf);
+-            return;
+-        }
+ 	if (len + 5 >= size) {
+ 	    xmlChar *new_buf;
+             size_t new_size;
+@@ -4774,6 +4782,13 @@ xmlParseCommentComplex(xmlParserCtxtPtr ctxt, xmlChar *buf,
+ 	    GROW;
+ 	    cur = CUR_CHAR(l);
+ 	}
++
++        if (len > maxLength) {
++            xmlFatalErrMsgStr(ctxt, XML_ERR_COMMENT_NOT_FINISHED,
++                         "Comment too big found", NULL);
++            xmlFree (buf);
++            return;
++        }
+     }
+     buf[len] = 0;
+     if (cur == 0) {
+@@ -4818,6 +4833,9 @@ xmlParseComment(xmlParserCtxtPtr ctxt) {
+     xmlChar *buf = NULL;
+     size_t size = XML_PARSER_BUFFER_SIZE;
+     size_t len = 0;
++    size_t maxLength = (ctxt->options & XML_PARSE_HUGE) ?
++                       XML_MAX_HUGE_LENGTH :
++                       XML_MAX_TEXT_LENGTH;
+     xmlParserInputState state;
+     const xmlChar *in;
+     size_t nbchar = 0;
+@@ -4901,8 +4919,7 @@ get_more:
+ 		buf[len] = 0;
+ 	    }
+ 	}
+-        if ((len > XML_MAX_TEXT_LENGTH) &&
+-            ((ctxt->options & XML_PARSE_HUGE) == 0)) {
++        if (len > maxLength) {
+             xmlFatalErrMsgStr(ctxt, XML_ERR_COMMENT_NOT_FINISHED,
+                          "Comment too big found", NULL);
+             xmlFree (buf);
+@@ -5098,6 +5115,9 @@ xmlParsePI(xmlParserCtxtPtr ctxt) {
+     xmlChar *buf = NULL;
+     size_t len = 0;
+     size_t size = XML_PARSER_BUFFER_SIZE;
++    size_t maxLength = (ctxt->options & XML_PARSE_HUGE) ?
++                       XML_MAX_HUGE_LENGTH :
++                       XML_MAX_TEXT_LENGTH;
+     int cur, l;
+     const xmlChar *target;
+     xmlParserInputState state;
+@@ -5172,14 +5192,6 @@ xmlParsePI(xmlParserCtxtPtr ctxt) {
+                         return;
+                     }
+ 		    count = 0;
+-                    if ((len > XML_MAX_TEXT_LENGTH) &&
+-                        ((ctxt->options & XML_PARSE_HUGE) == 0)) {
+-                        xmlFatalErrMsgStr(ctxt, XML_ERR_PI_NOT_FINISHED,
+-                                          "PI %s too big found", target);
+-                        xmlFree(buf);
+-                        ctxt->instate = state;
+-                        return;
+-                    }
+ 		}
+ 		COPY_BUF(l,buf,len,cur);
+ 		NEXTL(l);
+@@ -5189,15 +5201,14 @@ xmlParsePI(xmlParserCtxtPtr ctxt) {
+ 		    GROW;
+ 		    cur = CUR_CHAR(l);
+ 		}
++                if (len > maxLength) {
++                    xmlFatalErrMsgStr(ctxt, XML_ERR_PI_NOT_FINISHED,
++                                      "PI %s too big found", target);
++                    xmlFree(buf);
++                    ctxt->instate = state;
++                    return;
++                }
+ 	    }
+-            if ((len > XML_MAX_TEXT_LENGTH) &&
+-                ((ctxt->options & XML_PARSE_HUGE) == 0)) {
+-                xmlFatalErrMsgStr(ctxt, XML_ERR_PI_NOT_FINISHED,
+-                                  "PI %s too big found", target);
+-                xmlFree(buf);
+-                ctxt->instate = state;
+-                return;
+-            }
+ 	    buf[len] = 0;
+ 	    if (cur != '?') {
+ 		xmlFatalErrMsgStr(ctxt, XML_ERR_PI_NOT_FINISHED,
+@@ -8851,6 +8862,9 @@ xmlParseAttValueInternal(xmlParserCtxtPtr ctxt, int *len, int *alloc,
+     const xmlChar *in = NULL, *start, *end, *last;
+     xmlChar *ret = NULL;
+     int line, col;
++    int maxLength = (ctxt->options & XML_PARSE_HUGE) ?
++                    XML_MAX_HUGE_LENGTH :
++                    XML_MAX_TEXT_LENGTH;
+ 
+     GROW;
+     in = (xmlChar *) CUR_PTR;
+@@ -8906,8 +8920,7 @@ xmlParseAttValueInternal(xmlParserCtxtPtr ctxt, int *len, int *alloc,
+ 		    in = in + delta;
+ 		}
+ 		end = ctxt->input->end;
+-                if (((in - start) > XML_MAX_TEXT_LENGTH) &&
+-                    ((ctxt->options & XML_PARSE_HUGE) == 0)) {
++                if ((in - start) > maxLength) {
+                     xmlFatalErrMsg(ctxt, XML_ERR_ATTRIBUTE_NOT_FINISHED,
+                                    "AttValue length too long\n");
+                     return(NULL);
+@@ -8929,8 +8942,7 @@ xmlParseAttValueInternal(xmlParserCtxtPtr ctxt, int *len, int *alloc,
+ 		    in = in + delta;
+ 		}
+ 		end = ctxt->input->end;
+-                if (((in - start) > XML_MAX_TEXT_LENGTH) &&
+-                    ((ctxt->options & XML_PARSE_HUGE) == 0)) {
++                if ((in - start) > maxLength) {
+                     xmlFatalErrMsg(ctxt, XML_ERR_ATTRIBUTE_NOT_FINISHED,
+                                    "AttValue length too long\n");
+                     return(NULL);
+@@ -8963,16 +8975,14 @@ xmlParseAttValueInternal(xmlParserCtxtPtr ctxt, int *len, int *alloc,
+ 		    last = last + delta;
+ 		}
+ 		end = ctxt->input->end;
+-                if (((in - start) > XML_MAX_TEXT_LENGTH) &&
+-                    ((ctxt->options & XML_PARSE_HUGE) == 0)) {
++                if ((in - start) > maxLength) {
+                     xmlFatalErrMsg(ctxt, XML_ERR_ATTRIBUTE_NOT_FINISHED,
+                                    "AttValue length too long\n");
+                     return(NULL);
+                 }
+ 	    }
+ 	}
+-        if (((in - start) > XML_MAX_TEXT_LENGTH) &&
+-            ((ctxt->options & XML_PARSE_HUGE) == 0)) {
++        if ((in - start) > maxLength) {
+             xmlFatalErrMsg(ctxt, XML_ERR_ATTRIBUTE_NOT_FINISHED,
+                            "AttValue length too long\n");
+             return(NULL);
+@@ -8994,8 +9004,7 @@ xmlParseAttValueInternal(xmlParserCtxtPtr ctxt, int *len, int *alloc,
+ 		    in = in + delta;
+ 		}
+ 		end = ctxt->input->end;
+-                if (((in - start) > XML_MAX_TEXT_LENGTH) &&
+-                    ((ctxt->options & XML_PARSE_HUGE) == 0)) {
++                if ((in - start) > maxLength) {
+                     xmlFatalErrMsg(ctxt, XML_ERR_ATTRIBUTE_NOT_FINISHED,
+                                    "AttValue length too long\n");
+                     return(NULL);
+@@ -9003,8 +9012,7 @@ xmlParseAttValueInternal(xmlParserCtxtPtr ctxt, int *len, int *alloc,
+ 	    }
+ 	}
+ 	last = in;
+-        if (((in - start) > XML_MAX_TEXT_LENGTH) &&
+-            ((ctxt->options & XML_PARSE_HUGE) == 0)) {
++        if ((in - start) > maxLength) {
+             xmlFatalErrMsg(ctxt, XML_ERR_ATTRIBUTE_NOT_FINISHED,
+                            "AttValue length too long\n");
+             return(NULL);
+@@ -9711,6 +9719,9 @@ xmlParseCDSect(xmlParserCtxtPtr ctxt) {
+     int	s, sl;
+     int cur, l;
+     int count = 0;
++    int maxLength = (ctxt->options & XML_PARSE_HUGE) ?
++                    XML_MAX_HUGE_LENGTH :
++                    XML_MAX_TEXT_LENGTH;
+ 
+     /* Check 2.6.0 was NXT(0) not RAW */
+     if (CMP9(CUR_PTR, '<', '!', '[', 'C', 'D', 'A', 'T', 'A', '[')) {
+@@ -9744,13 +9755,6 @@ xmlParseCDSect(xmlParserCtxtPtr ctxt) {
+ 	if (len + 5 >= size) {
+ 	    xmlChar *tmp;
+ 
+-            if ((size > XML_MAX_TEXT_LENGTH) &&
+-                ((ctxt->options & XML_PARSE_HUGE) == 0)) {
+-                xmlFatalErrMsgStr(ctxt, XML_ERR_CDATA_NOT_FINISHED,
+-                             "CData section too big found", NULL);
+-                xmlFree (buf);
+-                return;
+-            }
+ 	    tmp = (xmlChar *) xmlRealloc(buf, size * 2 * sizeof(xmlChar));
+ 	    if (tmp == NULL) {
+ 	        xmlFree(buf);
+@@ -9776,6 +9780,12 @@ xmlParseCDSect(xmlParserCtxtPtr ctxt) {
+ 	}
+ 	NEXTL(l);
+ 	cur = CUR_CHAR(l);
++        if (len > maxLength) {
++            xmlFatalErrMsg(ctxt, XML_ERR_CDATA_NOT_FINISHED,
++                           "CData section too big found\n");
++            xmlFree(buf);
++            return;
++        }
+     }
+     buf[len] = 0;
+     ctxt->instate = XML_PARSER_CONTENT;
+-- 
+
+From a8fa5f7b5c3c745397b3178405d6be9fdb3cfcbc Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Wed, 31 Aug 2022 22:11:25 +0200
+Subject: [PATCH 2/2] Fix dict corruption caused by entity reference cycles
+
+When an entity reference cycle is detected, the entity content is
+cleared by setting its first byte to zero. But the entity content might
+be allocated from a dict. In this case, the dict entry becomes corrupted
+leading to all kinds of logic errors, including memory errors like
+double-frees.
+
+Stop storing entity content, orig, ExternalID and SystemID in a dict.
+These values are unlikely to occur multiple times in a document, so they
+shouldn't have been stored in a dict in the first place.
+
+Thanks to Ned Williamson and Nathan Wachholz working with Google Project
+Zero for the report!
+---
+ entities.c | 55 ++++++++++++++++--------------------------------------
+ 1 file changed, 16 insertions(+), 39 deletions(-)
+
+diff --git a/entities.c b/entities.c
+index c8193376..3bf1c3ce 100644
+--- a/entities.c
++++ b/entities.c
+@@ -112,36 +112,19 @@ xmlFreeEntity(xmlEntityPtr entity)
+     if ((entity->children) && (entity->owner == 1) &&
+         (entity == (xmlEntityPtr) entity->children->parent))
+         xmlFreeNodeList(entity->children);
+-    if (dict != NULL) {
+-        if ((entity->name != NULL) && (!xmlDictOwns(dict, entity->name)))
+-            xmlFree((char *) entity->name);
+-        if ((entity->ExternalID != NULL) &&
+-	    (!xmlDictOwns(dict, entity->ExternalID)))
+-            xmlFree((char *) entity->ExternalID);
+-        if ((entity->SystemID != NULL) &&
+-	    (!xmlDictOwns(dict, entity->SystemID)))
+-            xmlFree((char *) entity->SystemID);
+-        if ((entity->URI != NULL) && (!xmlDictOwns(dict, entity->URI)))
+-            xmlFree((char *) entity->URI);
+-        if ((entity->content != NULL)
+-            && (!xmlDictOwns(dict, entity->content)))
+-            xmlFree((char *) entity->content);
+-        if ((entity->orig != NULL) && (!xmlDictOwns(dict, entity->orig)))
+-            xmlFree((char *) entity->orig);
+-    } else {
+-        if (entity->name != NULL)
+-            xmlFree((char *) entity->name);
+-        if (entity->ExternalID != NULL)
+-            xmlFree((char *) entity->ExternalID);
+-        if (entity->SystemID != NULL)
+-            xmlFree((char *) entity->SystemID);
+-        if (entity->URI != NULL)
+-            xmlFree((char *) entity->URI);
+-        if (entity->content != NULL)
+-            xmlFree((char *) entity->content);
+-        if (entity->orig != NULL)
+-            xmlFree((char *) entity->orig);
+-    }
++    if ((entity->name != NULL) &&
++        ((dict == NULL) || (!xmlDictOwns(dict, entity->name))))
++        xmlFree((char *) entity->name);
++    if (entity->ExternalID != NULL)
++        xmlFree((char *) entity->ExternalID);
++    if (entity->SystemID != NULL)
++        xmlFree((char *) entity->SystemID);
++    if (entity->URI != NULL)
++        xmlFree((char *) entity->URI);
++    if (entity->content != NULL)
++        xmlFree((char *) entity->content);
++    if (entity->orig != NULL)
++        xmlFree((char *) entity->orig);
+     xmlFree(entity);
+ }
+ 
+@@ -177,18 +160,12 @@ xmlCreateEntity(xmlDictPtr dict, const xmlChar *name, int type,
+ 	    ret->SystemID = xmlStrdup(SystemID);
+     } else {
+         ret->name = xmlDictLookup(dict, name, -1);
+-	if (ExternalID != NULL)
+-	    ret->ExternalID = xmlDictLookup(dict, ExternalID, -1);
+-	if (SystemID != NULL)
+-	    ret->SystemID = xmlDictLookup(dict, SystemID, -1);
++	ret->ExternalID = xmlStrdup(ExternalID);
++	ret->SystemID = xmlStrdup(SystemID);
+     }
+     if (content != NULL) {
+         ret->length = xmlStrlen(content);
+-	if ((dict != NULL) && (ret->length < 5))
+-	    ret->content = (xmlChar *)
+-	                   xmlDictLookup(dict, content, ret->length);
+-	else
+-	    ret->content = xmlStrndup(content, ret->length);
++	ret->content = xmlStrndup(content, ret->length);
+      } else {
+         ret->length = 0;
+         ret->content = NULL;
+-- 
+
+From 647e072ea0a2f12687fa05c172f4c4713fdb0c4f Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Fri, 7 Apr 2023 11:46:35 +0200
+Subject: [PATCH] [CVE-2023-28484] Fix null deref in xmlSchemaFixupComplexType
+
+Fix a null pointer dereference when parsing (invalid) XML schemas.
+
+Thanks to Robby Simpson for the report!
+
+Fixes #491.
+---
+ result/schemas/issue491_0_0.err |  1 +
+ test/schemas/issue491_0.xml     |  1 +
+ test/schemas/issue491_0.xsd     | 18 ++++++++++++++++++
+ xmlschemas.c                    |  2 +-
+ 4 files changed, 21 insertions(+), 1 deletion(-)
+ create mode 100644 result/schemas/issue491_0_0.err
+ create mode 100644 test/schemas/issue491_0.xml
+ create mode 100644 test/schemas/issue491_0.xsd
+
+diff --git a/result/schemas/issue491_0_0.err b/result/schemas/issue491_0_0.err
+new file mode 100644
+index 00000000..9b2bb969
+--- /dev/null
++++ b/result/schemas/issue491_0_0.err
+@@ -0,0 +1 @@
++./test/schemas/issue491_0.xsd:8: element complexType: Schemas parser error : complex type 'ChildType': The content type of both, the type and its base type, must either 'mixed' or 'element-only'.
+diff --git a/test/schemas/issue491_0.xml b/test/schemas/issue491_0.xml
+new file mode 100644
+index 00000000..e2b2fc2e
+--- /dev/null
++++ b/test/schemas/issue491_0.xml
+@@ -0,0 +1 @@
++<Child xmlns="http://www.test.com">5</Child>
+diff --git a/test/schemas/issue491_0.xsd b/test/schemas/issue491_0.xsd
+new file mode 100644
+index 00000000..81702649
+--- /dev/null
++++ b/test/schemas/issue491_0.xsd
+@@ -0,0 +1,18 @@
++<?xml version='1.0' encoding='UTF-8'?>
++<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.test.com" targetNamespace="http://www.test.com" elementFormDefault="qualified" attributeFormDefault="unqualified">
++  <xs:complexType name="BaseType">
++    <xs:simpleContent>
++      <xs:extension base="xs:int" />
++    </xs:simpleContent>
++  </xs:complexType>
++  <xs:complexType name="ChildType">
++    <xs:complexContent>
++      <xs:extension base="BaseType">
++        <xs:sequence>
++          <xs:element name="bad" type="xs:int" minOccurs="0" maxOccurs="1"/>
++        </xs:sequence>
++      </xs:extension>
++    </xs:complexContent>
++  </xs:complexType>
++  <xs:element name="Child" type="ChildType" />
++</xs:schema>
+diff --git a/xmlschemas.c b/xmlschemas.c
+index 152b7c3f..eec24a95 100644
+--- a/xmlschemas.c
++++ b/xmlschemas.c
+@@ -18619,7 +18619,7 @@ xmlSchemaFixupComplexType(xmlSchemaParserCtxtPtr pctxt,
+ 			"allowed to appear inside other model groups",
+ 			NULL, NULL);
+ 
+-		} else if (! dummySequence) {
++		} else if ((!dummySequence) && (baseType->subtypes != NULL)) {
+ 		    xmlSchemaTreeItemPtr effectiveContent =
+ 			(xmlSchemaTreeItemPtr) type->subtypes;
+ 		    /*
+-- 
+
+From 4c6922f763ad958c48ff66f82823ae21f2e92ee6 Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Tue, 13 Sep 2022 16:40:31 +0200
+Subject: [PATCH] schemas: Fix null-pointer-deref in
+ xmlSchemaCheckCOSSTDerivedOK
+
+Found by OSS-Fuzz.
+---
+ result/schemas/oss-fuzz-51295_0_0.err |  2 ++
+ test/schemas/oss-fuzz-51295_0.xml     |  1 +
+ test/schemas/oss-fuzz-51295_0.xsd     |  4 ++++
+ xmlschemas.c                          | 15 +++++++++++++--
+ 4 files changed, 20 insertions(+), 2 deletions(-)
+ create mode 100644 result/schemas/oss-fuzz-51295_0_0.err
+ create mode 100644 test/schemas/oss-fuzz-51295_0.xml
+ create mode 100644 test/schemas/oss-fuzz-51295_0.xsd
+
+diff --git a/result/schemas/oss-fuzz-51295_0_0.err b/result/schemas/oss-fuzz-51295_0_0.err
+new file mode 100644
+index 00000000..1e89524f
+--- /dev/null
++++ b/result/schemas/oss-fuzz-51295_0_0.err
+@@ -0,0 +1,2 @@
++./test/schemas/oss-fuzz-51295_0.xsd:2: element element: Schemas parser error : element decl. 'e': The element declaration 'e' defines a circular substitution group to element declaration 'e'.
++./test/schemas/oss-fuzz-51295_0.xsd:2: element element: Schemas parser error : element decl. 'e': The element declaration 'e' defines a circular substitution group to element declaration 'e'.
+diff --git a/test/schemas/oss-fuzz-51295_0.xml b/test/schemas/oss-fuzz-51295_0.xml
+new file mode 100644
+index 00000000..10a7e703
+--- /dev/null
++++ b/test/schemas/oss-fuzz-51295_0.xml
+@@ -0,0 +1 @@
++<e/>
+diff --git a/test/schemas/oss-fuzz-51295_0.xsd b/test/schemas/oss-fuzz-51295_0.xsd
+new file mode 100644
+index 00000000..fde96af5
+--- /dev/null
++++ b/test/schemas/oss-fuzz-51295_0.xsd
+@@ -0,0 +1,4 @@
++<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
++    <xs:element name="e" substitutionGroup="e"/>
++    <xs:element name="t" substitutionGroup="e" type='xs:decimal'/>
++</xs:schema>
+diff --git a/xmlschemas.c b/xmlschemas.c
+index f31d3d1f..152b7c3f 100644
+--- a/xmlschemas.c
++++ b/xmlschemas.c
+@@ -13345,8 +13345,19 @@ xmlSchemaResolveElementReferences(xmlSchemaElementPtr elemDecl,
+ 	    * declaration `resolved` to by the `actual value`
+ 	    * of the substitutionGroup [attribute], if present"
+ 	    */
+-	    if (elemDecl->subtypes == NULL)
+-		elemDecl->subtypes = substHead->subtypes;
++	    if (elemDecl->subtypes == NULL) {
++                if (substHead->subtypes == NULL) {
++                    /*
++                     * This can happen with self-referencing substitution
++                     * groups. The cycle will be detected later, but we have
++                     * to set subtypes to avoid null-pointer dereferences.
++                     */
++	            elemDecl->subtypes = xmlSchemaGetBuiltInType(
++                            XML_SCHEMAS_ANYTYPE);
++                } else {
++		    elemDecl->subtypes = substHead->subtypes;
++                }
++            }
+ 	}
+     }
+     /*
+-- 
+
+From a40db8fde759261b042138646da36c632a739f31 Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Fri, 7 Apr 2023 11:49:27 +0200
+Subject: [PATCH] [CVE-2023-29469] Hashing of empty dict strings isn't
+ deterministic
+
+When hashing empty strings which aren't null-terminated,
+xmlDictComputeFastKey could produce inconsistent results. This could
+lead to various logic or memory errors, including double frees.
+
+For consistency the seed is also taken into account, but this shouldn't
+have an impact on security.
+
+Found by OSS-Fuzz.
+
+Fixes #510.
+
+Incorporates change from commit
+09a2dd453007f9c7205274623acdd73747c22d64.
+---
+ dict.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/dict.c b/dict.c
+index 0ef3718d..5e84cfca 100644
+--- a/dict.c
++++ b/dict.c
+@@ -444,8 +444,9 @@ static unsigned long
+ xmlDictComputeFastKey(const xmlChar *name, int namelen, int seed) {
+     unsigned long value = seed;
+ 
+-    if (name == NULL) return(0);
+-    value = *name;
++    if ((name == NULL) || (namelen <= 0))
++        return(value);
++    value += *name;
+     value <<= 5;
+     if (namelen > 10) {
+         value += name[namelen - 1];
+-- 
+
+From d0c3f01e110d54415611c5fa0040cdf4a56053f9 Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Sat, 6 May 2023 17:47:37 +0200
+Subject: [PATCH] parser: Fix old SAX1 parser with custom callbacks
+
+For some reason, xmlCtxtUseOptionsInternal set the start and end element
+SAX handlers to the internal DOM builder functions when XML_PARSE_SAX1
+was specified. This means that custom SAX handlers could never work with
+that flag because these functions would receive the wrong user data
+argument and crash immediately.
+
+Fixes #535.
+---
+ parser.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/parser.c b/parser.c
+index bb05791d3..0c8bed129 100644
+--- a/parser.c
++++ b/parser.c
+@@ -14479,8 +14479,6 @@ xmlCtxtUseOptionsInternal(xmlParserCtxtPtr ctxt, int options, const char *encodi
+     }
+ #ifdef LIBXML_SAX1_ENABLED
+     if (options & XML_PARSE_SAX1) {
+-        ctxt->sax->startElement = xmlSAX2StartElement;
+-        ctxt->sax->endElement = xmlSAX2EndElement;
+         ctxt->sax->startElementNs = NULL;
+         ctxt->sax->endElementNs = NULL;
+         ctxt->sax->initialized = 1;
+-- 
+
+From b9d4ab2fd6b7da380edab777a0414ef254804f0d Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Sat, 14 Oct 2023 22:45:54 +0200
+Subject: [PATCH] [CVE-2024-25062] xmlreader: Don't expand XIncludes when
+ backtracking
+
+Fixes a use-after-free if XML Reader if used with DTD validation and
+XInclude expansion.
+
+Fixes #604.
+---
+ xmlreader.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/xmlreader.c b/xmlreader.c
+index 34c4c6bc..8f2f9131 100644
+--- a/xmlreader.c
++++ b/xmlreader.c
+@@ -1511,6 +1511,7 @@ node_found:
+      * Handle XInclude if asked for
+      */
+     if ((reader->xinclude) && (reader->node != NULL) &&
++        (reader->state != XML_TEXTREADER_BACKTRACK) &&
+ 	(reader->node->type == XML_ELEMENT_NODE) &&
+ 	(reader->node->ns != NULL) &&
+ 	((xmlStrEqual(reader->node->ns->href, XINCLUDE_NS)) ||
+-- 
+
+From 6bb146a3ea24a9bacfad6fe67268f0404af37d9c Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Wed, 2 Nov 2022 16:13:27 +0100
+Subject: [PATCH] malloc-fail: Fix use-after-free in xmlXIncludeAddNode
+
+Found with libFuzzer, see #344.
+---
+ xinclude.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/xinclude.c b/xinclude.c
+index 2a0614d7..e32b3419 100644
+--- a/xinclude.c
++++ b/xinclude.c
+@@ -614,14 +614,15 @@ xmlXIncludeAddNode(xmlXIncludeCtxtPtr ctxt, xmlNodePtr cur) {
+     }
+     URL = xmlSaveUri(uri);
+     xmlFreeURI(uri);
+-    xmlFree(URI);
+     if (URL == NULL) {
+ 	xmlXIncludeErr(ctxt, cur, XML_XINCLUDE_HREF_URI,
+ 	               "invalid value URI %s\n", URI);
+ 	if (fragment != NULL)
+ 	    xmlFree(fragment);
++        xmlFree(URI);
+ 	return(-1);
+     }
++    xmlFree(URI);
+ 
+     /*
+      * If local and xml then we need a fragment
+-- 
+
+From 245b70d7d2768572ae1b05b3668ca858b9ec4ed4 Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Tue, 10 Dec 2024 16:52:05 +0100
+Subject: [PATCH] [CVE-2024-56171] Fix use-after-free after
+ xmlSchemaItemListAdd
+
+xmlSchemaItemListAdd can reallocate the items array. Update local
+variables after adding item in
+
+- xmlSchemaIDCFillNodeTables
+- xmlSchemaBubbleIDCNodeTables
+
+Fixes #828.
+---
+ xmlschemas.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/xmlschemas.c b/xmlschemas.c
+index d276faf10..28b14bd44 100644
+--- a/xmlschemas.c
++++ b/xmlschemas.c
+@@ -23388,6 +23388,7 @@ xmlSchemaIDCFillNodeTables(xmlSchemaValidCtxtPtr vctxt,
+ 			}
+ 			if (xmlSchemaItemListAdd(bind->dupls, bind->nodeTable[j]) == -1)
+ 			    goto internal_error;
++                        dupls = (xmlSchemaPSVIIDCNodePtr *) bind->dupls->items;
+ 			/*
+ 			* Remove the duplicate entry from the IDC node-table.
+ 			*/
+@@ -23604,6 +23605,8 @@ xmlSchemaBubbleIDCNodeTables(xmlSchemaValidCtxtPtr vctxt)
+ 				goto internal_error;
+ 			}
+ 			xmlSchemaItemListAdd(parBind->dupls, parNode);
++		        dupls = (xmlSchemaPSVIIDCNodePtr *)
++                            parBind->dupls->items;
+ 		    } else {
+ 			/*
+ 			* Add the node-table entry (node and key-sequence) of
+-- 
+
+
+From 858ca26c0689161a6b903a6682cc8a1cc10a0ea8 Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Tue, 11 Feb 2025 17:30:40 +0100
+Subject: [PATCH] [CVE-2025-24928] Fix stack-buffer-overflow in
+ xmlSnprintfElements
+
+Fixes #847.
+---
+ valid.c | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
+
+diff --git a/valid.c b/valid.c
+index 76d657d62..abefdc50a 100644
+--- a/valid.c
++++ b/valid.c
+@@ -5057,25 +5057,26 @@ xmlSnprintfElements(char *buf, int size, xmlNodePtr node, int glob) {
+ 	    return;
+ 	}
+         switch (cur->type) {
+-            case XML_ELEMENT_NODE:
++            case XML_ELEMENT_NODE: {
++                int qnameLen = xmlStrlen(cur->name);
++
++                if ((cur->ns != NULL) && (cur->ns->prefix != NULL))
++                    qnameLen += xmlStrlen(cur->ns->prefix) + 1;
++                if (size - len < qnameLen + 10) {
++                    if ((size - len > 4) && (buf[len - 1] != '.'))
++                        strcat(buf, " ...");
++                    return;
++                }
+ 		if ((cur->ns != NULL) && (cur->ns->prefix != NULL)) {
+-		    if (size - len < xmlStrlen(cur->ns->prefix) + 10) {
+-			if ((size - len > 4) && (buf[len - 1] != '.'))
+-			    strcat(buf, " ...");
+-			return;
+-		    }
+ 		    strcat(buf, (char *) cur->ns->prefix);
+ 		    strcat(buf, ":");
+ 		}
+-                if (size - len < xmlStrlen(cur->name) + 10) {
+-		    if ((size - len > 4) && (buf[len - 1] != '.'))
+-			strcat(buf, " ...");
+-		    return;
+-		}
+-	        strcat(buf, (char *) cur->name);
++                if (cur->name != NULL)
++	            strcat(buf, (char *) cur->name);
+ 		if (cur->next != NULL)
+ 		    strcat(buf, " ");
+ 		break;
++            }
+             case XML_TEXT_NODE:
+ 		if (xmlIsBlankNode(cur))
+ 		    break;
+-- 
+
+
+From c0fa8ea4b9a3fc0043e95622dcc4bf0a96199d57 Mon Sep 17 00:00:00 2001
+From: Maks Verver <maks@verver.ch>
+Date: Mon, 9 Jun 2025 20:09:17 +0100
+Subject: [PATCH] [CVE-2025-32414] python: Read at most len/4 characters.
+
+Fixes #889 by reserving space in the buffer for UTF-8 encoding of text.
+---
+ python/libxml.c | 28 ++++++++++++++++++----------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
+
+diff --git a/python/libxml.c b/python/libxml.c
+index ef630254..f31e080f 100644
+--- a/python/libxml.c
++++ b/python/libxml.c
+@@ -287,7 +287,9 @@ xmlPythonFileReadRaw (void * context, char * buffer, int len) {
+ #endif
+     file = (PyObject *) context;
+     if (file == NULL) return(-1);
+-    ret = PyEval_CallMethod(file, (char *) "read", (char *) "(i)", len);
++    /* When read() returns a string, the length is in characters not bytes, so
++       request at most len / 4 characters to leave space for UTF-8 encoding. */
++    ret = PyEval_CallMethod(file, (char *) "read", (char *) "(i)", len / 4);
+     if (ret == NULL) {
+ 	printf("xmlPythonFileReadRaw: result is NULL\n");
+ 	return(-1);
+@@ -322,10 +324,12 @@ xmlPythonFileReadRaw (void * context, char * buffer, int len) {
+ 	Py_DECREF(ret);
+ 	return(-1);
+     }
+-    if (lenread > len)
+-	memcpy(buffer, data, len);
+-    else
+-	memcpy(buffer, data, lenread);
++    if (lenread < 0 || lenread > len) {
++	printf("xmlPythonFileReadRaw: invalid lenread\n");
++	Py_DECREF(ret);
++	return(-1);
++    }
++    memcpy(buffer, data, lenread);
+     Py_DECREF(ret);
+     return(lenread);
+ }
+@@ -352,7 +356,9 @@ xmlPythonFileRead (void * context, char * buffer, int len) {
+ #endif
+     file = (PyObject *) context;
+     if (file == NULL) return(-1);
+-    ret = PyEval_CallMethod(file, (char *) "io_read", (char *) "(i)", len);
++    /* When read() returns a string, the length is in characters not bytes, so
++       request at most len / 4 characters to leave space for UTF-8 encoding. */
++    ret = PyEval_CallMethod(file, (char *) "io_read", (char *) "(i)", len / 4);
+     if (ret == NULL) {
+ 	printf("xmlPythonFileRead: result is NULL\n");
+ 	return(-1);
+@@ -387,10 +393,12 @@ xmlPythonFileRead (void * context, char * buffer, int len) {
+ 	Py_DECREF(ret);
+ 	return(-1);
+     }
+-    if (lenread > len)
+-	memcpy(buffer, data, len);
+-    else
+-	memcpy(buffer, data, lenread);
++    if (lenread < 0 || lenread > len) {
++	printf("xmlPythonFileRead: invalid lenread\n");
++	Py_DECREF(ret);
++	return(-1);
++    }
++    memcpy(buffer, data, lenread);
+     Py_DECREF(ret);
+     return(lenread);
+ }
+-- 
+
+From 40e00bc5174ab61036c893078123467144b05a4a Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Mon, 14 Oct 2019 16:56:59 +0200
+Subject: [PATCH] Fix integer overflow when counting written bytes
+
+Check for integer overflow when updating the `written` member of
+struct xmlOutputBuffer in xmlIO.c.
+
+Closes #112. Resolves !54 and !55.
+---
+ xmlIO.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/xmlIO.c b/xmlIO.c
+index 2a1e2cb08..752d5e0a0 100644
+--- a/xmlIO.c
++++ b/xmlIO.c
+@@ -3413,7 +3413,10 @@ xmlOutputBufferWrite(xmlOutputBufferPtr out, int len, const char *buf) {
+ 		out->error = XML_IO_WRITE;
+ 		return(ret);
+ 	    }
+-	    out->written += ret;
++            if (out->written > INT_MAX - ret)
++                out->written = INT_MAX;
++            else
++                out->written += ret;
+ 	}
+ 	written += nbchars;
+     } while (len > 0);
+@@ -3609,7 +3612,10 @@ xmlOutputBufferWriteEscape(xmlOutputBufferPtr out, const xmlChar *str,
+ 		out->error = XML_IO_WRITE;
+ 		return(ret);
+ 	    }
+-	    out->written += ret;
++            if (out->written > INT_MAX - ret)
++                out->written = INT_MAX;
++            else
++                out->written += ret;
+ 	} else if (xmlBufAvail(out->buffer) < MINLEN) {
+ 	    xmlBufGrow(out->buffer, MINLEN);
+ 	}
+@@ -3703,7 +3709,10 @@ xmlOutputBufferFlush(xmlOutputBufferPtr out) {
+ 	out->error = XML_IO_FLUSH;
+ 	return(ret);
+     }
+-    out->written += ret;
++    if (out->written > INT_MAX - ret)
++        out->written = INT_MAX;
++    else
++        out->written += ret;
+ 
+ #ifdef DEBUG_INPUT
+     xmlGenericError(xmlGenericErrorContext,
+-- 
+
+From 1256dce1c2c928e1436a7e8bd8b40113099383c8 Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Tue, 27 May 2025 12:53:17 +0200
+Subject: [PATCH] tree: Fix integer overflow in xmlBuildQName
+
+This issue affects memory safety and might receive a CVE ID later.
+
+Fixes #926.
+---
+ tree.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/tree.c b/tree.c
+index 86afb7d6..3b0d0397 100644
+--- a/tree.c
++++ b/tree.c
+@@ -20,6 +20,7 @@
+ 
+ #include <string.h> /* for memset() only ! */
+ #include <stddef.h>
++#include <stdint.h>
+ #include <limits.h>
+ #ifdef HAVE_CTYPE_H
+ #include <ctype.h>
+@@ -222,16 +223,18 @@ xmlGetParameterEntityFromDtd(const xmlDtd *dtd, const xmlChar *name) {
+ xmlChar *
+ xmlBuildQName(const xmlChar *ncname, const xmlChar *prefix,
+ 	      xmlChar *memory, int len) {
+-    int lenn, lenp;
++    size_t lenn, lenp;
+     xmlChar *ret;
+ 
+-    if (ncname == NULL) return(NULL);
++    if ((ncname == NULL) || (len < 0)) return(NULL);
+     if (prefix == NULL) return((xmlChar *) ncname);
+ 
+     lenn = strlen((char *) ncname);
+     lenp = strlen((char *) prefix);
++    if (lenn >= SIZE_MAX - lenp - 1)
++        return(NULL);
+ 
+-    if ((memory == NULL) || (len < lenn + lenp + 2)) {
++    if ((memory == NULL) || ((size_t) len < lenn + lenp + 2)) {
+ 	ret = (xmlChar *) xmlMallocAtomic(lenn + lenp + 2);
+ 	if (ret == NULL) {
+ 	    xmlTreeErrMemory("building QName");
+-- 
+
+From b2a28a861e9d43a23b877c3994daa28f8af69618 Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Fri, 4 Jul 2025 14:28:26 +0200
+Subject: [PATCH] schematron: Fix memory safety issues in
+ xmlSchematronReportOutput
+
+Fix use-after-free (CVE-2025-49794) and type confusion (CVE-2025-49796)
+in xmlSchematronReportOutput.
+
+Fixes #931.
+Fixes #933.
+---
+ result/schematron/cve-2025-49794_0.err |  2 +
+ result/schematron/cve-2025-49796_0.err |  2 +
+ schematron.c                           | 67 ++++++++++++++------------
+ test/schematron/cve-2025-49794.sct     | 10 ++++
+ test/schematron/cve-2025-49794_0.xml   |  6 +++
+ test/schematron/cve-2025-49796.sct     |  9 ++++
+ test/schematron/cve-2025-49796_0.xml   |  3 ++
+ 7 files changed, 67 insertions(+), 32 deletions(-)
+ create mode 100644 result/schematron/cve-2025-49794_0.err
+ create mode 100644 result/schematron/cve-2025-49796_0.err
+ create mode 100644 test/schematron/cve-2025-49794.sct
+ create mode 100644 test/schematron/cve-2025-49794_0.xml
+ create mode 100644 test/schematron/cve-2025-49796.sct
+ create mode 100644 test/schematron/cve-2025-49796_0.xml
+
+diff --git a/result/schematron/cve-2025-49794_0.err b/result/schematron/cve-2025-49794_0.err
+new file mode 100644
+index 00000000..57752310
+--- /dev/null
++++ b/result/schematron/cve-2025-49794_0.err
+@@ -0,0 +1,2 @@
++./test/schematron/cve-2025-49794_0.xml:2: element boo0: schematron error : /librar0/boo0 line 2:  
++./test/schematron/cve-2025-49794_0.xml fails to validate
+diff --git a/result/schematron/cve-2025-49796_0.err b/result/schematron/cve-2025-49796_0.err
+new file mode 100644
+index 00000000..bf875ee0
+--- /dev/null
++++ b/result/schematron/cve-2025-49796_0.err
+@@ -0,0 +1,2 @@
++./test/schematron/cve-2025-49796_0.xml:2: element boo0: schematron error : /librar0/boo0 line 2:  
++./test/schematron/cve-2025-49796_0.xml fails to validate
+diff --git a/schematron.c b/schematron.c
+index ddbb069b..0c7bc84a 100644
+--- a/schematron.c
++++ b/schematron.c
+@@ -1239,27 +1239,15 @@ exit:
+  *									*
+  ************************************************************************/
+ 
+-static xmlNodePtr
++static xmlXPathObjectPtr
+ xmlSchematronGetNode(xmlSchematronValidCtxtPtr ctxt,
+                      xmlNodePtr cur, const xmlChar *xpath) {
+-    xmlNodePtr node = NULL;
+-    xmlXPathObjectPtr ret;
+-
+     if ((ctxt == NULL) || (cur == NULL) || (xpath == NULL))
+         return(NULL);
+ 
+     ctxt->xctxt->doc = cur->doc;
+     ctxt->xctxt->node = cur;
+-    ret = xmlXPathEval(xpath, ctxt->xctxt);
+-    if (ret == NULL)
+-        return(NULL);
+-
+-    if ((ret->type == XPATH_NODESET) &&
+-        (ret->nodesetval != NULL) && (ret->nodesetval->nodeNr > 0))
+-	node = ret->nodesetval->nodeTab[0];
+-
+-    xmlXPathFreeObject(ret);
+-    return(node);
++    return(xmlXPathEval(xpath, ctxt->xctxt));
+ }
+ 
+ /**
+@@ -1301,28 +1289,43 @@ xmlSchematronFormatReport(xmlSchematronValidCtxtPtr ctxt,
+     child = test->children;
+     while (child != NULL) {
+         if ((child->type == XML_TEXT_NODE) ||
+-	    (child->type == XML_CDATA_SECTION_NODE))
+-	    ret = xmlStrcat(ret, child->content);
+-	else if (IS_SCHEMATRON(child, "name")) {
+-	    xmlChar *path;
++            (child->type == XML_CDATA_SECTION_NODE))
++            ret = xmlStrcat(ret, child->content);
++        else if (IS_SCHEMATRON(child, "name")) {
++            xmlXPathObject *obj = NULL;
++            xmlChar *path;
+ 
+ 	    path = xmlGetNoNsProp(child, BAD_CAST "path");
+ 
+             node = cur;
+-	    if (path != NULL) {
+-	        node = xmlSchematronGetNode(ctxt, cur, path);
+-		if (node == NULL)
+-		    node = cur;
+-		xmlFree(path);
+-	    }
+-
+-	    if ((node->ns == NULL) || (node->ns->prefix == NULL))
+-	        ret = xmlStrcat(ret, node->name);
+-	    else {
+-	        ret = xmlStrcat(ret, node->ns->prefix);
+-	        ret = xmlStrcat(ret, BAD_CAST ":");
+-	        ret = xmlStrcat(ret, node->name);
+-	    }
++            if (path != NULL) {
++                obj = xmlSchematronGetNode(ctxt, cur, path);
++                if ((obj != NULL) &&
++                    (obj->type == XPATH_NODESET) &&
++                    (obj->nodesetval != NULL) &&
++                    (obj->nodesetval->nodeNr > 0))
++                    node = obj->nodesetval->nodeTab[0];
++                xmlFree(path);
++            }
++
++            switch (node->type) {
++                case XML_ELEMENT_NODE:
++                case XML_ATTRIBUTE_NODE:
++                    if ((node->ns == NULL) || (node->ns->prefix == NULL))
++                        ret = xmlStrcat(ret, node->name);
++                    else {
++                        ret = xmlStrcat(ret, node->ns->prefix);
++                        ret = xmlStrcat(ret, BAD_CAST ":");
++                        ret = xmlStrcat(ret, node->name);
++                    }
++                    break;
++
++                /* TODO: handle other node types */
++                default:
++                    break;
++            }
++
++            xmlXPathFreeObject(obj);
+ 	} else {
+ 	    child = child->next;
+ 	    continue;
+diff --git a/test/schematron/cve-2025-49794.sct b/test/schematron/cve-2025-49794.sct
+new file mode 100644
+index 00000000..7fc9ee3d
+--- /dev/null
++++ b/test/schematron/cve-2025-49794.sct
+@@ -0,0 +1,10 @@
++<sch:schema xmlns:sch="http://purl.oclc.org/dsdl/schematron">
++    <sch:pattern id="">
++        <sch:rule context="boo0">
++            <sch:report test="not(0)">
++                <sch:name path="&#9;e|namespace::*|e"/>
++            </sch:report>
++            <sch:report test="0"></sch:report>
++        </sch:rule>
++    </sch:pattern>
++</sch:schema>
+diff --git a/test/schematron/cve-2025-49794_0.xml b/test/schematron/cve-2025-49794_0.xml
+new file mode 100644
+index 00000000..debc64ba
+--- /dev/null
++++ b/test/schematron/cve-2025-49794_0.xml
+@@ -0,0 +1,6 @@
++<librar0>
++    <boo0 t="">
++        <author></author>
++    </boo0>
++    <ins></ins>
++</librar0>
+diff --git a/test/schematron/cve-2025-49796.sct b/test/schematron/cve-2025-49796.sct
+new file mode 100644
+index 00000000..e9702d75
+--- /dev/null
++++ b/test/schematron/cve-2025-49796.sct
+@@ -0,0 +1,9 @@
++<sch:schema xmlns:sch="http://purl.oclc.org/dsdl/schematron">
++    <sch:pattern id="">
++        <sch:rule context="boo0">
++            <sch:report test="not(0)">
++                <sch:name path="/"/>
++            </sch:report>
++        </sch:rule>
++    </sch:pattern>
++</sch:schema>
+diff --git a/test/schematron/cve-2025-49796_0.xml b/test/schematron/cve-2025-49796_0.xml
+new file mode 100644
+index 00000000..be33c4ec
+--- /dev/null
++++ b/test/schematron/cve-2025-49796_0.xml
+@@ -0,0 +1,3 @@
++<librar0>
++    <boo0/>
++</librar0>
+-- 
+
+From 87786d6200ae1f5ac98d21f04d451e17ff25a216 Mon Sep 17 00:00:00 2001
+From: David Kilzer <ddkilzer@apple.com>
+Date: Mon, 23 Jun 2025 14:41:56 -0700
+Subject: [PATCH] libxslt: heap-use-after-free in xmlFreeID caused by `atype`
+ corruption
+
+* include/libxml/tree.h:
+(XML_ATTR_CLEAR_ATYPE): Add.
+(XML_ATTR_GET_ATYPE): Add.
+(XML_ATTR_SET_ATYPE): Add.
+(XML_NODE_ADD_EXTRA): Add.
+(XML_NODE_CLEAR_EXTRA): Add.
+(XML_NODE_GET_EXTRA): Add.
+(XML_NODE_SET_EXTRA): Add.
+(XML_DOC_ADD_PROPERTIES): Add.
+(XML_DOC_CLEAR_PROPERTIES): Add.
+(XML_DOC_GET_PROPERTIES): Add.
+(XML_DOC_SET_PROPERTIES): Add.
+- Add macros for accessing fields with upper bits that may be set by
+  libxslt.
+
+* HTMLparser.c:
+(htmlNewDocNoDtD):
+* SAX2.c:
+(xmlSAX2StartDocument):
+(xmlSAX2EndDocument):
+* parser.c:
+(xmlParseEntityDecl):
+(xmlParseExternalSubset):
+(xmlParseReference):
+(xmlCtxtParseDtd):
+* runxmlconf.c:
+(xmlconfTestInvalid):
+(xmlconfTestValid):
+* tree.c:
+(xmlNewDoc):
+(xmlFreeProp):
+(xmlNodeSetDoc):
+(xmlSetNsProp):
+(xmlDOMWrapAdoptBranch):
+* valid.c:
+(xmlFreeID):
+(xmlAddIDInternal):
+(xmlValidateAttributeValueInternal):
+(xmlValidateOneAttribute):
+(xmlValidateRef):
+* xmlreader.c:
+(xmlTextReaderStartElement):
+(xmlTextReaderStartElementNs):
+(xmlTextReaderValidateEntity):
+(xmlTextReaderRead):
+(xmlTextReaderNext):
+(xmlTextReaderIsEmptyElement):
+(xmlTextReaderPreserve):
+* xmlschemas.c:
+(xmlSchemaPValAttrNodeID):
+* xmlschemastypes.c:
+(xmlSchemaValAtomicType):
+- Adopt macros by renaming the struct fields, recompiling and fixing
+  compiler failures, then changing the struct field names back.
+---
+ HTMLparser.c          |  1 +
+ SAX2.c                |  6 ++--
+ include/libxml/tree.h | 14 ++++++++-
+ parser.c              |  8 ++---
+ runxmlconf.c          |  4 +--
+ tree.c                | 20 ++++++-------
+ valid.c               | 68 +++++++++++++++++++++----------------------
+ xmlreader.c           | 30 +++++++++----------
+ xmlschemas.c          |  4 +--
+ xmlschemastypes.c     | 12 ++++----
+ 10 files changed, 90 insertions(+), 77 deletions(-)
+
+diff --git a/HTMLparser.c b/HTMLparser.c
+index e4f816e5..0ed96ad0 100644
+--- a/HTMLparser.c
++++ b/HTMLparser.c
+@@ -2335,6 +2335,7 @@ htmlNewDocNoDtD(const xmlChar *URI, const xmlChar *ExternalID) {
+     cur->refs = NULL;
+     cur->_private = NULL;
+     cur->charset = XML_CHAR_ENCODING_UTF8;
++    XML_DOC_SET_PROPERTIES(cur, XML_DOC_HTML | XML_DOC_USERBUILT);
+     cur->properties = XML_DOC_HTML | XML_DOC_USERBUILT;
+     if ((ExternalID != NULL) ||
+ 	(URI != NULL))
+diff --git a/SAX2.c b/SAX2.c
+index 0f261b7b..f283e5d1 100644
+--- a/SAX2.c
++++ b/SAX2.c
+@@ -999,7 +999,7 @@ xmlSAX2StartDocument(void *ctx)
+ 	    xmlSAX2ErrMemory(ctxt, "xmlSAX2StartDocument");
+ 	    return;
+ 	}
+-	ctxt->myDoc->properties = XML_DOC_HTML;
++	XML_DOC_SET_PROPERTIES(ctxt->myDoc, XML_DOC_HTML);
+ 	ctxt->myDoc->parseFlags = ctxt->options;
+ #else
+         xmlGenericError(xmlGenericErrorContext,
+@@ -1012,9 +1012,9 @@ xmlSAX2StartDocument(void *ctx)
+     } else {
+ 	doc = ctxt->myDoc = xmlNewDoc(ctxt->version);
+ 	if (doc != NULL) {
+-	    doc->properties = 0;
++	    XML_DOC_CLEAR_PROPERTIES(doc);
+ 	    if (ctxt->options & XML_PARSE_OLD10)
+-	        doc->properties |= XML_DOC_OLD10;
++	        XML_DOC_ADD_PROPERTIES(doc, XML_DOC_OLD10);
+ 	    doc->parseFlags = ctxt->options;
+ 	    if (ctxt->encoding != NULL)
+ 		doc->encoding = xmlStrdup(ctxt->encoding);
+diff --git a/include/libxml/tree.h b/include/libxml/tree.h
+index 4a9b3bc6..91ea0602 100644
+--- a/include/libxml/tree.h
++++ b/include/libxml/tree.h
+@@ -365,7 +365,6 @@ struct _xmlElement {
+ #endif
+ };
+ 
+-
+ /**
+  * XML_LOCAL_NAMESPACE:
+  *
+@@ -446,6 +445,10 @@ struct _xmlAttr {
+     void            *psvi;	/* for type/PSVI informations */
+ };
+ 
++#define XML_ATTR_CLEAR_ATYPE(attr) (((attr)->atype) = 0)
++#define XML_ATTR_GET_ATYPE(attr) (((attr)->atype) & ~(15U << 27))
++#define XML_ATTR_SET_ATYPE(attr, type) ((attr)->atype = ((((attr)->atype) & (15U << 27)) | ((type) & ~(15U << 27))))
++
+ /**
+  * xmlID:
+  *
+@@ -507,6 +510,11 @@ struct _xmlNode {
+     unsigned short   extra;	/* extra data for XPath/XSLT */
+ };
+ 
++#define XML_NODE_ADD_EXTRA(node, type) ((node)->extra |= ((type) & ~(15U << 12)))
++#define XML_NODE_CLEAR_EXTRA(node) (((node)->extra) = 0)
++#define XML_NODE_GET_EXTRA(node) (((node)->extra) & ~(15U << 12))
++#define XML_NODE_SET_EXTRA(node, type) ((node)->extra = ((((node)->extra) & (15U << 12)) | ((type) & ~(15U << 12))))
++
+ /**
+  * XML_GET_CONTENT:
+  *
+@@ -585,6 +593,10 @@ struct _xmlDoc {
+ 				   set at the end of parsing */
+ };
+ 
++#define XML_DOC_ADD_PROPERTIES(doc, type) ((doc)->properties |= ((type) & ~(15U << 27)))
++#define XML_DOC_CLEAR_PROPERTIES(doc) (((doc)->properties) = 0)
++#define XML_DOC_GET_PROPERTIES(doc) (((doc)->properties) & ~(15U << 27))
++#define XML_DOC_SET_PROPERTIES(doc, type) ((doc)->properties = ((((doc)->properties) & (15U << 27)) | ((type) & ~(15U << 27))))
+ 
+ typedef struct _xmlDOMWrapCtxt xmlDOMWrapCtxt;
+ typedef xmlDOMWrapCtxt *xmlDOMWrapCtxtPtr;
+diff --git a/parser.c b/parser.c
+index 1c5e036e..874cef74 100644
+--- a/parser.c
++++ b/parser.c
+@@ -5446,7 +5446,7 @@ xmlParseEntityDecl(xmlParserCtxtPtr ctxt) {
+ 			    xmlErrMemory(ctxt, "New Doc failed");
+ 			    return;
+ 			}
+-			ctxt->myDoc->properties = XML_DOC_INTERNAL;
++			XML_DOC_SET_PROPERTIES(ctxt->myDoc, XML_DOC_INTERNAL);
+ 		    }
+ 		    if (ctxt->myDoc->intSubset == NULL)
+ 			ctxt->myDoc->intSubset = xmlNewDtd(ctxt->myDoc,
+@@ -5517,7 +5517,7 @@ xmlParseEntityDecl(xmlParserCtxtPtr ctxt) {
+ 			        xmlErrMemory(ctxt, "New Doc failed");
+ 				return;
+ 			    }
+-			    ctxt->myDoc->properties = XML_DOC_INTERNAL;
++			    XML_DOC_SET_PROPERTIES(ctxt->myDoc, XML_DOC_INTERNAL);
+ 			}
+ 
+ 			if (ctxt->myDoc->intSubset == NULL)
+@@ -6953,7 +6953,7 @@ xmlParseExternalSubset(xmlParserCtxtPtr ctxt, const xmlChar *ExternalID,
+ 	    xmlErrMemory(ctxt, "New Doc failed");
+ 	    return;
+ 	}
+-	ctxt->myDoc->properties = XML_DOC_INTERNAL;
++	XML_DOC_SET_PROPERTIES(ctxt->myDoc, XML_DOC_INTERNAL);
+     }
+     if ((ctxt->myDoc != NULL) && (ctxt->myDoc->intSubset == NULL))
+         xmlCreateIntSubset(ctxt->myDoc, NULL, ExternalID, SystemID);
+@@ -7335,7 +7335,7 @@ xmlParseReference(xmlParserCtxtPtr ctxt) {
+ 			    (nw != NULL) &&
+ 			    (nw->type == XML_ELEMENT_NODE) &&
+ 			    (nw->children == NULL))
+-			    nw->extra = 1;
++			    XML_NODE_SET_EXTRA(nw, 1);
+ 
+ 			break;
+ 		    }
+diff --git a/runxmlconf.c b/runxmlconf.c
+index cef20f48..e233eaf8 100644
+--- a/runxmlconf.c
++++ b/runxmlconf.c
+@@ -197,7 +197,7 @@ xmlconfTestInvalid(const char *id, const char *filename, int options) {
+ 	         id, filename);
+     } else {
+     /* invalidity should be reported both in the context and in the document */
+-        if ((ctxt->valid != 0) || (doc->properties & XML_DOC_DTDVALID)) {
++        if ((ctxt->valid != 0) || (XML_DOC_GET_PROPERTIES(doc) & XML_DOC_DTDVALID)) {
+ 	    test_log("test %s : %s failed to detect invalid document\n",
+ 		     id, filename);
+ 	    nb_errors++;
+@@ -229,7 +229,7 @@ xmlconfTestValid(const char *id, const char *filename, int options) {
+ 	ret = 0;
+     } else {
+     /* validity should be reported both in the context and in the document */
+-        if ((ctxt->valid == 0) || ((doc->properties & XML_DOC_DTDVALID) == 0)) {
++        if ((ctxt->valid == 0) || ((XML_DOC_GET_PROPERTIES(doc) & XML_DOC_DTDVALID) == 0)) {
+ 	    test_log("test %s : %s failed to validate a valid document\n",
+ 		     id, filename);
+ 	    nb_errors++;
+diff --git a/tree.c b/tree.c
+index 86a8da79..f701baa6 100644
+--- a/tree.c
++++ b/tree.c
+@@ -1186,7 +1186,7 @@ xmlNewDoc(const xmlChar *version) {
+     cur->compression = -1; /* not initialized */
+     cur->doc = cur;
+     cur->parseFlags = 0;
+-    cur->properties = XML_DOC_USERBUILT;
++    XML_DOC_SET_PROPERTIES(cur, XML_DOC_USERBUILT);
+     /*
+      * The in memory encoding is always UTF8
+      * This field will never change and would
+@@ -2091,7 +2091,7 @@ xmlFreeProp(xmlAttrPtr cur) {
+ 	xmlDeregisterNodeDefaultValue((xmlNodePtr)cur);
+ 
+     /* Check for ID removal -> leading to invalid references ! */
+-    if ((cur->doc != NULL) && (cur->atype == XML_ATTRIBUTE_ID)) {
++    if ((cur->doc != NULL) && (XML_ATTR_GET_ATYPE(cur) == XML_ATTRIBUTE_ID)) {
+ 	    xmlRemoveID(cur->doc, cur);
+     }
+     if (cur->children != NULL) xmlFreeNodeList(cur->children);
+@@ -2810,7 +2810,7 @@ xmlSetTreeDoc(xmlNodePtr tree, xmlDocPtr doc) {
+ 	if(tree->type == XML_ELEMENT_NODE) {
+ 	    prop = tree->properties;
+ 	    while (prop != NULL) {
+-                if (prop->atype == XML_ATTRIBUTE_ID) {
++                if (XML_ATTR_GET_ATYPE(prop) == XML_ATTRIBUTE_ID) {
+                     xmlRemoveID(tree->doc, prop);
+                 }
+ 
+@@ -6882,9 +6882,9 @@ xmlSetNsProp(xmlNodePtr node, xmlNsPtr ns, const xmlChar *name,
+ 	/*
+ 	* Modify the attribute's value.
+ 	*/
+-	if (prop->atype == XML_ATTRIBUTE_ID) {
++	if (XML_ATTR_GET_ATYPE(prop) == XML_ATTRIBUTE_ID) {
+ 	    xmlRemoveID(node->doc, prop);
+-	    prop->atype = XML_ATTRIBUTE_ID;
++	    XML_ATTR_SET_ATYPE(prop, XML_ATTRIBUTE_ID);
+ 	}
+ 	if (prop->children != NULL)
+ 	    xmlFreeNodeList(prop->children);
+@@ -6910,7 +6910,7 @@ xmlSetNsProp(xmlNodePtr node, xmlNsPtr ns, const xmlChar *name,
+ 		tmp = tmp->next;
+ 	    }
+ 	}
+-	if (prop->atype == XML_ATTRIBUTE_ID)
++	if (XML_ATTR_GET_ATYPE(prop) == XML_ATTRIBUTE_ID)
+ 	    xmlAddID(NULL, node->doc, value, prop);
+ 	return(prop);
+     }
+@@ -9200,7 +9200,7 @@ ns_end:
+ 		if (cur->type == XML_ELEMENT_NODE) {
+ 		    cur->psvi = NULL;
+ 		    cur->line = 0;
+-		    cur->extra = 0;
++		    XML_NODE_CLEAR_EXTRA(cur);
+ 		    /*
+ 		    * Walk attributes.
+ 		    */
+@@ -9216,11 +9216,11 @@ ns_end:
+ 		    * Attributes.
+ 		    */
+ 		    if ((sourceDoc != NULL) &&
+-			(((xmlAttrPtr) cur)->atype == XML_ATTRIBUTE_ID))
++			(XML_ATTR_GET_ATYPE((xmlAttrPtr) cur) == XML_ATTRIBUTE_ID))
+ 		    {
+ 			xmlRemoveID(sourceDoc, (xmlAttrPtr) cur);
+ 		    }
+-		    ((xmlAttrPtr) cur)->atype = 0;
++		    XML_ATTR_CLEAR_ATYPE((xmlAttrPtr) cur);
+ 		    ((xmlAttrPtr) cur)->psvi = NULL;
+ 		}
+ 		break;
+@@ -9940,7 +9940,7 @@ xmlDOMWrapAdoptAttr(xmlDOMWrapCtxtPtr ctxt,
+     }
+ 
+     XML_TREE_ADOPT_STR(attr->name);
+-    attr->atype = 0;
++    XML_ATTR_CLEAR_ATYPE(attr);
+     attr->psvi = NULL;
+     /*
+     * Walk content.
+diff --git a/valid.c b/valid.c
+index a64b96be..ff293750 100644
+--- a/valid.c
++++ b/valid.c
+@@ -1856,7 +1856,7 @@ xmlScanIDAttributeDecl(xmlValidCtxtPtr ctxt, xmlElementPtr elem, int err) {
+     if (elem == NULL) return(0);
+     cur = elem->attributes;
+     while (cur != NULL) {
+-        if (cur->atype == XML_ATTRIBUTE_ID) {
++        if (XML_ATTR_GET_ATYPE(cur) == XML_ATTRIBUTE_ID) {
+ 	    ret ++;
+ 	    if ((ret > 1) && (err))
+ 		xmlErrValidNode(ctxt, (xmlNodePtr) elem, XML_DTD_MULTIPLE_ID,
+@@ -2224,7 +2224,7 @@ xmlDumpAttributeDecl(xmlBufferPtr buf, xmlAttributePtr attr) {
+ 	xmlBufferWriteChar(buf, ":");
+     }
+     xmlBufferWriteCHAR(buf, attr->name);
+-    switch (attr->atype) {
++    switch (XML_ATTR_GET_ATYPE(attr)) {
+ 	case XML_ATTRIBUTE_CDATA:
+ 	    xmlBufferWriteChar(buf, " CDATA");
+ 	    break;
+@@ -2649,7 +2649,7 @@ xmlAddID(xmlValidCtxtPtr ctxt, xmlDocPtr doc, const xmlChar *value,
+ 	return(NULL);
+     }
+     if (attr != NULL)
+-	attr->atype = XML_ATTRIBUTE_ID;
++	XML_ATTR_SET_ATYPE(attr, XML_ATTRIBUTE_ID);
+     return(ret);
+ }
+ 
+@@ -2723,7 +2723,7 @@ xmlIsID(xmlDocPtr doc, xmlNodePtr elem, xmlAttrPtr attr) {
+ 	if ((fullelemname != felem) && (fullelemname != elem->name))
+ 	    xmlFree(fullelemname);
+ 
+-        if ((attrDecl != NULL) && (attrDecl->atype == XML_ATTRIBUTE_ID))
++        if ((attrDecl != NULL) && (XML_ATTR_GET_ATYPE(attrDecl) == XML_ATTRIBUTE_ID))
+ 	    return(1);
+     }
+     return(0);
+@@ -2763,7 +2763,7 @@ xmlRemoveID(xmlDocPtr doc, xmlAttrPtr attr) {
+ 
+     xmlHashRemoveEntry(table, ID, (xmlHashDeallocator) xmlFreeID);
+     xmlFree(ID);
+-    attr->atype = 0;
++    XML_ATTR_CLEAR_ATYPE(attr);
+     return(0);
+ }
+ 
+@@ -3041,8 +3041,8 @@ xmlIsRef(xmlDocPtr doc, xmlNodePtr elem, xmlAttrPtr attr) {
+ 		                         elem->name, attr->name);
+ 
+ 	if ((attrDecl != NULL) &&
+-	    (attrDecl->atype == XML_ATTRIBUTE_IDREF ||
+-	     attrDecl->atype == XML_ATTRIBUTE_IDREFS))
++	    (XML_ATTR_GET_ATYPE(attrDecl) == XML_ATTRIBUTE_IDREF ||
++	     XML_ATTR_GET_ATYPE(attrDecl) == XML_ATTRIBUTE_IDREFS))
+ 	return(1);
+     }
+     return(0);
+@@ -3417,7 +3417,7 @@ xmlIsMixedElement(xmlDocPtr doc, const xmlChar *name) {
+ 
+ static int
+ xmlIsDocNameStartChar(xmlDocPtr doc, int c) {
+-    if ((doc == NULL) || (doc->properties & XML_DOC_OLD10) == 0) {
++    if ((doc == NULL) || (XML_DOC_GET_PROPERTIES(doc) & XML_DOC_OLD10) == 0) {
+         /*
+ 	 * Use the new checks of production [4] [4a] amd [5] of the
+ 	 * Update 5 of XML-1.0
+@@ -3447,7 +3447,7 @@ xmlIsDocNameStartChar(xmlDocPtr doc, int c) {
+ 
+ static int
+ xmlIsDocNameChar(xmlDocPtr doc, int c) {
+-    if ((doc == NULL) || (doc->properties & XML_DOC_OLD10) == 0) {
++    if ((doc == NULL) || (XML_DOC_GET_PROPERTIES(doc) & XML_DOC_OLD10) == 0) {
+         /*
+ 	 * Use the new checks of production [4] [4a] amd [5] of the
+ 	 * Update 5 of XML-1.0
+@@ -3998,7 +3998,7 @@ xmlValidCtxtNormalizeAttributeValue(xmlValidCtxtPtr ctxt, xmlDocPtr doc,
+ 
+     if (attrDecl == NULL)
+ 	return(NULL);
+-    if (attrDecl->atype == XML_ATTRIBUTE_CDATA)
++    if (XML_ATTR_GET_ATYPE(attrDecl) == XML_ATTRIBUTE_CDATA)
+ 	return(NULL);
+ 
+     ret = xmlStrdup(value);
+@@ -4073,7 +4073,7 @@ xmlValidNormalizeAttributeValue(xmlDocPtr doc, xmlNodePtr elem,
+ 
+     if (attrDecl == NULL)
+ 	return(NULL);
+-    if (attrDecl->atype == XML_ATTRIBUTE_CDATA)
++    if (XML_ATTR_GET_ATYPE(attrDecl) == XML_ATTRIBUTE_CDATA)
+ 	return(NULL);
+ 
+     ret = xmlStrdup(value);
+@@ -4098,7 +4098,7 @@ xmlValidNormalizeAttributeValue(xmlDocPtr doc, xmlNodePtr elem,
+ static void
+ xmlValidateAttributeIdCallback(xmlAttributePtr attr, int *count,
+ 	                       const xmlChar* name ATTRIBUTE_UNUSED) {
+-    if (attr->atype == XML_ATTRIBUTE_ID) (*count)++;
++    if (XML_ATTR_GET_ATYPE(attr) == XML_ATTRIBUTE_ID) (*count)++;
+ }
+ 
+ /**
+@@ -4130,7 +4130,7 @@ xmlValidateAttributeDecl(xmlValidCtxtPtr ctxt, xmlDocPtr doc,
+     /* Attribute Default Legal */
+     /* Enumeration */
+     if (attr->defaultValue != NULL) {
+-	val = xmlValidateAttributeValueInternal(doc, attr->atype,
++	val = xmlValidateAttributeValueInternal(doc, XML_ATTR_GET_ATYPE(attr),
+ 	                                        attr->defaultValue);
+ 	if (val == 0) {
+ 	    xmlErrValidNode(ctxt, (xmlNodePtr) attr, XML_DTD_ATTRIBUTE_DEFAULT,
+@@ -4141,7 +4141,7 @@ xmlValidateAttributeDecl(xmlValidCtxtPtr ctxt, xmlDocPtr doc,
+     }
+ 
+     /* ID Attribute Default */
+-    if ((attr->atype == XML_ATTRIBUTE_ID)&&
++    if ((XML_ATTR_GET_ATYPE(attr) == XML_ATTRIBUTE_ID)&&
+         (attr->def != XML_ATTRIBUTE_IMPLIED) &&
+ 	(attr->def != XML_ATTRIBUTE_REQUIRED)) {
+ 	xmlErrValidNode(ctxt, (xmlNodePtr) attr, XML_DTD_ID_FIXED,
+@@ -4151,7 +4151,7 @@ xmlValidateAttributeDecl(xmlValidCtxtPtr ctxt, xmlDocPtr doc,
+     }
+ 
+     /* One ID per Element Type */
+-    if (attr->atype == XML_ATTRIBUTE_ID) {
++    if (XML_ATTR_GET_ATYPE(attr) == XML_ATTRIBUTE_ID) {
+         int nbId;
+ 
+ 	/* the trick is that we parse DtD as their own internal subset */
+@@ -4410,9 +4410,9 @@ xmlValidateOneAttribute(xmlValidCtxtPtr ctxt, xmlDocPtr doc,
+ 	       attr->name, elem->name, NULL);
+ 	return(0);
+     }
+-    attr->atype = attrDecl->atype;
++    XML_ATTR_SET_ATYPE(attr, attrDecl->atype);
+ 
+-    val = xmlValidateAttributeValueInternal(doc, attrDecl->atype, value);
++    val = xmlValidateAttributeValueInternal(doc, XML_ATTR_GET_ATYPE(attrDecl), value);
+     if (val == 0) {
+ 	    xmlErrValidNode(ctxt, elem, XML_DTD_ATTRIBUTE_VALUE,
+ 	   "Syntax of value for attribute %s of %s is not valid\n",
+@@ -4431,19 +4431,19 @@ xmlValidateOneAttribute(xmlValidCtxtPtr ctxt, xmlDocPtr doc,
+     }
+ 
+     /* Validity Constraint: ID uniqueness */
+-    if (attrDecl->atype == XML_ATTRIBUTE_ID) {
++    if (XML_ATTR_GET_ATYPE(attrDecl) == XML_ATTRIBUTE_ID) {
+         if (xmlAddID(ctxt, doc, value, attr) == NULL)
+ 	    ret = 0;
+     }
+ 
+-    if ((attrDecl->atype == XML_ATTRIBUTE_IDREF) ||
+-	(attrDecl->atype == XML_ATTRIBUTE_IDREFS)) {
++    if ((XML_ATTR_GET_ATYPE(attrDecl) == XML_ATTRIBUTE_IDREF) ||
++	(XML_ATTR_GET_ATYPE(attrDecl) == XML_ATTRIBUTE_IDREFS)) {
+         if (xmlAddRef(ctxt, doc, value, attr) == NULL)
+ 	    ret = 0;
+     }
+ 
+     /* Validity Constraint: Notation Attributes */
+-    if (attrDecl->atype == XML_ATTRIBUTE_NOTATION) {
++    if (XML_ATTR_GET_ATYPE(attrDecl) == XML_ATTRIBUTE_NOTATION) {
+         xmlEnumerationPtr tree = attrDecl->tree;
+         xmlNotationPtr nota;
+ 
+@@ -4473,7 +4473,7 @@ xmlValidateOneAttribute(xmlValidCtxtPtr ctxt, xmlDocPtr doc,
+     }
+ 
+     /* Validity Constraint: Enumeration */
+-    if (attrDecl->atype == XML_ATTRIBUTE_ENUMERATION) {
++    if (XML_ATTR_GET_ATYPE(attrDecl) == XML_ATTRIBUTE_ENUMERATION) {
+         xmlEnumerationPtr tree = attrDecl->tree;
+ 	while (tree != NULL) {
+ 	    if (xmlStrEqual(tree->name, value)) break;
+@@ -4498,7 +4498,7 @@ xmlValidateOneAttribute(xmlValidCtxtPtr ctxt, xmlDocPtr doc,
+ 
+     /* Extra check for the attribute value */
+     ret &= xmlValidateAttributeValue2(ctxt, doc, attr->name,
+-				      attrDecl->atype, value);
++				      XML_ATTR_GET_ATYPE(attrDecl), value);
+ 
+     return(ret);
+ }
+@@ -4597,7 +4597,7 @@ xmlNodePtr elem, const xmlChar *prefix, xmlNsPtr ns, const xmlChar *value) {
+ 	return(0);
+     }
+ 
+-    val = xmlValidateAttributeValueInternal(doc, attrDecl->atype, value);
++    val = xmlValidateAttributeValueInternal(doc, XML_ATTR_GET_ATYPE(attrDecl), value);
+     if (val == 0) {
+ 	if (ns->prefix != NULL) {
+ 	    xmlErrValidNode(ctxt, elem, XML_DTD_INVALID_DEFAULT,
+@@ -4647,7 +4647,7 @@ xmlNodePtr elem, const xmlChar *prefix, xmlNsPtr ns, const xmlChar *value) {
+ #endif
+ 
+     /* Validity Constraint: Notation Attributes */
+-    if (attrDecl->atype == XML_ATTRIBUTE_NOTATION) {
++    if (XML_ATTR_GET_ATYPE(attrDecl) == XML_ATTRIBUTE_NOTATION) {
+         xmlEnumerationPtr tree = attrDecl->tree;
+         xmlNotationPtr nota;
+ 
+@@ -4689,7 +4689,7 @@ xmlNodePtr elem, const xmlChar *prefix, xmlNsPtr ns, const xmlChar *value) {
+     }
+ 
+     /* Validity Constraint: Enumeration */
+-    if (attrDecl->atype == XML_ATTRIBUTE_ENUMERATION) {
++    if (XML_ATTR_GET_ATYPE(attrDecl) == XML_ATTRIBUTE_ENUMERATION) {
+         xmlEnumerationPtr tree = attrDecl->tree;
+ 	while (tree != NULL) {
+ 	    if (xmlStrEqual(tree->name, value)) break;
+@@ -4727,10 +4727,10 @@ xmlNodePtr elem, const xmlChar *prefix, xmlNsPtr ns, const xmlChar *value) {
+     /* Extra check for the attribute value */
+     if (ns->prefix != NULL) {
+ 	ret &= xmlValidateAttributeValue2(ctxt, doc, ns->prefix,
+-					  attrDecl->atype, value);
++					  XML_ATTR_GET_ATYPE(attrDecl), value);
+     } else {
+ 	ret &= xmlValidateAttributeValue2(ctxt, doc, BAD_CAST "xmlns",
+-					  attrDecl->atype, value);
++					  XML_ATTR_GET_ATYPE(attrDecl), value);
+     }
+ 
+     return(ret);
+@@ -6483,7 +6483,7 @@ xmlValidateRef(xmlRefPtr ref, xmlValidCtxtPtr ctxt,
+ 	    while (IS_BLANK_CH(*cur)) cur++;
+ 	}
+ 	xmlFree(dup);
+-    } else if (attr->atype == XML_ATTRIBUTE_IDREF) {
++    } else if (XML_ATTR_GET_ATYPE(attr) == XML_ATTRIBUTE_IDREF) {
+ 	id = xmlGetID(ctxt->doc, name);
+ 	if (id == NULL) {
+ 	    xmlErrValidNode(ctxt, attr->parent, XML_DTD_UNKNOWN_ID,
+@@ -6491,7 +6491,7 @@ xmlValidateRef(xmlRefPtr ref, xmlValidCtxtPtr ctxt,
+ 		   attr->name, name, NULL);
+ 	    ctxt->valid = 0;
+ 	}
+-    } else if (attr->atype == XML_ATTRIBUTE_IDREFS) {
++    } else if (XML_ATTR_GET_ATYPE(attr) == XML_ATTRIBUTE_IDREFS) {
+ 	xmlChar *dup, *str = NULL, *cur, save;
+ 
+ 	dup = xmlStrdup(name);
+@@ -6686,7 +6686,7 @@ xmlValidateAttributeCallback(xmlAttributePtr cur, xmlValidCtxtPtr ctxt,
+ 
+     if (cur == NULL)
+ 	return;
+-    switch (cur->atype) {
++    switch (XML_ATTR_GET_ATYPE(cur)) {
+ 	case XML_ATTRIBUTE_CDATA:
+ 	case XML_ATTRIBUTE_ID:
+ 	case XML_ATTRIBUTE_IDREF	:
+@@ -6701,7 +6701,7 @@ xmlValidateAttributeCallback(xmlAttributePtr cur, xmlValidCtxtPtr ctxt,
+ 	    if (cur->defaultValue != NULL) {
+ 
+ 		ret = xmlValidateAttributeValue2(ctxt, ctxt->doc, cur->name,
+-			                         cur->atype, cur->defaultValue);
++			                         XML_ATTR_GET_ATYPE(cur), cur->defaultValue);
+ 		if ((ret == 0) && (ctxt->valid == 1))
+ 		    ctxt->valid = 0;
+ 	    }
+@@ -6709,14 +6709,14 @@ xmlValidateAttributeCallback(xmlAttributePtr cur, xmlValidCtxtPtr ctxt,
+ 		xmlEnumerationPtr tree = cur->tree;
+ 		while (tree != NULL) {
+ 		    ret = xmlValidateAttributeValue2(ctxt, ctxt->doc,
+-				    cur->name, cur->atype, tree->name);
++				    cur->name, XML_ATTR_GET_ATYPE(cur), tree->name);
+ 		    if ((ret == 0) && (ctxt->valid == 1))
+ 			ctxt->valid = 0;
+ 		    tree = tree->next;
+ 		}
+ 	    }
+     }
+-    if (cur->atype == XML_ATTRIBUTE_NOTATION) {
++    if (XML_ATTR_GET_ATYPE(cur) == XML_ATTRIBUTE_NOTATION) {
+ 	doc = cur->doc;
+ 	if (cur->elem == NULL) {
+ 	    xmlErrValid(ctxt, XML_ERR_INTERNAL_ERROR,
+diff --git a/xmlreader.c b/xmlreader.c
+index 34c4c6bc..1c584311 100644
+--- a/xmlreader.c
++++ b/xmlreader.c
+@@ -669,7 +669,7 @@ xmlTextReaderStartElement(void *ctx, const xmlChar *fullname,
+ 	if ((ctxt->node != NULL) && (ctxt->input != NULL) &&
+ 	    (ctxt->input->cur != NULL) && (ctxt->input->cur[0] == '/') &&
+ 	    (ctxt->input->cur[1] == '>'))
+-	    ctxt->node->extra = NODE_IS_EMPTY;
++	    XML_NODE_SET_EXTRA(ctxt->node, NODE_IS_EMPTY);
+     }
+     if (reader != NULL)
+ 	reader->state = XML_TEXTREADER_ELEMENT;
+@@ -734,7 +734,7 @@ xmlTextReaderStartElementNs(void *ctx,
+ 	if ((ctxt->node != NULL) && (ctxt->input != NULL) &&
+ 	    (ctxt->input->cur != NULL) && (ctxt->input->cur[0] == '/') &&
+ 	    (ctxt->input->cur[1] == '>'))
+-	    ctxt->node->extra = NODE_IS_EMPTY;
++	    XML_NODE_SET_EXTRA(ctxt->node, NODE_IS_EMPTY);
+     }
+     if (reader != NULL)
+ 	reader->state = XML_TEXTREADER_ELEMENT;
+@@ -1143,7 +1143,7 @@ xmlTextReaderValidateEntity(xmlTextReaderPtr reader) {
+ 	        xmlNodePtr tmp;
+ 		if (reader->entNr == 0) {
+ 		    while ((tmp = node->last) != NULL) {
+-			if ((tmp->extra & NODE_IS_PRESERVED) == 0) {
++			if ((XML_NODE_GET_EXTRA(tmp) & NODE_IS_PRESERVED) == 0) {
+ 			    xmlUnlinkNode(tmp);
+ 			    xmlTextReaderFreeNode(reader, tmp);
+ 			} else
+@@ -1394,7 +1394,7 @@ get_next_node:
+ 	if ((oldstate == XML_TEXTREADER_ELEMENT) &&
+             (reader->node->type == XML_ELEMENT_NODE) &&
+ 	    (reader->node->children == NULL) &&
+-	    ((reader->node->extra & NODE_IS_EMPTY) == 0)
++	    ((XML_NODE_GET_EXTRA(reader->node) & NODE_IS_EMPTY) == 0)
+ #ifdef LIBXML_XINCLUDE_ENABLED
+ 	    && (reader->in_xinclude <= 0)
+ #endif
+@@ -1408,7 +1408,7 @@ get_next_node:
+ 	    xmlTextReaderValidatePop(reader);
+ #endif /* LIBXML_REGEXP_ENABLED */
+         if ((reader->preserves > 0) &&
+-	    (reader->node->extra & NODE_IS_SPRESERVED))
++	    (XML_NODE_GET_EXTRA(reader->node) & NODE_IS_SPRESERVED))
+ 	    reader->preserves--;
+ 	reader->node = reader->node->next;
+ 	reader->state = XML_TEXTREADER_ELEMENT;
+@@ -1424,7 +1424,7 @@ get_next_node:
+ 	    (reader->node->prev != NULL) &&
+             (reader->node->prev->type != XML_DTD_NODE)) {
+ 	    xmlNodePtr tmp = reader->node->prev;
+-	    if ((tmp->extra & NODE_IS_PRESERVED) == 0) {
++	    if ((XML_NODE_GET_EXTRA(tmp) & NODE_IS_PRESERVED) == 0) {
+ 		xmlUnlinkNode(tmp);
+ 		xmlTextReaderFreeNode(reader, tmp);
+ 	    }
+@@ -1435,7 +1435,7 @@ get_next_node:
+     if ((oldstate == XML_TEXTREADER_ELEMENT) &&
+ 	(reader->node->type == XML_ELEMENT_NODE) &&
+ 	(reader->node->children == NULL) &&
+-	((reader->node->extra & NODE_IS_EMPTY) == 0)) {;
++	((XML_NODE_GET_EXTRA(reader->node) & NODE_IS_EMPTY) == 0)) {;
+ 	reader->state = XML_TEXTREADER_END;
+ 	goto node_found;
+     }
+@@ -1444,7 +1444,7 @@ get_next_node:
+ 	xmlTextReaderValidatePop(reader);
+ #endif /* LIBXML_REGEXP_ENABLED */
+     if ((reader->preserves > 0) &&
+-	(reader->node->extra & NODE_IS_SPRESERVED))
++	(XML_NODE_GET_EXTRA(reader->node) & NODE_IS_SPRESERVED))
+ 	reader->preserves--;
+     reader->node = reader->node->parent;
+     if ((reader->node == NULL) ||
+@@ -1471,7 +1471,7 @@ get_next_node:
+ #endif
+ 	    (reader->entNr == 0) &&
+ 	    (oldnode->type != XML_DTD_NODE) &&
+-	    ((oldnode->extra & NODE_IS_PRESERVED) == 0)) {
++	    ((XML_NODE_GET_EXTRA(oldnode) & NODE_IS_PRESERVED) == 0)) {
+ 	    xmlUnlinkNode(oldnode);
+ 	    xmlTextReaderFreeNode(reader, oldnode);
+ 	}
+@@ -1484,7 +1484,7 @@ get_next_node:
+ #endif
+ 	(reader->entNr == 0) &&
+         (reader->node->last != NULL) &&
+-        ((reader->node->last->extra & NODE_IS_PRESERVED) == 0)) {
++        ((XML_NODE_GET_EXTRA(reader->node->last) & NODE_IS_PRESERVED) == 0)) {
+ 	xmlNodePtr tmp = reader->node->last;
+ 	xmlUnlinkNode(tmp);
+ 	xmlTextReaderFreeNode(reader, tmp);
+@@ -1674,7 +1674,7 @@ xmlTextReaderNext(xmlTextReaderPtr reader) {
+         return(xmlTextReaderRead(reader));
+     if (reader->state == XML_TEXTREADER_END || reader->state == XML_TEXTREADER_BACKTRACK)
+         return(xmlTextReaderRead(reader));
+-    if (cur->extra & NODE_IS_EMPTY)
++    if (XML_NODE_GET_EXTRA(cur) & NODE_IS_EMPTY)
+         return(xmlTextReaderRead(reader));
+     do {
+         ret = xmlTextReaderRead(reader);
+@@ -3093,7 +3093,7 @@ xmlTextReaderIsEmptyElement(xmlTextReaderPtr reader) {
+     if (reader->in_xinclude > 0)
+         return(1);
+ #endif
+-    return((reader->node->extra & NODE_IS_EMPTY) != 0);
++    return((XML_NODE_GET_EXTRA(reader->node) & NODE_IS_EMPTY) != 0);
+ }
+ 
+ /**
+@@ -3957,15 +3957,15 @@ xmlTextReaderPreserve(xmlTextReaderPtr reader) {
+         return(NULL);
+ 
+     if ((cur->type != XML_DOCUMENT_NODE) && (cur->type != XML_DTD_NODE)) {
+-	cur->extra |= NODE_IS_PRESERVED;
+-	cur->extra |= NODE_IS_SPRESERVED;
++	XML_NODE_ADD_EXTRA(cur, NODE_IS_PRESERVED);
++	XML_NODE_ADD_EXTRA(cur, NODE_IS_SPRESERVED);
+     }
+     reader->preserves++;
+ 
+     parent = cur->parent;;
+     while (parent != NULL) {
+         if (parent->type == XML_ELEMENT_NODE)
+-	    parent->extra |= NODE_IS_PRESERVED;
++	    XML_NODE_ADD_EXTRA(parent, NODE_IS_PRESERVED);
+ 	parent = parent->parent;
+     }
+     return(cur);
+diff --git a/xmlschemas.c b/xmlschemas.c
+index 05a12e0b..5d61deb2 100644
+--- a/xmlschemas.c
++++ b/xmlschemas.c
+@@ -5969,7 +5969,7 @@ xmlSchemaPValAttrNodeID(xmlSchemaParserCtxtPtr ctxt, xmlAttrPtr attr)
+ 	/*
+ 	* NOTE: the IDness might have already be declared in the DTD
+ 	*/
+-	if (attr->atype != XML_ATTRIBUTE_ID) {
++	if (XML_ATTR_GET_ATYPE(attr) != XML_ATTRIBUTE_ID) {
+ 	    xmlIDPtr res;
+ 	    xmlChar *strip;
+ 
+@@ -5992,7 +5992,7 @@ xmlSchemaPValAttrNodeID(xmlSchemaParserCtxtPtr ctxt, xmlAttrPtr attr)
+ 		    NULL, NULL, "Duplicate value '%s' of simple "
+ 		    "type 'xs:ID'", value, NULL);
+ 	    } else
+-		attr->atype = XML_ATTRIBUTE_ID;
++		XML_ATTR_SET_ATYPE(attr, XML_ATTRIBUTE_ID);
+ 	}
+     } else if (ret > 0) {
+ 	ret = XML_SCHEMAP_S4S_ATTR_INVALID_VALUE;
+diff --git a/xmlschemastypes.c b/xmlschemastypes.c
+index c6c93659..a85475db 100644
+--- a/xmlschemastypes.c
++++ b/xmlschemastypes.c
+@@ -2760,7 +2760,7 @@ xmlSchemaValAtomicType(xmlSchemaTypePtr type, const xmlChar * value,
+                 /*
+                  * NOTE: the IDness might have already be declared in the DTD
+                  */
+-                if (attr->atype != XML_ATTRIBUTE_ID) {
++                if (XML_ATTR_GET_ATYPE(attr) != XML_ATTRIBUTE_ID) {
+                     xmlIDPtr res;
+                     xmlChar *strip;
+ 
+@@ -2773,7 +2773,7 @@ xmlSchemaValAtomicType(xmlSchemaTypePtr type, const xmlChar * value,
+                     if (res == NULL) {
+                         ret = 2;
+                     } else {
+-                        attr->atype = XML_ATTRIBUTE_ID;
++                        XML_ATTR_SET_ATYPE(attr, XML_ATTRIBUTE_ID);
+                     }
+                 }
+             }
+@@ -2798,7 +2798,7 @@ xmlSchemaValAtomicType(xmlSchemaTypePtr type, const xmlChar * value,
+                     xmlFree(strip);
+                 } else
+                     xmlAddRef(NULL, node->doc, value, attr);
+-                attr->atype = XML_ATTRIBUTE_IDREF;
++                XML_ATTR_SET_ATYPE(attr, XML_ATTRIBUTE_IDREF);
+             }
+             goto done;
+         case XML_SCHEMAS_IDREFS:
+@@ -2812,7 +2812,7 @@ xmlSchemaValAtomicType(xmlSchemaTypePtr type, const xmlChar * value,
+                 (node->type == XML_ATTRIBUTE_NODE)) {
+                 xmlAttrPtr attr = (xmlAttrPtr) node;
+ 
+-                attr->atype = XML_ATTRIBUTE_IDREFS;
++                XML_ATTR_SET_ATYPE(attr, XML_ATTRIBUTE_IDREFS);
+             }
+             goto done;
+         case XML_SCHEMAS_ENTITY:{
+@@ -2843,7 +2843,7 @@ xmlSchemaValAtomicType(xmlSchemaTypePtr type, const xmlChar * value,
+                     (node->type == XML_ATTRIBUTE_NODE)) {
+                     xmlAttrPtr attr = (xmlAttrPtr) node;
+ 
+-                    attr->atype = XML_ATTRIBUTE_ENTITY;
++                    XML_ATTR_SET_ATYPE(attr, XML_ATTRIBUTE_ENTITY);
+                 }
+                 goto done;
+             }
+@@ -2860,7 +2860,7 @@ xmlSchemaValAtomicType(xmlSchemaTypePtr type, const xmlChar * value,
+                 (node->type == XML_ATTRIBUTE_NODE)) {
+                 xmlAttrPtr attr = (xmlAttrPtr) node;
+ 
+-                attr->atype = XML_ATTRIBUTE_ENTITIES;
++                XML_ATTR_SET_ATYPE(attr, XML_ATTRIBUTE_ENTITIES);
+             }
+             goto done;
+         case XML_SCHEMAS_NOTATION:{
+-- 
+
+From 384cc7c182fc00c6d5e2ab4b5e3671b2e3f93c84 Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Sun, 6 Apr 2025 12:41:11 +0200
+Subject: [PATCH] [CVE-2025-32415] schemas: Fix heap buffer overflow in
+ xmlSchemaIDCFillNodeTables
+
+Don't use local variable which could contain a stale value.
+
+Fixes #890.
+---
+ xmlschemas.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/xmlschemas.c b/xmlschemas.c
+index e35c117ef..4bdabd129 100644
+--- a/xmlschemas.c
++++ b/xmlschemas.c
+@@ -23324,7 +23324,7 @@ xmlSchemaIDCFillNodeTables(xmlSchemaValidCtxtPtr vctxt,
+ 			j++;
+ 		    } while (j < nbDupls);
+ 		}
+-		if (nbNodeTable) {
++		if (bind->nbNodes) {
+ 		    j = 0;
+ 		    do {
+ 			if (nbFields == 1) {
+@@ -23375,7 +23375,7 @@ xmlSchemaIDCFillNodeTables(xmlSchemaValidCtxtPtr vctxt,
+ 
+ next_node_table_entry:
+ 			j++;
+-		    } while (j < nbNodeTable);
++		    } while (j < bind->nbNodes);
+ 		}
+ 		/*
+ 		* If everything is fine, then add the IDC target-node to
+-- 
+
+From 497fb24df7bdced5a8548f50b7b282ec73886a51 Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Tue, 12 Mar 2019 16:12:05 +0100
+Subject: [PATCH 01/12] Optional XPath operation limit
+
+Optionally limit the maximum numbers of XPath operations when evaluating
+an expression. Useful to avoid timeouts when fuzzing. The following
+operations count towards the limit:
+
+- XPath operations
+- Location step iterations
+- Union operations
+
+Enabled by setting opLimit to a non-zero value. Note that it's the user's
+responsibility to reset opCount. This allows to enforce the operation
+limit across multiple reuses of an XPath context.
+---
+ include/libxml/xpath.h |  7 +++-
+ xpath.c                | 81 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 87 insertions(+), 1 deletion(-)
+
+diff --git a/include/libxml/xpath.h b/include/libxml/xpath.h
+index d96776c5..d782ab0b 100644
+--- a/include/libxml/xpath.h
++++ b/include/libxml/xpath.h
+@@ -70,7 +70,8 @@ typedef enum {
+     XPATH_INVALID_CHAR_ERROR,
+     XPATH_INVALID_CTXT,
+     XPATH_STACK_ERROR,
+-    XPATH_FORBID_VARIABLE_ERROR
++    XPATH_FORBID_VARIABLE_ERROR,
++    XPATH_OP_LIMIT_EXCEEDED
+ } xmlXPathError;
+ 
+ /*
+@@ -352,6 +353,10 @@ struct _xmlXPathContext {
+ 
+     /* Cache for reusal of XPath objects */
+     void *cache;
++
++    /* Resource limits */
++    unsigned long opLimit;
++    unsigned long opCount;
+ };
+ 
+ /*
+diff --git a/xpath.c b/xpath.c
+index 3fcdc9e1..416b837c 100644
+--- a/xpath.c
++++ b/xpath.c
+@@ -627,6 +627,7 @@ static const char *xmlXPathErrorMessages[] = {
+     "Invalid or incomplete context\n",
+     "Stack usage error\n",
+     "Forbidden variable\n",
++    "Operation limit exceeded\n",
+     "?? Unknown error ??\n"	/* Must be last in the list! */
+ };
+ #define MAXERRNO ((int)(sizeof(xmlXPathErrorMessages) /	\
+@@ -764,6 +765,32 @@ xmlXPatherror(xmlXPathParserContextPtr ctxt, const char *file ATTRIBUTE_UNUSED,
+     xmlXPathErr(ctxt, no);
+ }
+ 
++/**
++ * xmlXPathCheckOpLimit:
++ * @ctxt:  the XPath Parser context
++ * @opCount:  the number of operations to be added
++ *
++ * Adds opCount to the running total of operations and returns -1 if the
++ * operation limit is exceeded. Returns 0 otherwise.
++ */
++static int
++xmlXPathCheckOpLimit(xmlXPathParserContextPtr ctxt, unsigned long opCount) {
++    xmlXPathContextPtr xpctxt = ctxt->context;
++
++    if ((opCount > xpctxt->opLimit) ||
++        (xpctxt->opCount > xpctxt->opLimit - opCount)) {
++        xpctxt->opCount = xpctxt->opLimit;
++        xmlXPathErr(ctxt, XPATH_OP_LIMIT_EXCEEDED);
++        return(-1);
++    }
++
++    xpctxt->opCount += opCount;
++    return(0);
++}
++
++#define OP_LIMIT_EXCEEDED(ctxt, n) \
++    ((ctxt->context->opLimit != 0) && (xmlXPathCheckOpLimit(ctxt, n) < 0))
++
+ /************************************************************************
+  *									*
+  *			Utilities					*
+@@ -12353,6 +12380,9 @@ xmlXPathNodeCollectAndTest(xmlXPathParserContextPtr ctxt,
+ 	cur = NULL;
+ 	hasNsNodes = 0;
+         do {
++            if (OP_LIMIT_EXCEEDED(ctxt, 1))
++                goto error;
++
+             cur = next(ctxt, cur);
+             if (cur == NULL)
+                 break;
+@@ -12756,6 +12786,8 @@ xmlXPathCompOpEvalFirst(xmlXPathParserContextPtr ctxt,
+     xmlXPathObjectPtr arg1, arg2;
+ 
+     CHECK_ERROR0;
++    if (OP_LIMIT_EXCEEDED(ctxt, 1))
++        return(0);
+     comp = ctxt->comp;
+     switch (op->op) {
+         case XPATH_OP_END:
+@@ -12796,6 +12828,17 @@ xmlXPathCompOpEvalFirst(xmlXPathParserContextPtr ctxt,
+ 	        xmlXPathReleaseObject(ctxt->context, arg2);
+                 XP_ERROR0(XPATH_INVALID_TYPE);
+             }
++            if ((ctxt->context->opLimit != 0) &&
++                (((arg1->nodesetval != NULL) &&
++                  (xmlXPathCheckOpLimit(ctxt,
++                                        arg1->nodesetval->nodeNr) < 0)) ||
++                 ((arg2->nodesetval != NULL) &&
++                  (xmlXPathCheckOpLimit(ctxt,
++                                        arg2->nodesetval->nodeNr) < 0)))) {
++	        xmlXPathReleaseObject(ctxt->context, arg1);
++	        xmlXPathReleaseObject(ctxt->context, arg2);
++                return(0);
++            }
+ 
+             arg1->nodesetval = xmlXPathNodeSetMerge(arg1->nodesetval,
+                                                     arg2->nodesetval);
+@@ -12888,6 +12931,8 @@ xmlXPathCompOpEvalLast(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op,
+     int cs;
+ 
+     CHECK_ERROR0;
++    if (OP_LIMIT_EXCEEDED(ctxt, 1))
++        return(0);
+     comp = ctxt->comp;
+     switch (op->op) {
+         case XPATH_OP_END:
+@@ -12935,6 +12980,17 @@ xmlXPathCompOpEvalLast(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op,
+ 	        xmlXPathReleaseObject(ctxt->context, arg2);
+                 XP_ERROR0(XPATH_INVALID_TYPE);
+             }
++            if ((ctxt->context->opLimit != 0) &&
++                (((arg1->nodesetval != NULL) &&
++                  (xmlXPathCheckOpLimit(ctxt,
++                                        arg1->nodesetval->nodeNr) < 0)) ||
++                 ((arg2->nodesetval != NULL) &&
++                  (xmlXPathCheckOpLimit(ctxt,
++                                        arg2->nodesetval->nodeNr) < 0)))) {
++	        xmlXPathReleaseObject(ctxt->context, arg1);
++	        xmlXPathReleaseObject(ctxt->context, arg2);
++                return(0);
++            }
+ 
+             arg1->nodesetval = xmlXPathNodeSetMerge(arg1->nodesetval,
+                                                     arg2->nodesetval);
+@@ -13312,6 +13368,8 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+     int cs;
+ 
+     CHECK_ERROR0;
++    if (OP_LIMIT_EXCEEDED(ctxt, 1))
++        return(0);
+     comp = ctxt->comp;
+     switch (op->op) {
+         case XPATH_OP_END:
+@@ -13469,6 +13527,17 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+ 	        xmlXPathReleaseObject(ctxt->context, arg2);
+                 XP_ERROR0(XPATH_INVALID_TYPE);
+             }
++            if ((ctxt->context->opLimit != 0) &&
++                (((arg1->nodesetval != NULL) &&
++                  (xmlXPathCheckOpLimit(ctxt,
++                                        arg1->nodesetval->nodeNr) < 0)) ||
++                 ((arg2->nodesetval != NULL) &&
++                  (xmlXPathCheckOpLimit(ctxt,
++                                        arg2->nodesetval->nodeNr) < 0)))) {
++	        xmlXPathReleaseObject(ctxt->context, arg1);
++	        xmlXPathReleaseObject(ctxt->context, arg2);
++                return(0);
++            }
+ 
+ 	    if ((arg1->nodesetval == NULL) ||
+ 		((arg2->nodesetval != NULL) &&
+@@ -14200,6 +14269,8 @@ xmlXPathCompOpEvalToBoolean(xmlXPathParserContextPtr ctxt,
+     xmlXPathObjectPtr resObj = NULL;
+ 
+ start:
++    if (OP_LIMIT_EXCEEDED(ctxt, 1))
++        return(0);
+     /* comp = ctxt->comp; */
+     switch (op->op) {
+         case XPATH_OP_END:
+@@ -14399,6 +14470,16 @@ xmlXPathRunStreamEval(xmlXPathContextPtr ctxt, xmlPatternPtr comp,
+     goto scan_children;
+ next_node:
+     do {
++        if (ctxt->opLimit != 0) {
++            if (ctxt->opCount >= ctxt->opLimit) {
++                xmlGenericError(xmlGenericErrorContext,
++                        "XPath operation limit exceeded\n");
++                xmlFreeStreamCtxt(patstream);
++                return(-1);
++            }
++            ctxt->opCount++;
++        }
++
+         nb_nodes++;
+ 
+ 	switch (cur->type) {
+-- 
+2.47.3
+
+
+From f8abfff734d21b3b594892e0df38942a8eb07b84 Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Mon, 18 Mar 2019 11:34:26 +0100
+Subject: [PATCH 02/12] Optional recursion limit when evaluating XPath
+ expressions
+
+Useful to avoid call stack overflows when fuzzing.
+---
+ include/libxml/xpath.h |  5 ++-
+ xpath.c                | 84 +++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 86 insertions(+), 3 deletions(-)
+
+diff --git a/include/libxml/xpath.h b/include/libxml/xpath.h
+index d782ab0b..3d9b1cee 100644
+--- a/include/libxml/xpath.h
++++ b/include/libxml/xpath.h
+@@ -71,7 +71,8 @@ typedef enum {
+     XPATH_INVALID_CTXT,
+     XPATH_STACK_ERROR,
+     XPATH_FORBID_VARIABLE_ERROR,
+-    XPATH_OP_LIMIT_EXCEEDED
++    XPATH_OP_LIMIT_EXCEEDED,
++    XPATH_RECURSION_LIMIT_EXCEEDED
+ } xmlXPathError;
+ 
+ /*
+@@ -357,6 +358,8 @@ struct _xmlXPathContext {
+     /* Resource limits */
+     unsigned long opLimit;
+     unsigned long opCount;
++    int depth;
++    int maxDepth;
+ };
+ 
+ /*
+diff --git a/xpath.c b/xpath.c
+index 416b837c..aaa85446 100644
+--- a/xpath.c
++++ b/xpath.c
+@@ -628,6 +628,7 @@ static const char *xmlXPathErrorMessages[] = {
+     "Stack usage error\n",
+     "Forbidden variable\n",
+     "Operation limit exceeded\n",
++    "Recursion limit exceeded\n",
+     "?? Unknown error ??\n"	/* Must be last in the list! */
+ };
+ #define MAXERRNO ((int)(sizeof(xmlXPathErrorMessages) /	\
+@@ -6187,6 +6188,8 @@ xmlXPathNewContext(xmlDocPtr doc) {
+     ret->contextSize = -1;
+     ret->proximityPosition = -1;
+ 
++    ret->maxDepth = INT_MAX;
++
+ #ifdef XP_DEFAULT_CACHE_ON
+     if (xmlXPathContextSetCache(ret, 1, -1, 0) == -1) {
+ 	xmlXPathFreeContext(ret);
+@@ -12788,9 +12791,13 @@ xmlXPathCompOpEvalFirst(xmlXPathParserContextPtr ctxt,
+     CHECK_ERROR0;
+     if (OP_LIMIT_EXCEEDED(ctxt, 1))
+         return(0);
++    if (ctxt->context->depth >= ctxt->context->maxDepth)
++        XP_ERROR0(XPATH_RECURSION_LIMIT_EXCEEDED);
++    ctxt->context->depth += 1;
+     comp = ctxt->comp;
+     switch (op->op) {
+         case XPATH_OP_END:
++            ctxt->context->depth -= 1;
+             return (0);
+         case XPATH_OP_UNION:
+             total =
+@@ -12847,9 +12854,11 @@ xmlXPathCompOpEvalFirst(xmlXPathParserContextPtr ctxt,
+             /* optimizer */
+ 	    if (total > cur)
+ 		xmlXPathCompSwap(op);
++            ctxt->context->depth -= 1;
+             return (total + cur);
+         case XPATH_OP_ROOT:
+             xmlXPathRoot(ctxt);
++            ctxt->context->depth -= 1;
+             return (0);
+         case XPATH_OP_NODE:
+             if (op->ch1 != -1)
+@@ -12860,6 +12869,7 @@ xmlXPathCompOpEvalFirst(xmlXPathParserContextPtr ctxt,
+ 	    CHECK_ERROR0;
+ 	    valuePush(ctxt, xmlXPathCacheNewNodeSet(ctxt->context,
+ 		ctxt->context->node));
++            ctxt->context->depth -= 1;
+             return (total);
+         case XPATH_OP_RESET:
+             if (op->ch1 != -1)
+@@ -12869,21 +12879,26 @@ xmlXPathCompOpEvalFirst(xmlXPathParserContextPtr ctxt,
+                 total += xmlXPathCompOpEval(ctxt, &comp->steps[op->ch2]);
+ 	    CHECK_ERROR0;
+             ctxt->context->node = NULL;
++            ctxt->context->depth -= 1;
+             return (total);
+         case XPATH_OP_COLLECT:{
+-                if (op->ch1 == -1)
++                if (op->ch1 == -1) {
++                    ctxt->context->depth -= 1;
+                     return (total);
++                }
+ 
+                 total = xmlXPathCompOpEval(ctxt, &comp->steps[op->ch1]);
+ 		CHECK_ERROR0;
+ 
+                 total += xmlXPathNodeCollectAndTest(ctxt, op, first, NULL, 0);
++                ctxt->context->depth -= 1;
+                 return (total);
+             }
+         case XPATH_OP_VALUE:
+             valuePush(ctxt,
+                       xmlXPathCacheObjectCopy(ctxt->context,
+ 			(xmlXPathObjectPtr) op->value4));
++            ctxt->context->depth -= 1;
+             return (0);
+         case XPATH_OP_SORT:
+             if (op->ch1 != -1)
+@@ -12896,15 +12911,21 @@ xmlXPathCompOpEvalFirst(xmlXPathParserContextPtr ctxt,
+                 && (ctxt->value->nodesetval != NULL)
+ 		&& (ctxt->value->nodesetval->nodeNr > 1))
+                 xmlXPathNodeSetSort(ctxt->value->nodesetval);
++            ctxt->context->depth -= 1;
+             return (total);
+ #ifdef XP_OPTIMIZED_FILTER_FIRST
+ 	case XPATH_OP_FILTER:
+                 total += xmlXPathCompOpEvalFilterFirst(ctxt, op, first);
++            ctxt->context->depth -= 1;
+             return (total);
+ #endif
+         default:
++            ctxt->context->depth -= 1;
+             return (xmlXPathCompOpEval(ctxt, op));
+     }
++
++    ctxt->context->depth -= 1;
++    return(total);
+ }
+ 
+ /**
+@@ -12933,9 +12954,13 @@ xmlXPathCompOpEvalLast(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op,
+     CHECK_ERROR0;
+     if (OP_LIMIT_EXCEEDED(ctxt, 1))
+         return(0);
++    if (ctxt->context->depth >= ctxt->context->maxDepth)
++        XP_ERROR0(XPATH_RECURSION_LIMIT_EXCEEDED);
++    ctxt->context->depth += 1;
+     comp = ctxt->comp;
+     switch (op->op) {
+         case XPATH_OP_END:
++            ctxt->context->depth -= 1;
+             return (0);
+         case XPATH_OP_UNION:
+ 	    bakd = ctxt->context->doc;
+@@ -12999,9 +13024,11 @@ xmlXPathCompOpEvalLast(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op,
+             /* optimizer */
+ 	    if (total > cur)
+ 		xmlXPathCompSwap(op);
++            ctxt->context->depth -= 1;
+             return (total + cur);
+         case XPATH_OP_ROOT:
+             xmlXPathRoot(ctxt);
++            ctxt->context->depth -= 1;
+             return (0);
+         case XPATH_OP_NODE:
+             if (op->ch1 != -1)
+@@ -13012,6 +13039,7 @@ xmlXPathCompOpEvalLast(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op,
+ 	    CHECK_ERROR0;
+ 	    valuePush(ctxt, xmlXPathCacheNewNodeSet(ctxt->context,
+ 		ctxt->context->node));
++            ctxt->context->depth -= 1;
+             return (total);
+         case XPATH_OP_RESET:
+             if (op->ch1 != -1)
+@@ -13021,21 +13049,26 @@ xmlXPathCompOpEvalLast(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op,
+                 total += xmlXPathCompOpEval(ctxt, &comp->steps[op->ch2]);
+ 	    CHECK_ERROR0;
+             ctxt->context->node = NULL;
++            ctxt->context->depth -= 1;
+             return (total);
+         case XPATH_OP_COLLECT:{
+-                if (op->ch1 == -1)
++                if (op->ch1 == -1) {
++                    ctxt->context->depth -= 1;
+                     return (0);
++                }
+ 
+                 total += xmlXPathCompOpEval(ctxt, &comp->steps[op->ch1]);
+ 		CHECK_ERROR0;
+ 
+                 total += xmlXPathNodeCollectAndTest(ctxt, op, NULL, last, 0);
++                ctxt->context->depth -= 1;
+                 return (total);
+             }
+         case XPATH_OP_VALUE:
+             valuePush(ctxt,
+                       xmlXPathCacheObjectCopy(ctxt->context,
+ 			(xmlXPathObjectPtr) op->value4));
++            ctxt->context->depth -= 1;
+             return (0);
+         case XPATH_OP_SORT:
+             if (op->ch1 != -1)
+@@ -13048,10 +13081,15 @@ xmlXPathCompOpEvalLast(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op,
+                 && (ctxt->value->nodesetval != NULL)
+ 		&& (ctxt->value->nodesetval->nodeNr > 1))
+                 xmlXPathNodeSetSort(ctxt->value->nodesetval);
++            ctxt->context->depth -= 1;
+             return (total);
+         default:
++            ctxt->context->depth -= 1;
+             return (xmlXPathCompOpEval(ctxt, op));
+     }
++
++    ctxt->context->depth -= 1;
++    return (total);
+ }
+ 
+ #ifdef XP_OPTIMIZED_FILTER_FIRST
+@@ -13370,9 +13408,13 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+     CHECK_ERROR0;
+     if (OP_LIMIT_EXCEEDED(ctxt, 1))
+         return(0);
++    if (ctxt->context->depth >= ctxt->context->maxDepth)
++        XP_ERROR0(XPATH_RECURSION_LIMIT_EXCEEDED);
++    ctxt->context->depth += 1;
+     comp = ctxt->comp;
+     switch (op->op) {
+         case XPATH_OP_END:
++            ctxt->context->depth -= 1;
+             return (0);
+         case XPATH_OP_AND:
+ 	    bakd = ctxt->context->doc;
+@@ -13383,6 +13425,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+ 	    CHECK_ERROR0;
+             xmlXPathBooleanFunction(ctxt, 1);
+             if ((ctxt->value == NULL) || (ctxt->value->boolval == 0))
++                ctxt->context->depth -= 1;
+                 return (total);
+             arg2 = valuePop(ctxt);
+ 	    ctxt->context->doc = bakd;
+@@ -13398,6 +13441,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+             if (ctxt->value != NULL)
+                 ctxt->value->boolval &= arg2->boolval;
+ 	    xmlXPathReleaseObject(ctxt->context, arg2);
++            ctxt->context->depth -= 1;
+             return (total);
+         case XPATH_OP_OR:
+ 	    bakd = ctxt->context->doc;
+@@ -13408,6 +13452,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+ 	    CHECK_ERROR0;
+             xmlXPathBooleanFunction(ctxt, 1);
+             if ((ctxt->value == NULL) || (ctxt->value->boolval == 1))
++                ctxt->context->depth -= 1;
+                 return (total);
+             arg2 = valuePop(ctxt);
+ 	    ctxt->context->doc = bakd;
+@@ -13423,6 +13468,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+             if (ctxt->value != NULL)
+                 ctxt->value->boolval |= arg2->boolval;
+ 	    xmlXPathReleaseObject(ctxt->context, arg2);
++            ctxt->context->depth -= 1;
+             return (total);
+         case XPATH_OP_EQUAL:
+ 	    bakd = ctxt->context->doc;
+@@ -13442,6 +13488,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+ 	    else
+ 		equal = xmlXPathNotEqualValues(ctxt);
+ 	    valuePush(ctxt, xmlXPathCacheNewBoolean(ctxt->context, equal));
++            ctxt->context->depth -= 1;
+             return (total);
+         case XPATH_OP_CMP:
+ 	    bakd = ctxt->context->doc;
+@@ -13458,6 +13505,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+ 	    CHECK_ERROR0;
+             ret = xmlXPathCompareValues(ctxt, op->value, op->value2);
+ 	    valuePush(ctxt, xmlXPathCacheNewBoolean(ctxt->context, ret));
++            ctxt->context->depth -= 1;
+             return (total);
+         case XPATH_OP_PLUS:
+ 	    bakd = ctxt->context->doc;
+@@ -13484,6 +13532,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+                 CAST_TO_NUMBER;
+                 CHECK_TYPE0(XPATH_NUMBER);
+             }
++            ctxt->context->depth -= 1;
+             return (total);
+         case XPATH_OP_MULT:
+ 	    bakd = ctxt->context->doc;
+@@ -13504,6 +13553,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+                 xmlXPathDivValues(ctxt);
+             else if (op->value == 2)
+                 xmlXPathModValues(ctxt);
++            ctxt->context->depth -= 1;
+             return (total);
+         case XPATH_OP_UNION:
+ 	    bakd = ctxt->context->doc;
+@@ -13549,9 +13599,11 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+ 
+             valuePush(ctxt, arg1);
+ 	    xmlXPathReleaseObject(ctxt->context, arg2);
++            ctxt->context->depth -= 1;
+             return (total);
+         case XPATH_OP_ROOT:
+             xmlXPathRoot(ctxt);
++            ctxt->context->depth -= 1;
+             return (total);
+         case XPATH_OP_NODE:
+             if (op->ch1 != -1)
+@@ -13562,6 +13614,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+ 	    CHECK_ERROR0;
+ 	    valuePush(ctxt, xmlXPathCacheNewNodeSet(ctxt->context,
+ 		ctxt->context->node));
++            ctxt->context->depth -= 1;
+             return (total);
+         case XPATH_OP_RESET:
+             if (op->ch1 != -1)
+@@ -13571,21 +13624,25 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+                 total += xmlXPathCompOpEval(ctxt, &comp->steps[op->ch2]);
+ 	    CHECK_ERROR0;
+             ctxt->context->node = NULL;
++            ctxt->context->depth -= 1;
+             return (total);
+         case XPATH_OP_COLLECT:{
+                 if (op->ch1 == -1)
++                    ctxt->context->depth -= 1;
+                     return (total);
+ 
+                 total += xmlXPathCompOpEval(ctxt, &comp->steps[op->ch1]);
+ 		CHECK_ERROR0;
+ 
+                 total += xmlXPathNodeCollectAndTest(ctxt, op, NULL, NULL, 0);
++                ctxt->context->depth -= 1;
+                 return (total);
+             }
+         case XPATH_OP_VALUE:
+             valuePush(ctxt,
+                       xmlXPathCacheObjectCopy(ctxt->context,
+ 			(xmlXPathObjectPtr) op->value4));
++            ctxt->context->depth -= 1;
+             return (total);
+         case XPATH_OP_VARIABLE:{
+ 		xmlXPathObjectPtr val;
+@@ -13607,6 +13664,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+             "xmlXPathCompOpEval: variable %s bound to undefined prefix %s\n",
+                                     (char *) op->value4, (char *)op->value5);
+                         ctxt->error = XPATH_UNDEF_PREFIX_ERROR;
++                        ctxt->context->depth -= 1;
+                         return (total);
+                     }
+ 		    val = xmlXPathVariableLookupNS(ctxt->context,
+@@ -13615,6 +13673,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+ 			XP_ERROR0(XPATH_UNDEF_VARIABLE_ERROR);
+                     valuePush(ctxt, val);
+                 }
++                ctxt->context->depth -= 1;
+                 return (total);
+             }
+         case XPATH_OP_FUNCTION:{
+@@ -13629,6 +13688,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+                         xmlXPathCompOpEval(ctxt, &comp->steps[op->ch1]);
+                     if (ctxt->error != XPATH_EXPRESSION_OK) {
+                         xmlXPathPopFrame(ctxt, frame);
++                        ctxt->context->depth -= 1;
+                         return (total);
+                     }
+                 }
+@@ -13637,6 +13697,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+ 			    "xmlXPathCompOpEval: parameter error\n");
+ 		    ctxt->error = XPATH_INVALID_OPERAND;
+                     xmlXPathPopFrame(ctxt, frame);
++		    ctxt->context->depth -= 1;
+ 		    return (total);
+ 		}
+ 		for (i = 0; i < op->value; i++) {
+@@ -13645,6 +13706,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+ 				"xmlXPathCompOpEval: parameter error\n");
+ 			ctxt->error = XPATH_INVALID_OPERAND;
+                         xmlXPathPopFrame(ctxt, frame);
++			ctxt->context->depth -= 1;
+ 			return (total);
+ 		    }
+                 }
+@@ -13665,6 +13727,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+                                     (char *)op->value4, (char *)op->value5);
+                             xmlXPathPopFrame(ctxt, frame);
+                             ctxt->error = XPATH_UNDEF_PREFIX_ERROR;
++                            ctxt->context->depth -= 1;
+                             return (total);
+                         }
+                         func = xmlXPathFunctionLookupNS(ctxt->context,
+@@ -13687,6 +13750,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+                 ctxt->context->function = oldFunc;
+                 ctxt->context->functionURI = oldFuncURI;
+                 xmlXPathPopFrame(ctxt, frame);
++                ctxt->context->depth -= 1;
+                 return (total);
+             }
+         case XPATH_OP_ARG:
+@@ -13710,6 +13774,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+                 ctxt->context->doc = bakd;
+ 	        CHECK_ERROR0;
+ 	    }
++            ctxt->context->depth -= 1;
+             return (total);
+         case XPATH_OP_PREDICATE:
+         case XPATH_OP_FILTER:{
+@@ -13763,6 +13828,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+                             (ctxt->value->nodesetval->nodeNr > 1))
+                             xmlXPathNodeSetClearFromPos(ctxt->value->nodesetval,
+                                                         1, 1);
++                        ctxt->context->depth -= 1;
+                         return (total);
+                     }
+                 }
+@@ -13798,6 +13864,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+                             (ctxt->value->nodesetval->nodeTab != NULL) &&
+                             (ctxt->value->nodesetval->nodeNr > 1))
+                             xmlXPathNodeSetKeepLast(ctxt->value->nodesetval);
++                        ctxt->context->depth -= 1;
+                         return (total);
+                     }
+                 }
+@@ -13817,8 +13884,10 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+                         xmlXPathCompOpEval(ctxt, &comp->steps[op->ch1]);
+ 		CHECK_ERROR0;
+                 if (op->ch2 == -1)
++                    ctxt->context->depth -= 1;
+                     return (total);
+                 if (ctxt->value == NULL)
++                    ctxt->context->depth -= 1;
+                     return (total);
+ 
+                 oldnode = ctxt->context->node;
+@@ -13854,6 +13923,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+ 			}
+                         valuePush(ctxt, obj);
+                         CHECK_ERROR0;
++                        ctxt->context->depth -= 1;
+                         return (total);
+                     }
+                     newlocset = xmlXPtrLocationSetCreate(NULL);
+@@ -13913,6 +13983,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+                     ctxt->context->proximityPosition = -1;
+                     valuePush(ctxt, xmlXPtrWrapLocationSet(newlocset));
+                     ctxt->context->node = oldnode;
++                    ctxt->context->depth -= 1;
+                     return (total);
+                 }
+ #endif /* LIBXML_XPTR_ENABLED */
+@@ -14064,6 +14135,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+ 			xmlXPathCacheWrapNodeSet(ctxt->context, newset));
+                 }
+                 ctxt->context->node = oldnode;
++                ctxt->context->depth -= 1;
+                 return (total);
+             }
+         case XPATH_OP_SORT:
+@@ -14077,6 +14149,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+ 	    {
+                 xmlXPathNodeSetSort(ctxt->value->nodesetval);
+ 	    }
++            ctxt->context->depth -= 1;
+             return (total);
+ #ifdef LIBXML_XPTR_ENABLED
+         case XPATH_OP_RANGETO:{
+@@ -14097,6 +14170,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+                     XP_ERROR0(XPATH_INVALID_OPERAND);
+                 }
+                 if (op->ch2 == -1)
++                    ctxt->context->depth -= 1;
+                     return (total);
+ 
+                 if (ctxt->value->type == XPATH_LOCATIONSET) {
+@@ -14120,6 +14194,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+ 			}
+                         valuePush(ctxt, obj);
+                         CHECK_ERROR0;
++                        ctxt->context->depth -= 1;
+                         return (total);
+                     }
+                     newlocset = xmlXPtrLocationSetCreate(NULL);
+@@ -14243,6 +14318,7 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+                 ctxt->context->contextSize = -1;
+                 ctxt->context->proximityPosition = -1;
+                 valuePush(ctxt, xmlXPtrWrapLocationSet(newlocset));
++                ctxt->context->depth -= 1;
+                 return (total);
+             }
+ #endif /* LIBXML_XPTR_ENABLED */
+@@ -14250,6 +14326,8 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+     xmlGenericError(xmlGenericErrorContext,
+                     "XPath: unknown precompiled operation %d\n", op->op);
+     ctxt->error = XPATH_INVALID_OPERAND;
++
++    ctxt->context->depth -= 1;
+     return (total);
+ }
+ 
+@@ -14603,6 +14681,8 @@ xmlXPathRunEval(xmlXPathParserContextPtr ctxt, int toBool)
+     if ((ctxt == NULL) || (ctxt->comp == NULL))
+ 	return(-1);
+ 
++    ctxt->context->depth = 0;
++
+     if (ctxt->valueTab == NULL) {
+ 	/* Allocate the value stack */
+ 	ctxt->valueTab = (xmlXPathObjectPtr *)
+-- 
+2.47.3
+
+
+From 732305df78d8e8491e057a014df822dff0770a20 Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Sat, 20 Apr 2019 17:01:19 +0200
+Subject: [PATCH 03/12] Limit recursion depth in xmlXPathOptimizeExpression
+
+---
+ xpath.c | 33 +++++++++++++++++++++++++--------
+ 1 file changed, 25 insertions(+), 8 deletions(-)
+
+diff --git a/xpath.c b/xpath.c
+index aaa85446..47f394aa 100644
+--- a/xpath.c
++++ b/xpath.c
+@@ -14923,8 +14923,12 @@ xmlXPathTryStreamCompile(xmlXPathContextPtr ctxt, const xmlChar *str) {
+ #endif /* XPATH_STREAMING */
+ 
+ static void
+-xmlXPathOptimizeExpression(xmlXPathCompExprPtr comp, xmlXPathStepOpPtr op)
++xmlXPathOptimizeExpression(xmlXPathParserContextPtr pctxt,
++                           xmlXPathStepOpPtr op)
+ {
++    xmlXPathCompExprPtr comp = pctxt->comp;
++    xmlXPathContextPtr ctxt;
++
+     /*
+     * Try to rewrite "descendant-or-self::node()/foo" to an optimized
+     * internal representation.
+@@ -14980,10 +14984,18 @@ xmlXPathOptimizeExpression(xmlXPathCompExprPtr comp, xmlXPathStepOpPtr op)
+         return;
+ 
+     /* Recurse */
++    ctxt = pctxt->context;
++    if (ctxt != NULL) {
++        if (ctxt->depth >= ctxt->maxDepth)
++            return;
++        ctxt->depth += 1;
++    }
+     if (op->ch1 != -1)
+-        xmlXPathOptimizeExpression(comp, &comp->steps[op->ch1]);
++        xmlXPathOptimizeExpression(pctxt, &comp->steps[op->ch1]);
+     if (op->ch2 != -1)
+-	xmlXPathOptimizeExpression(comp, &comp->steps[op->ch2]);
++	xmlXPathOptimizeExpression(pctxt, &comp->steps[op->ch2]);
++    if (ctxt != NULL)
++        ctxt->depth -= 1;
+ }
+ 
+ /**
+@@ -15031,6 +15043,11 @@ xmlXPathCtxtCompile(xmlXPathContextPtr ctxt, const xmlChar *str) {
+ 	comp = NULL;
+     } else {
+ 	comp = pctxt->comp;
++	if ((comp->nbStep > 1) && (comp->last >= 0)) {
++            if (ctxt != NULL)
++                ctxt->depth = 0;
++	    xmlXPathOptimizeExpression(pctxt, &comp->steps[comp->last]);
++	}
+ 	pctxt->comp = NULL;
+     }
+     xmlXPathFreeParserContext(pctxt);
+@@ -15041,9 +15058,6 @@ xmlXPathCtxtCompile(xmlXPathContextPtr ctxt, const xmlChar *str) {
+ 	comp->string = xmlStrdup(str);
+ 	comp->nb = 0;
+ #endif
+-	if ((comp->nbStep > 1) && (comp->last >= 0)) {
+-	    xmlXPathOptimizeExpression(comp, &comp->steps[comp->last]);
+-	}
+     }
+     return(comp);
+ }
+@@ -15207,9 +15221,12 @@ xmlXPathEvalExpr(xmlXPathParserContextPtr ctxt) {
+         if (*ctxt->cur != 0)
+             XP_ERROR(XPATH_EXPR_ERROR);
+ 
+-	if ((ctxt->comp->nbStep > 1) && (ctxt->comp->last >= 0))
+-	    xmlXPathOptimizeExpression(ctxt->comp,
++	if ((ctxt->comp->nbStep > 1) && (ctxt->comp->last >= 0)) {
++            if (ctxt->context != NULL)
++                ctxt->context->depth = 0;
++	    xmlXPathOptimizeExpression(ctxt,
+ 		&ctxt->comp->steps[ctxt->comp->last]);
++        }
+     }
+ 
+     xmlXPathRunEval(ctxt, 0);
+-- 
+2.47.3
+
+
+From 65b588d99e50903504bab022e2cb94b25690113b Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Mon, 17 Aug 2020 03:37:18 +0200
+Subject: [PATCH 04/12] Stop using maxParserDepth in xpath.c
+
+Only use a single maxDepth value.
+---
+ xpath.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/xpath.c b/xpath.c
+index 47f394aa..8c0b793e 100644
+--- a/xpath.c
++++ b/xpath.c
+@@ -11069,6 +11069,18 @@ xmlXPathCompAndExpr(xmlXPathParserContextPtr ctxt) {
+  */
+ static void
+ xmlXPathCompileExpr(xmlXPathParserContextPtr ctxt, int sort) {
++    xmlXPathContextPtr xpctxt = ctxt->context;
++
++    if (xpctxt != NULL) {
++        if (xpctxt->depth >= xpctxt->maxDepth)
++            XP_ERROR(XPATH_RECURSION_LIMIT_EXCEEDED);
++        /*
++         * Parsing a single '(' pushes about 10 functions on the call stack
++         * before recursing!
++         */
++        xpctxt->depth += 10;
++    }
++
+     xmlXPathCompAndExpr(ctxt);
+     CHECK_ERROR;
+     SKIP_BLANKS;
+-- 
+2.47.3
+
+
+From 4afa73ca76211158e6121b1849c40952e757176c Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Wed, 2 Jun 2021 17:31:49 +0200
+Subject: [PATCH 05/12] Fix XPath recursion limit
+
+Fix accounting of recursion depth when parsing XPath expressions.
+
+This silly bug introduced in commit 804c5297 could lead to spurious
+errors when parsing larger expressions or XSLT documents.
+
+Should fix #264.
+---
+ xpath.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/xpath.c b/xpath.c
+index 8c0b793e..70dda1be 100644
+--- a/xpath.c
++++ b/xpath.c
+@@ -11102,6 +11102,9 @@ xmlXPathCompileExpr(xmlXPathParserContextPtr ctxt, int sort) {
+ 	*/
+ 	PUSH_UNARY_EXPR(XPATH_OP_SORT, ctxt->comp->last , 0, 0);
+     }
++
++    if (xpctxt != NULL)
++        xpctxt->depth -= 10;
+ }
+ 
+ /**
+-- 
+2.47.3
+
+
+From 20159ae640cef072e4838e38a9bf1791ea78db43 Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Thu, 28 Jul 2022 20:21:24 +0200
+Subject: [PATCH 06/12] Make XPath depth check work with recursive invocations
+
+EXSLT functions like dyn:map or dyn:evaluate invoke xmlXPathRunEval
+recursively. Don't set depth to zero but keep and restore the original
+value to avoid stack overflows when abusing these functions.
+---
+ xpath.c | 23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
+
+diff --git a/xpath.c b/xpath.c
+index 70dda1be..b16ae0f8 100644
+--- a/xpath.c
++++ b/xpath.c
+@@ -14692,12 +14692,11 @@ static int
+ xmlXPathRunEval(xmlXPathParserContextPtr ctxt, int toBool)
+ {
+     xmlXPathCompExprPtr comp;
++    int oldDepth;
+ 
+     if ((ctxt == NULL) || (ctxt->comp == NULL))
+ 	return(-1);
+ 
+-    ctxt->context->depth = 0;
+-
+     if (ctxt->valueTab == NULL) {
+ 	/* Allocate the value stack */
+ 	ctxt->valueTab = (xmlXPathObjectPtr *)
+@@ -14751,11 +14750,13 @@ xmlXPathRunEval(xmlXPathParserContextPtr ctxt, int toBool)
+ 	    "xmlXPathRunEval: last is less than zero\n");
+ 	return(-1);
+     }
++    oldDepth = ctxt->context->depth;
+     if (toBool)
+ 	return(xmlXPathCompOpEvalToBoolean(ctxt,
+ 	    &comp->steps[comp->last], 0));
+     else
+ 	xmlXPathCompOpEval(ctxt, &comp->steps[comp->last]);
++    ctxt->context->depth = oldDepth;
+ 
+     return(0);
+ }
+@@ -15027,6 +15028,7 @@ xmlXPathCompExprPtr
+ xmlXPathCtxtCompile(xmlXPathContextPtr ctxt, const xmlChar *str) {
+     xmlXPathParserContextPtr pctxt;
+     xmlXPathCompExprPtr comp;
++    int oldDepth = 0;
+ 
+ #ifdef XPATH_STREAMING
+     comp = xmlXPathTryStreamCompile(ctxt, str);
+@@ -15039,7 +15041,11 @@ xmlXPathCtxtCompile(xmlXPathContextPtr ctxt, const xmlChar *str) {
+     pctxt = xmlXPathNewParserContext(str, ctxt);
+     if (pctxt == NULL)
+         return NULL;
++    if (ctxt != NULL)
++        oldDepth = ctxt->depth;
+     xmlXPathCompileExpr(pctxt, 1);
++    if (ctxt != NULL)
++        ctxt->depth = oldDepth;
+ 
+     if( pctxt->error != XPATH_EXPRESSION_OK )
+     {
+@@ -15060,8 +15066,10 @@ xmlXPathCtxtCompile(xmlXPathContextPtr ctxt, const xmlChar *str) {
+ 	comp = pctxt->comp;
+ 	if ((comp->nbStep > 1) && (comp->last >= 0)) {
+             if (ctxt != NULL)
+-                ctxt->depth = 0;
++                oldDepth = ctxt->depth;
+ 	    xmlXPathOptimizeExpression(pctxt, &comp->steps[comp->last]);
++            if (ctxt != NULL)
++                ctxt->depth = oldDepth;
+ 	}
+ 	pctxt->comp = NULL;
+     }
+@@ -15217,6 +15225,7 @@ xmlXPathEvalExpr(xmlXPathParserContextPtr ctxt) {
+ #ifdef XPATH_STREAMING
+     xmlXPathCompExprPtr comp;
+ #endif
++    int oldDepth = 0;
+ 
+     if (ctxt == NULL) return;
+ 
+@@ -15229,7 +15238,11 @@ xmlXPathEvalExpr(xmlXPathParserContextPtr ctxt) {
+     } else
+ #endif
+     {
++        if (ctxt->context != NULL)
++            oldDepth = ctxt->context->depth;
+ 	xmlXPathCompileExpr(ctxt, 1);
++        if (ctxt->context != NULL)
++            ctxt->context->depth = oldDepth;
+         CHECK_ERROR;
+ 
+         /* Check for trailing characters. */
+@@ -15238,9 +15251,11 @@ xmlXPathEvalExpr(xmlXPathParserContextPtr ctxt) {
+ 
+ 	if ((ctxt->comp->nbStep > 1) && (ctxt->comp->last >= 0)) {
+             if (ctxt->context != NULL)
+-                ctxt->context->depth = 0;
++                oldDepth = ctxt->context->depth;
+ 	    xmlXPathOptimizeExpression(ctxt,
+ 		&ctxt->comp->steps[ctxt->comp->last]);
++            if (ctxt->context != NULL)
++                ctxt->context->depth = oldDepth;
+         }
+     }
+ 
+-- 
+2.47.3
+
+
+From 293505285f50bb9c3e69ffa7fa49c1f25512eb09 Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Fri, 13 Sep 2024 20:59:47 +0200
+Subject: [PATCH 07/12] xpath: Make recursion check work with xmlXPathCompile
+
+The check for maximum recursion depth required a parser context with an
+xmlXPathContext which xmlXPathCompile didn't provide.
+
+All other code should already set up or require an xmlXPathContext.
+---
+ xpath.c | 27 ++++++++++++++++++++++-----
+ 1 file changed, 22 insertions(+), 5 deletions(-)
+
+diff --git a/xpath.c b/xpath.c
+index b16ae0f8..bca0ba77 100644
+--- a/xpath.c
++++ b/xpath.c
+@@ -15027,6 +15027,7 @@ xmlXPathOptimizeExpression(xmlXPathParserContextPtr pctxt,
+ xmlXPathCompExprPtr
+ xmlXPathCtxtCompile(xmlXPathContextPtr ctxt, const xmlChar *str) {
+     xmlXPathParserContextPtr pctxt;
++    xmlXPathContextPtr tmpctxt = NULL;
+     xmlXPathCompExprPtr comp;
+     int oldDepth = 0;
+ 
+@@ -15038,18 +15039,32 @@ xmlXPathCtxtCompile(xmlXPathContextPtr ctxt, const xmlChar *str) {
+ 
+     xmlXPathInit();
+ 
++    /*
++     * We need an xmlXPathContext for the depth check.
++     */
++    if (ctxt == NULL) {
++        tmpctxt = xmlXPathNewContext(NULL);
++        if (tmpctxt == NULL)
++            return(NULL);
++        ctxt = tmpctxt;
++    }
++
+     pctxt = xmlXPathNewParserContext(str, ctxt);
+-    if (pctxt == NULL)
++    if (pctxt == NULL) {
++        if (tmpctxt != NULL)
++            xmlXPathFreeContext(tmpctxt);
+         return NULL;
+-    if (ctxt != NULL)
+-        oldDepth = ctxt->depth;
++    }
++
++    oldDepth = ctxt->depth;
+     xmlXPathCompileExpr(pctxt, 1);
+-    if (ctxt != NULL)
+-        ctxt->depth = oldDepth;
++    ctxt->depth = oldDepth;
+ 
+     if( pctxt->error != XPATH_EXPRESSION_OK )
+     {
+         xmlXPathFreeParserContext(pctxt);
++        if (tmpctxt != NULL)
++            xmlXPathFreeContext(tmpctxt);
+         return(NULL);
+     }
+ 
+@@ -15074,6 +15089,8 @@ xmlXPathCtxtCompile(xmlXPathContextPtr ctxt, const xmlChar *str) {
+ 	pctxt->comp = NULL;
+     }
+     xmlXPathFreeParserContext(pctxt);
++    if (tmpctxt != NULL)
++        xmlXPathFreeContext(tmpctxt);
+ 
+     if (comp != NULL) {
+ 	comp->expr = xmlStrdup(str);
+-- 
+2.47.3
+
+
+From 0afa658c7820cf32d5d880a4b3f4eb9ea95898b4 Mon Sep 17 00:00:00 2001
+From: RHEL Packaging Agent <jotnar@redhat.com>
+Date: Tue, 18 Nov 2025 14:20:08 +0000
+Subject: [PATCH 08/12] xpath: Fix depth restoration in xmlXPathRunEval
+
+Ensure that the depth is always restored in xmlXPathRunEval, even when
+toBool is true or when an error occurs. This prevents depth from
+accumulating incorrectly across XPath evaluations.
+---
+ xpath.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/xpath.c b/xpath.c
+index bca0ba77..90d624a2 100644
+--- a/xpath.c
++++ b/xpath.c
+@@ -14751,12 +14751,15 @@ xmlXPathRunEval(xmlXPathParserContextPtr ctxt, int toBool)
+ 	return(-1);
+     }
+     oldDepth = ctxt->context->depth;
+-    if (toBool)
+-	return(xmlXPathCompOpEvalToBoolean(ctxt,
+-	    &comp->steps[comp->last], 0));
+-    else
++    if (toBool) {
++	int ret = xmlXPathCompOpEvalToBoolean(ctxt,
++	    &comp->steps[comp->last], 0);
++	ctxt->context->depth = oldDepth;
++	return(ret);
++    } else {
+ 	xmlXPathCompOpEval(ctxt, &comp->steps[comp->last]);
+-    ctxt->context->depth = oldDepth;
++	ctxt->context->depth = oldDepth;
++    }
+ 
+     return(0);
+ }
+-- 
+2.47.3
+
+
+From e0315a0e773982b10220cfbad25b92bc97119d80 Mon Sep 17 00:00:00 2001
+From: RHEL Packaging Agent <jotnar@redhat.com>
+Date: Tue, 18 Nov 2025 14:33:12 +0000
+Subject: [PATCH 09/12] Revert incorrect depth restoration in toBool branch
+
+The manual fix that added depth restoration to the toBool branch of
+xmlXPathRunEval was incorrect. The toBool branch should return directly
+from xmlXPathCompOpEvalToBoolean without restoring depth, as
+xmlXPathCompOpEvalToBoolean either doesn't modify depth or calls
+xmlXPathCompOpEval which properly manages depth internally.
+
+This matches the implementation in upstream master branch.
+---
+ xpath.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
+
+diff --git a/xpath.c b/xpath.c
+index 90d624a2..bca0ba77 100644
+--- a/xpath.c
++++ b/xpath.c
+@@ -14751,15 +14751,12 @@ xmlXPathRunEval(xmlXPathParserContextPtr ctxt, int toBool)
+ 	return(-1);
+     }
+     oldDepth = ctxt->context->depth;
+-    if (toBool) {
+-	int ret = xmlXPathCompOpEvalToBoolean(ctxt,
+-	    &comp->steps[comp->last], 0);
+-	ctxt->context->depth = oldDepth;
+-	return(ret);
+-    } else {
++    if (toBool)
++	return(xmlXPathCompOpEvalToBoolean(ctxt,
++	    &comp->steps[comp->last], 0));
++    else
+ 	xmlXPathCompOpEval(ctxt, &comp->steps[comp->last]);
+-	ctxt->context->depth = oldDepth;
+-    }
++    ctxt->context->depth = oldDepth;
+ 
+     return(0);
+ }
+-- 
+2.47.3
+
+
+From cb9a07705374ae359bddde2ed7f8a578b2315e93 Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Wed, 8 May 2019 12:00:51 +0200
+Subject: [PATCH 10/12] Limit recursion depth in xmlXPathCompOpEvalPredicate
+
+---
+ xpath.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/xpath.c b/xpath.c
+index bca0ba77..9406d05f 100644
+--- a/xpath.c
++++ b/xpath.c
+@@ -11740,8 +11740,12 @@ xmlXPathCompOpEvalPredicate(xmlXPathParserContextPtr ctxt,
+ 	    * TODO: raise an internal error.
+ 	    */
+ 	}
++	if (ctxt->context->depth >= ctxt->context->maxDepth)
++	    XP_ERROR0(XPATH_RECURSION_LIMIT_EXCEEDED);
++	ctxt->context->depth += 1;
+ 	contextSize = xmlXPathCompOpEvalPredicate(ctxt,
+ 	    &comp->steps[op->ch1], set, contextSize, hasNsNodes);
++	ctxt->context->depth -= 1;
+ 	CHECK_ERROR0;
+ 	if (contextSize <= 0)
+ 	    return(0);
+-- 
+2.47.3
+
+
+From 0e1013a03a95d5791ace90fd072a72f85ee82676 Mon Sep 17 00:00:00 2001
+From: RHEL Packaging Agent <jotnar@redhat.com>
+Date: Tue, 18 Nov 2025 15:03:03 +0000
+Subject: [PATCH 11/12] Fix missing braces in XPATH_OP_AND and XPATH_OP_OR
+ cases
+
+The depth decrement and return statement must be inside the if block,
+otherwise depth is not decremented when the condition is false, causing
+depth to accumulate and eventually exceed the limit.
+
+This fixes test failures where XPath evaluation was failing with
+'Error: unable to evaluate xpath expression'.
+---
+ xpath.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/xpath.c b/xpath.c
+index 9406d05f..691cbd02 100644
+--- a/xpath.c
++++ b/xpath.c
+@@ -13443,9 +13443,10 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+             total += xmlXPathCompOpEval(ctxt, &comp->steps[op->ch1]);
+ 	    CHECK_ERROR0;
+             xmlXPathBooleanFunction(ctxt, 1);
+-            if ((ctxt->value == NULL) || (ctxt->value->boolval == 0))
++            if ((ctxt->value == NULL) || (ctxt->value->boolval == 0)) {
+                 ctxt->context->depth -= 1;
+                 return (total);
++            }
+             arg2 = valuePop(ctxt);
+ 	    ctxt->context->doc = bakd;
+ 	    ctxt->context->node = bak;
+@@ -13470,9 +13471,10 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+             total += xmlXPathCompOpEval(ctxt, &comp->steps[op->ch1]);
+ 	    CHECK_ERROR0;
+             xmlXPathBooleanFunction(ctxt, 1);
+-            if ((ctxt->value == NULL) || (ctxt->value->boolval == 1))
++            if ((ctxt->value == NULL) || (ctxt->value->boolval == 1)) {
+                 ctxt->context->depth -= 1;
+                 return (total);
++            }
+             arg2 = valuePop(ctxt);
+ 	    ctxt->context->doc = bakd;
+ 	    ctxt->context->node = bak;
+-- 
+2.47.3
+
+
+From 368c7c8da85446ca7ba3ddb1cc7f2ed3a3b36865 Mon Sep 17 00:00:00 2001
+From: RHEL Packaging Agent <jotnar@redhat.com>
+Date: Tue, 18 Nov 2025 15:13:35 +0000
+Subject: [PATCH 12/12] Fix missing braces in XPATH_OP_COLLECT,
+ XPATH_OP_PREDICATE/FILTER, and XPATH_OP_RANGETO cases
+
+The depth decrement and return statement must be inside the if block,
+otherwise depth is not decremented when the condition is false, causing
+depth to accumulate and eventually exceed the limit.
+
+This fixes test failures where XPath evaluation was failing with
+'Error: unable to evaluate xpath expression'.
+---
+ xpath.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/xpath.c b/xpath.c
+index 691cbd02..07685880 100644
+--- a/xpath.c
++++ b/xpath.c
+@@ -13648,9 +13648,10 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+             ctxt->context->depth -= 1;
+             return (total);
+         case XPATH_OP_COLLECT:{
+-                if (op->ch1 == -1)
++                if (op->ch1 == -1) {
+                     ctxt->context->depth -= 1;
+                     return (total);
++                }
+ 
+                 total += xmlXPathCompOpEval(ctxt, &comp->steps[op->ch1]);
+ 		CHECK_ERROR0;
+@@ -13904,12 +13905,14 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+                     total +=
+                         xmlXPathCompOpEval(ctxt, &comp->steps[op->ch1]);
+ 		CHECK_ERROR0;
+-                if (op->ch2 == -1)
++                if (op->ch2 == -1) {
+                     ctxt->context->depth -= 1;
+                     return (total);
+-                if (ctxt->value == NULL)
++                }
++                if (ctxt->value == NULL) {
+                     ctxt->context->depth -= 1;
+                     return (total);
++                }
+ 
+                 oldnode = ctxt->context->node;
+ 
+@@ -14190,9 +14193,10 @@ xmlXPathCompOpEval(xmlXPathParserContextPtr ctxt, xmlXPathStepOpPtr op)
+                 if (ctxt->value == NULL) {
+                     XP_ERROR0(XPATH_INVALID_OPERAND);
+                 }
+-                if (op->ch2 == -1)
++                if (op->ch2 == -1) {
+                     ctxt->context->depth -= 1;
+                     return (total);
++                }
+ 
+                 if (ctxt->value->type == XPATH_LOCATIONSET) {
+                     /*
+-- 
+
+From 8ddc7f13337c9fe7c6b6e616f404b0fffb8a5145 Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Wed, 8 May 2024 11:49:31 +0200
+Subject: [PATCH] [CVE-2024-34459] Fix buffer overread with `xmllint --htmlout`
+
+Add a missing bounds check.
+---
+ xmllint.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/xmllint.c b/xmllint.c
+index 0e433b721..62f6b0273 100644
+--- a/xmllint.c
++++ b/xmllint.c
+@@ -559,7 +559,7 @@ xmlHTMLPrintFileContext(xmlParserInputPtr input) {
+     len = strlen(buffer);
+     snprintf(&buffer[len], sizeof(buffer) - len, "\n");
+     cur = input->cur;
+-    while ((*cur == '\n') || (*cur == '\r'))
++    while ((cur > base) && ((*cur == '\n') || (*cur == '\r')))
+ 	cur--;
+     n = 0;
+     while ((cur != base) && (n++ < 80)) {
+-- 
+
+From 79abeb402f5570330f092b3dbe326798079231c9 Mon Sep 17 00:00:00 2001
+From: David King <dking@redhat.com>
+Date: Tue, 16 Jun 2026 14:59:25 +0100
+Subject: [PATCH] Fix potential buffer overflows of interactive shell
+
+CVE-2025-6170
+
+Fixes #941 on 2.12 branch. Based on upstream commit
+069bcda17d8194e9582c64dd4bc9dac99b015810 by Michael Mann.
+---
+ debugXML.c | 15 ++++++++++-----
+ xmllint.c  |  8 +++++---
+ 2 files changed, 15 insertions(+), 8 deletions(-)
+
+diff --git a/debugXML.c b/debugXML.c
+index 303515ec..63b77ba6 100644
+--- a/debugXML.c
++++ b/debugXML.c
+@@ -2779,6 +2779,10 @@ xmlShellPwd(xmlShellCtxtPtr ctxt ATTRIBUTE_UNUSED, char *buffer,
+     return (0);
+ }
+ 
++#define MAX_PROMPT_SIZE     500
++#define MAX_ARG_SIZE        400
++#define MAX_COMMAND_SIZE    100
++
+ /**
+  * xmlShell:
+  * @doc:  the initial document
+@@ -2794,10 +2798,10 @@ void
+ xmlShell(xmlDocPtr doc, char *filename, xmlShellReadlineFunc input,
+          FILE * output)
+ {
+-    char prompt[500] = "/ > ";
++    char prompt[MAX_PROMPT_SIZE] = "/ > ";
+     char *cmdline = NULL, *cur;
+-    char command[100];
+-    char arg[400];
++    char command[MAX_COMMAND_SIZE];
++    char arg[MAX_ARG_SIZE];
+     int i;
+     xmlShellCtxtPtr ctxt;
+     xmlXPathObjectPtr list;
+@@ -2855,7 +2859,8 @@ xmlShell(xmlDocPtr doc, char *filename, xmlShellReadlineFunc input,
+             cur++;
+         i = 0;
+         while ((*cur != ' ') && (*cur != '\t') &&
+-               (*cur != '\n') && (*cur != '\r')) {
++               (*cur != '\n') && (*cur != '\r') &&
++	       (i < (MAX_COMMAND_SIZE - 1))) {
+             if (*cur == 0)
+                 break;
+             command[i++] = *cur++;
+@@ -2870,7 +2875,7 @@ xmlShell(xmlDocPtr doc, char *filename, xmlShellReadlineFunc input,
+         while ((*cur == ' ') || (*cur == '\t'))
+             cur++;
+         i = 0;
+-        while ((*cur != '\n') && (*cur != '\r') && (*cur != 0)) {
++        while ((*cur != '\n') && (*cur != '\r') && (*cur != 0) && (i < (MAX_ARG_SIZE-1))) {
+             if (*cur == 0)
+                 break;
+             arg[i++] = *cur++;
+diff --git a/xmllint.c b/xmllint.c
+index 4d84c640..4b2c06d9 100644
+--- a/xmllint.c
++++ b/xmllint.c
+@@ -722,6 +722,8 @@ xmlHTMLValidityWarning(void *ctx, const char *msg, ...)
+     xmlHTMLEncodeSend();
+ }
+ 
++#define MAX_PROMPT_SIZE     500
++
+ /************************************************************************
+  *									*
+  *			Shell Interface					*
+@@ -752,16 +754,16 @@ xmlShellReadline(char *prompt) {
+ 
+     return (line_read);
+ #else
+-    char line_read[501];
++    char line_read[MAX_PROMPT_SIZE+1];
+     char *ret;
+     int len;
+ 
+     if (prompt != NULL)
+ 	fprintf(stdout, "%s", prompt);
+     fflush(stdout);
+-    if (!fgets(line_read, 500, stdin))
++    if (!fgets(line_read, MAX_PROMPT_SIZE, stdin))
+         return(NULL);
+-    line_read[500] = 0;
++    line_read[MAX_PROMPT_SIZE] = 0;
+     len = strlen(line_read);
+     ret = (char *) malloc(len + 1);
+     if (ret != NULL) {
+-- 
+
