@@ -9,7 +9,6 @@
 # https://sourceware.org/bzip2/downloads.html
 
 BZIP2_VER=1.0.8
-#BZIP2_VER=1.0.6
 BZIP2_TAR=bzip2-${BZIP2_VER}.tar.gz
 BZIP2_DIR=bzip2-${BZIP2_VER}
 PKG_NAME=bzip2
@@ -59,18 +58,6 @@ echo "****************************"
 echo "Downloading package"
 echo "****************************"
 
-
-
-
-binary="no"
-if [[ $binary == "ok" ]]; then
-   mkdir -p "$BZIP2_DIR"
-   cd "$BZIP2_DIR"
-   wget https://github.com/amidevous2/Build-Scripts/releases/download/download/bzip2-1.0.8-bin.tar
-   tar -xvf bzip2-1.0.8-bin.tar -C $INSTX_PREFIX
-binary="no"
-else
-binary="no"
 
 echo ""
 echo "Bzip2 ${BZIP2_VER}..."
@@ -178,45 +165,10 @@ then
     exit 1
 fi
 
-
-
-
-
-
 # Fix flags in *.pc files
 bash "${INSTX_TOPDIR}/fix-pkgconfig.sh"
 
 # Fix runpaths
-bash "${INSTX_TOPDIR}/fix-runpath.sh"
-
-echo ""
-echo "****************************"
-echo "Testing package"
-echo "****************************"
-
-#MAKE_FLAGS=()
-#MAKE_FLAGS+=("-f" "Makefile" "check")
-#MAKE_FLAGS+=("-j" "${INSTX_JOBS}")
-#MAKE_FLAGS+=("CC=${CC}")
-#MAKE_FLAGS+=("CPPFLAGS=${CPPFLAGS} -I.")
-#MAKE_FLAGS+=("ASFLAGS=${ASFLAGS}")
-#MAKE_FLAGS+=("CFLAGS=${CFLAGS}")
-#MAKE_FLAGS+=("CXXFLAGS=${CXXFLAGS}")
-#MAKE_FLAGS+=("LDFLAGS=${LDFLAGS}")
-#MAKE_FLAGS+=("LIBS=${LDLIBS}")
-
-#if ! "${MAKE}" "${MAKE_FLAGS[@]}"
-#then
-#    echo ""
-#    echo "****************************"
-#    echo "Failed to test Bzip"
-#    echo "****************************"
-#
-#    bash "${INSTX_TOPDIR}/collect-logs.sh" "${PKG_NAME}"
-#    exit 1
-#fi
-
-# Fix runpaths again
 bash "${INSTX_TOPDIR}/fix-runpath.sh"
 
 echo ""
@@ -240,73 +192,8 @@ ln -s bzgrep ${INSTX_PREFIX}/bin/bzfgrep
 ln -s libbz2.so.1.0.8 ${INSTX_PREFIX}/bin/libbz2.so.1
 ln -s libbz2.so.1 ${INSTX_PREFIX}/bin/libbz2.so
 
-###############################################################################
-
-echo ""
-echo "****************************"
-echo "Building package"
-echo "****************************"
-
-if [[ "$IS_DARWIN" -ne 0 ]]; then
-    MAKEFILE=Makefile-libbz2_dylib
-else
-    MAKEFILE=Makefile-libbz2_so
-fi
-
-MAKE_FLAGS=()
-MAKE_FLAGS+=("-f" "$MAKEFILE")
-MAKE_FLAGS+=("-j" "${INSTX_JOBS}")
-MAKE_FLAGS+=("CC=${CC}")
-MAKE_FLAGS+=("CPPFLAGS=${CPPFLAGS} -I.")
-MAKE_FLAGS+=("ASFLAGS=${ASFLAGS}")
-MAKE_FLAGS+=("CFLAGS=${CFLAGS}")
-MAKE_FLAGS+=("CXXFLAGS=${CXXFLAGS}")
-MAKE_FLAGS+=("LDFLAGS=${LDFLAGS}")
-MAKE_FLAGS+=("LIBS=${LDLIBS}")
-
-if ! "${MAKE}" "${MAKE_FLAGS[@]}"
-then
-    echo ""
-    echo "****************************"
-    echo "Failed to build Bzip library"
-    echo "****************************"
-
-    bash "${INSTX_TOPDIR}/collect-logs.sh" "${PKG_NAME}"
-    exit 1
-fi
-
-echo ""
-echo "****************************"
-echo "Installing package"
-echo "****************************"
-
-if [[ -n "${SUDO_PASSWORD}" ]]
-then
-    echo "Installing shared object..."
-    MAKE_FLAGS=("-f" "$MAKEFILE" install
-                PREFIX="${INSTX_PREFIX}" LIBDIR="${INSTX_LIBDIR}")
-    printf "%s\n" "${SUDO_PASSWORD}" | sudo ${SUDO_ENV_OPT} -S "${MAKE}" "${MAKE_FLAGS[@]}"
-
-    MAKE_FLAGS=("-f" "$MAKEFILE" installdirs
-                PREFIX="${INSTX_PREFIX}" LIBDIR="${INSTX_LIBDIR}")
-    printf "%s\n" "${SUDO_PASSWORD}" | sudo ${SUDO_ENV_OPT} -S "${MAKE}" "${MAKE_FLAGS[@]}"
-else
-    echo "Installing shared object..."
-    MAKE_FLAGS=("-f" "$MAKEFILE" installdirs
-                PREFIX="${INSTX_PREFIX}" LIBDIR="${INSTX_LIBDIR}")
-    "${MAKE}" "${MAKE_FLAGS[@]}"
-
-    MAKE_FLAGS=("-f" "$MAKEFILE" install
-                PREFIX="${INSTX_PREFIX}" LIBDIR="${INSTX_LIBDIR}")
-    "${MAKE}" "${MAKE_FLAGS[@]}"
-fi
-
-###############################################################################
-
-fi
-
-
-
+echo "y a une erreur ici"
+sleep 30
 mkdir -p "${INSTX_PKGCONFIG}"
 cat > "${INSTX_PKGCONFIG}/libbz2.pc" <<EOF
 prefix=${INSTX_PREFIX}
