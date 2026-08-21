@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -Eeuo pipefail
+trap 'echo "ERREUR : $BASH_SOURCE:$LINENO : commande échouée : $BASH_COMMAND" >&2; exit 1' ERR
+
 # Written and placed in public domain by Jeffrey Walton
 
 # This script builds a handful of packages that are used by most GNU packages.
