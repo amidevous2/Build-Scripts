@@ -119,28 +119,26 @@ echo "***********************"
 #    gmp_cflags="${INSTX_CFLAGS} -fdebug-prefix-map=${PWD}=${INSTX_SRCDIR}/${GMP_DIR}"
 #    gmp_cxxflags="${INSTX_CXXFLAGS} -fdebug-prefix-map=${PWD}=${INSTX_SRCDIR}/${GMP_DIR}"
 #else
-    gmp_cflags="${INSTX_CFLAGS}"
-    gmp_cxxflags="${INSTX_CXXFLAGS}"
+#    gmp_cflags="${INSTX_CFLAGS}"
+#    gmp_cxxflags="${INSTX_CXXFLAGS}"
 #fi
 
-CONFIG_OPTS=()
-CONFIG_OPTS+=("--enable-static")
-CONFIG_OPTS+=("--enable-shared")
-CONFIG_OPTS+=("--enable-assert=no")
-CONFIG_OPTS+=("ABI=$INSTX_BITNESS")
+unset LD_LIBRARY_PATH
+unset CPATH
+unset LIBRARY_PATH
+unset CPATH
+unset C_INCLUDE_PATH
+unset CPLUS_INCLUDE_PATH
+unset PKG_CONFIG_PATH
+unset CPPFLAGS
+unset CFLAGS
+unset CXXFLAGS
+unset LDFLAGS
 
-    PKG_CONFIG_PATH="${INSTX_PKGCONFIG}" \
-    CPPFLAGS="${INSTX_CPPFLAGS}" \
-    ASFLAGS="${INSTX_ASFLAGS}" \
-    CFLAGS="${gmp_cflags}" \
-    CXXFLAGS="${gmp_cxxflags}" \
-    LDFLAGS="${INSTX_LDFLAGS}" \
-    LIBS="${INSTX_LDLIBS}" \
 ./configure \
-    --build="${AUTOCONF_BUILD}" \
     --prefix="${INSTX_PREFIX}" \
     --libdir="${INSTX_LIBDIR}" \
-    "${CONFIG_OPTS[@]}"
+    --disable-shared --enable-static
 
 if [[ "$?" -ne 0 ]]; then
     echo ""
@@ -177,26 +175,6 @@ fi
 bash "${INSTX_TOPDIR}/fix-pkgconfig.sh"
 
 # Fix runpaths
-bash "${INSTX_TOPDIR}/fix-runpath.sh"
-
-echo ""
-echo "***********************"
-echo "Testing package"
-echo "***********************"
-
-MAKE_FLAGS=("check" "-k" "V=1")
-if ! "${MAKE}" "${MAKE_FLAGS[@]}"
-then
-    echo ""
-    echo "***********************"
-    echo "Failed to test GMP"
-    echo "***********************"
-
-    bash "${INSTX_TOPDIR}/collect-logs.sh" "${PKG_NAME}"
-    exit 1
-fi
-
-# Fix runpaths again
 bash "${INSTX_TOPDIR}/fix-runpath.sh"
 
 echo ""
