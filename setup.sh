@@ -8,8 +8,17 @@ cd $HOME
 if command -v curl >/dev/null 2>&1; then DL="curl --insecure -fsSL"; else DL="wget --no-check-certificate -qO-"; fi
 \$DL "https://github.com/jqlang/jq/releases/download/jq-1.6/jq-$(if [ "\$(uname -m)" == "x86_64" ]; then echo "linux64"; else echo "linux32"; fi)" > "./jq"; chmod 755 "./jq"
 COMMIT=\$(\$DL "https://api.github.com/repos/amidevous2/Build-Scripts/commits/php56" | ./jq -r .sha)
+downloaddirectory() {
+    local URL="\$1"
+    local OUTPUT="\$2"
+    if command -v wget >/dev/null 2>&1; then
+        wget --no-check-certificate "\$URL" -O "\$OUTPUT"
+    elif command -v curl >/dev/null 2>&1; then
+        curl --insecure -fL -o "\$OUTPUT" "\$URL"
+    fi
+}
 mkdir -p Build-Scripts
-wget https://github.com/amidevous2/Build-Scripts/archive/\$COMMIT.tar.gz -O Build-Scripts.targ.gz
+downloaddirectory https://github.com/amidevous2/Build-Scripts/archive/\$COMMIT.tar.gz Build-Scripts.targ.gz
 tar -xvf Build-Scripts.targ.gz
 rm -rf $HOME/Build-Scripts/*
 cp -R $HOME/Build-Scripts-\$COMMIT/* $HOME/Build-Scripts/
