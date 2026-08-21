@@ -110,7 +110,7 @@ if [[ -e ../patch/libxml2.patch ]]; then
     echo "***************************"
     echo "Patching package"
     echo "***************************"
-    patch -u -p0 < ../patch/libxml2.patch
+    patch --force -p1 < ../patch/libxml2.patch
 fi
 
 # Fix sys_lib_dlsearch_path_spec
