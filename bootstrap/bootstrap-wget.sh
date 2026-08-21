@@ -59,16 +59,29 @@ fi
 
 ############################## Misc ##############################
 
-if [[ -z "$(command -v patch 2>/dev/null)" ]]
-then
-    echo "Please install patch program"
-    exit 1
+
+mkdir -p $PREFIX
+if [[ "$(uname -m)" "x86_64" ]]
+mv 7z 7z.i386
+mv 7z.x86_64 7z
+mv 7z.so 7z.so.i386
+mv 7z.so.x86_64 7z.so
+mv 7zCon.sfx 7zCon.sfx.i386
+mv 7zCon.sfx.x86_64 7zCon.sfx
+mv 7za 7za.i386
+mv 7za.x86_64 7za
+cat gcc-4.4.7-x86_64.tar.xz_aa gcc-4.4.7-x86_64.tar.xz_ab gcc-4.4.7-x86_64.tar.xz_ac gcc-4.4.7-x86_64.tar.xz_ad gcc-4.4.7-x86_64.tar.xz_ae gcc-4.4.7-x86_64.tar.xz_af gcc-4.4.7-x86_64.tar.xz_ag gcc-4.4.7-x86_64.tar.xz_ah gcc-4.4.7-x86_64.tar.xz_ai > gcc-4.4.7-x86_64.tar.xz
+gccfile=gcc-4.4.7-x86_64.tar.xz
+gccfilemin=gcc-4.4.7-x86_64.tar
+else
+cat gcc-4.4.7-i686.tar.xz_aa gcc-4.4.7-i686.tar.xz_ab gcc-4.4.7-i686.tar.xz_ac gcc-4.4.7-i686.tar.xz_ad gcc-4.4.7-i686.tar.xz_ae gcc-4.4.7-i686.tar.xz_af > gcc-4.4.7-i686.tar.xz
+gccfile=gcc-4.4.7-i686.tar.xz
+gccfilemin=gcc-4.4.7-i686.tar
 fi
-if [[ -z "$(command -v perl 2>/dev/null)" ]]
-then
-    echo "Please install patch program"
-    exit 1
-fi
+chmod 777 7z
+chmod 777 7z.so
+chmod 777 7zCon.sfx
+chmod 777 7za
 
 if [[ -z "$CC" ]]
 then
@@ -78,7 +91,21 @@ then
         CC=clang; CXX=clang++
     elif [[ -n "$(command -v cc 2>/dev/null)" && -n "$(command -v CC 2>/dev/null)" ]]; then
         CC=cc; CXX=CC
+    else
+    cd $PREFIX
+    mv $BOOTSTRAP_DIR/$gccfile
+    7z x $gccfile
+    7z x $gccfilemin
+    rm -f $gccfile $gccfilemin
+    CC=$PREFIX/bin/gcc; CXX=$PREFIX/bin/g++
     fi
+else
+cd $PREFIX
+mv $BOOTSTRAP_DIR/$gccfile
+7z x $gccfile
+7z x $gccfilemin
+rm -f $gccfile $gccfilemin
+CC=$PREFIX/bin/gcc; CXX=$PREFIX/bin/g++
 fi
 
 if $CC $CFLAGS bitness.c -o /dev/null &>/dev/null; then
@@ -151,6 +178,10 @@ fi
 
 echo "Copy cacert.pem to $CACERTFILE"
 echo "Done."
+
+############################## Perl ##############################
+
+
 
 ############################## OpenSSL ##############################
 
