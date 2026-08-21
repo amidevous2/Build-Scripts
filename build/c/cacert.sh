@@ -26,6 +26,12 @@ if [[ "${SUDO_PASSWORD_DONE}" != "yes" ]]; then
     fi
 fi
 
+if [[ -e "${INSTX_PKG_CACHE}/${PKG_NAME}" ]]; then
+    echo ""
+    echo "$PKG_NAME is already installed."
+    exit 0
+fi
+
 ###############################################################################
 
 # setup-cacert.sh writes the certs locally for the user so we
