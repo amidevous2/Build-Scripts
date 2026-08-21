@@ -1,6 +1,4 @@
 #!/bin/bash
-set -Eeuo pipefail
-trap 'echo "ERREUR : $BASH_SOURCE:$LINENO : commande échouée : $BASH_COMMAND" >&2; exit 1' ERR
 
 rougefonce='\e[0;31m'
 neutre='\e[0;m'
@@ -10,7 +8,11 @@ chmod +x "build/$minfolder/$script.sh"
 echo -e "${neutre}*****************************************************************************"
 echo -e "${neutre}****************************Start Build $script"
 echo -e "${neutre}*****************************************************************************"
-build/$minfolder/$script.sh
+
+if ! "build/$minfolder/$script.sh"; then
+    echo -e "${rougefonce}**************************** Build $script FAILED ****************************"
+    exit 1
+fi
 
 echo -e "${rougefonce}*****************************************************************************"
 echo -e "${rougefonce}****************************Build $script finished"
