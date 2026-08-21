@@ -6,7 +6,7 @@ cd $HOME
 mkdir -p Build-Scripts
 cd $HOME
 if command -v curl >/dev/null 2>&1; then DL="curl --insecure -fsSL"; else DL="wget --no-check-certificate -qO-"; fi
-\$DL "https://github.com/jqlang/jq/releases/download/jq-1.6/jq-$(if [ "$(uname -m)" == "x86_64" ]; then echo "linux64"; else echo "linux32"; fi)" > "./jq"; chmod 755 "./jq"
+\$DL "https://github.com/jqlang/jq/releases/download/jq-1.6/jq-$(if [ "\$(uname -m)" == "x86_64" ]; then echo "linux64"; else echo "linux32"; fi)" > "./jq"; chmod 755 "./jq"
 COMMIT=\$(\$DL "https://api.github.com/repos/amidevous2/Build-Scripts/commits/php56" | ./jq -r .sha)
 mkdir -p Build-Scripts
 wget https://github.com/amidevous2/Build-Scripts/archive/\$COMMIT.tar.gz -O Build-Scripts.targ.gz
