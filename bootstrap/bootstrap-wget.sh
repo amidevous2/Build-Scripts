@@ -5,20 +5,30 @@
 # This Wget is crippled, but allows bootstrapping a full Wget build.
 
 # Binaries
-WGET_TAR=wget-1.25.0.tar.gz
-UNISTR_TAR=libunistring-1.1.tar.gz
-SSL_TAR=openssl-1.0.2u.tar.gz
-PERL_TAR=perl-5.10.0.tar.gz
-TEXTTEMPLATE_TAR=perl-5.10.0.tar.gz
-PATH_TAR=patch-2.7.6.tar.gz
+WGET_GZ=wget-1.25.0.tar.gz
+UNISTR_GZ=libunistring-1.1.tar.gz
+SSL_GZ=openssl-1.0.2u.tar.gz
+PERL_GZ=perl-5.10.0.tar.gz
+TEXTTEMPLATE_GZ=Text-Template-1.45.tar.gz
+PATH_GZ=patch-2.7.6.tar.gz
 
-# Directories
-BOOTSTRAP_DIR=$(pwd)
-PATCH_DIR="$(pwd)/../patch"
+WGET_TAR=wget-1.25.0.tar
+UNISTR_TAR=libunistring-1.1.tar
+SSL_TAR=openssl-1.0.2u.tar
+PERL_TAR=perl-5.10.0.tar
+TEXTTEMPLATE_TAR=Text-Template-1.45.tar
+PATH_TAR=patch-2.7.6.tar
 
 WGET_DIR=wget-1.25.0
 UNISTR_DIR=libunistring-1.1
 SSL_DIR=openssl-1.0.2u
+PERL_DIR=perl-5.10.0
+TEXTTEMPLATE_DIR=Text-Template
+PATH_DIR=patch-2.7.6
+
+# Directories
+BOOTSTRAP_DIR=$(pwd)
+PATCH_DIR="$(pwd)/../patch"
 
 # Install location
 PREFIX="$HOME/.build-scripts/wget"
@@ -70,11 +80,11 @@ mv 7zCon.sfx 7zCon.sfx.i386
 mv 7zCon.sfx.x86_64 7zCon.sfx
 mv 7za 7za.i386
 mv 7za.x86_64 7za
-cat gcc-4.4.7-x86_64.tar.xz_aa gcc-4.4.7-x86_64.tar.xz_ab gcc-4.4.7-x86_64.tar.xz_ac gcc-4.4.7-x86_64.tar.xz_ad gcc-4.4.7-x86_64.tar.xz_ae gcc-4.4.7-x86_64.tar.xz_af gcc-4.4.7-x86_64.tar.xz_ag gcc-4.4.7-x86_64.tar.xz_ah gcc-4.4.7-x86_64.tar.xz_ai > gcc-4.4.7-x86_64.tar.xz
+cat gcc-4.4.7-x86_64.tar.xz_aa gcc-4.4.7-x86_64.tar.xz_ab > gcc-4.4.7-x86_64.tar.xz
 gccfile=gcc-4.4.7-x86_64.tar.xz
 gccfilemin=gcc-4.4.7-x86_64.tar
 else
-cat gcc-4.4.7-i686.tar.xz_aa gcc-4.4.7-i686.tar.xz_ab gcc-4.4.7-i686.tar.xz_ac gcc-4.4.7-i686.tar.xz_ad gcc-4.4.7-i686.tar.xz_ae gcc-4.4.7-i686.tar.xz_af > gcc-4.4.7-i686.tar.xz
+cat gcc-4.4.7-i686.tar.xz_aa gcc-4.4.7-i686.tar.xz_ab > gcc-4.4.7-i686.tar.xz
 gccfile=gcc-4.4.7-i686.tar.xz
 gccfilemin=gcc-4.4.7-i686.tar
 fi
@@ -83,21 +93,23 @@ chmod 777 7z.so
 chmod 777 7zCon.sfx
 chmod 777 7za
 
+
 if [[ -z "$CC" ]]
 then
     if [[ -n "$(command -v gcc 2>/dev/null)" ]]; then
-        CC=gcc; CXX=g++
+        CC=gcc; CXX=g++ MAKE=make
     elif [[ -n "$(command -v clang 2>/dev/null)" ]]; then
-        CC=clang; CXX=clang++
+        CC=clang; CXX=clang++ MAKE=make
     elif [[ -n "$(command -v cc 2>/dev/null)" && -n "$(command -v CC 2>/dev/null)" ]]; then
-        CC=cc; CXX=CC
+        CC=cc; CXX=CC MAKE=make
     else
     cd $PREFIX
     mv $BOOTSTRAP_DIR/$gccfile
-    7z x $gccfile
-    7z x $gccfilemin
+    $BOOTSTRAP_DIR/7z x $gccfile
+    $BOOTSTRAP_DIR/7z x $gccfilemin
     rm -f $gccfile $gccfilemin
-    CC=$PREFIX/bin/gcc; CXX=$PREFIX/bin/g++
+    CC=$PREFIX/bin/gcc; CXX=$PREFIX/bin/g++ MAKE=$PREFIX/bin/make
+    cd $BOOTSTRAP_DIR
     fi
 else
 cd $PREFIX
@@ -105,7 +117,8 @@ mv $BOOTSTRAP_DIR/$gccfile
 7z x $gccfile
 7z x $gccfilemin
 rm -f $gccfile $gccfilemin
-CC=$PREFIX/bin/gcc; CXX=$PREFIX/bin/g++
+CC=$PREFIX/bin/gcc; CXX=$PREFIX/bin/g++ MAKE=$PREFIX/bin/make
+cd $BOOTSTRAP_DIR
 fi
 
 if $CC $CFLAGS bitness.c -o /dev/null &>/dev/null; then
@@ -179,7 +192,18 @@ fi
 echo "Copy cacert.pem to $CACERTFILE"
 echo "Done."
 
+############################## Patch ##############################
+$PATH_GZ
+$PATH_TAR
+rm -f 
+cd $PATH_DIR
+
 ############################## Perl ##############################
+
+
+
+############################## Perl ##############################
+
 
 
 
