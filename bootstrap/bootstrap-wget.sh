@@ -23,7 +23,7 @@ WGET_DIR=wget-1.25.0
 UNISTR_DIR=libunistring-1.1
 SSL_DIR=openssl-1.0.2u
 PERL_DIR=perl-5.10.0
-TEXTTEMPLATE_DIR=Text-Template
+TEXTTEMPLATE_DIR=Text-Template-1.45
 PATH_DIR=patch-2.7.6
 
 # Directories
@@ -33,7 +33,6 @@ PATCH_DIR="$(pwd)/../patch"
 # Install location
 PREFIX="$HOME/.build-scripts/wget"
 BINDIR="$PREFIX/bin"
-LIBDIR="$PREFIX/lib"
 CACERTDIR="$PREFIX/cacert"
 CACERTFILE="$CACERTDIR/cacert.pem"
 
@@ -41,7 +40,7 @@ CACERTFILE="$CACERTDIR/cacert.pem"
 : "${INSTX_JOBS:=2}"
 
 # Make the directories
-mkdir -p "$PREFIX" "$BINDIR" "$LIBDIR" "$CACERTDIR"
+mkdir -p "$CACERTDIR"
 
 ###############################################################################
 
@@ -71,7 +70,7 @@ fi
 
 
 mkdir -p $PREFIX
-if [[ "$(uname -m)" "x86_64" ]]
+if [[ "$(uname -m)" "x86_64" ]]; then
 mv 7z 7z.i386
 mv 7z.x86_64 7z
 mv 7z.so 7z.so.i386
@@ -83,10 +82,12 @@ mv 7za.x86_64 7za
 cat gcc-4.4.7-x86_64.tar.xz_aa gcc-4.4.7-x86_64.tar.xz_ab > gcc-4.4.7-x86_64.tar.xz
 gccfile=gcc-4.4.7-x86_64.tar.xz
 gccfilemin=gcc-4.4.7-x86_64.tar
+LIBDIR="$PREFIX/lib64"
 else
 cat gcc-4.4.7-i686.tar.xz_aa gcc-4.4.7-i686.tar.xz_ab > gcc-4.4.7-i686.tar.xz
 gccfile=gcc-4.4.7-i686.tar.xz
 gccfilemin=gcc-4.4.7-i686.tar
+LIBDIR="$PREFIX/lib"
 fi
 chmod 777 7z
 chmod 777 7z.so
