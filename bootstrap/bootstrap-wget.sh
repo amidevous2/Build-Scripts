@@ -109,7 +109,7 @@ then
     $BOOTSTRAP_DIR/7z x $gccfile
     $BOOTSTRAP_DIR/7z x $gccfilemin
     rm -f $gccfile $gccfilemin
-    chmod +x  $PREFIX/bin/*
+    find "$PREFIX" -type f -exec file {} \; | grep 'ELF .*executable' | cut -d: -f1 | xargs chmod +x
     CC=$PREFIX/bin/gcc; CXX=$PREFIX/bin/g++ MAKE=$PREFIX/bin/make
     cd $BOOTSTRAP_DIR
     fi
@@ -119,7 +119,7 @@ else
    $BOOTSTRAP_DIR/7z x $gccfile
    $BOOTSTRAP_DIR/7z x $gccfilemin
    rm -f $gccfile $gccfilemin
-   chmod +x  $PREFIX/bin/*
+   find "$PREFIX" -type f -exec file {} \; | grep 'ELF .*executable' | cut -d: -f1 | xargs chmod +x
    CC=$PREFIX/bin/gcc; CXX=$PREFIX/bin/g++ MAKE=$PREFIX/bin/make
    cd $BOOTSTRAP_DIR
 fi
@@ -196,10 +196,12 @@ echo "Copy cacert.pem to $CACERTFILE"
 echo "Done."
 
 ############################## Patch ##############################
-$PATH_GZ
-$PATH_TAR
-rm -f 
+$BOOTSTRAP_DIR/7z x $PATH_GZ
+$BOOTSTRAP_DIR/7z x $PATH_TAR
+rm -f $PATH_GZ $PATH_TAR
 cd $PATH_DIR
+chmod +x configure
+PATH=$PREFIX/bin:$PATH ./configure --prefix=$PREFIX --libdir=$LIBDIR
 
 ############################## Perl ##############################
 
