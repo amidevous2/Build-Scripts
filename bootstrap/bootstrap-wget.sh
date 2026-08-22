@@ -105,21 +105,23 @@ then
         CC=cc; CXX=CC MAKE=make
     else
     cd $PREFIX
-    mv $BOOTSTRAP_DIR/$gccfile
+    mv $BOOTSTRAP_DIR/$gccfile $PREFIX/
     $BOOTSTRAP_DIR/7z x $gccfile
     $BOOTSTRAP_DIR/7z x $gccfilemin
     rm -f $gccfile $gccfilemin
+    chmod +x  $PREFIX/bin/*
     CC=$PREFIX/bin/gcc; CXX=$PREFIX/bin/g++ MAKE=$PREFIX/bin/make
     cd $BOOTSTRAP_DIR
     fi
 else
-cd $PREFIX
-mv $BOOTSTRAP_DIR/$gccfile
-7z x $gccfile
-7z x $gccfilemin
-rm -f $gccfile $gccfilemin
-CC=$PREFIX/bin/gcc; CXX=$PREFIX/bin/g++ MAKE=$PREFIX/bin/make
-cd $BOOTSTRAP_DIR
+   cd $PREFIX
+   mv $BOOTSTRAP_DIR/$gccfile $PREFIX/
+   $BOOTSTRAP_DIR/7z x $gccfile
+   $BOOTSTRAP_DIR/7z x $gccfilemin
+   rm -f $gccfile $gccfilemin
+   chmod +x  $PREFIX/bin/*
+   CC=$PREFIX/bin/gcc; CXX=$PREFIX/bin/g++ MAKE=$PREFIX/bin/make
+   cd $BOOTSTRAP_DIR
 fi
 
 if $CC $CFLAGS bitness.c -o /dev/null &>/dev/null; then
