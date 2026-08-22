@@ -70,7 +70,7 @@ fi
 
 
 mkdir -p $PREFIX
-if [[ "$(uname -m)" "x86_64" ]]; then
+if [[ "$(uname -m)" == "x86_64" ]]; then
 mv 7z 7z.i386
 mv 7z.x86_64 7z
 mv 7z.so 7z.so.i386
