@@ -65,7 +65,7 @@ elif [[ -d "/usr/ucb/bin" ]]; then
         export PATH="/usr/ucb/bin:$PATH"
     fi
 fi
-
+export PATH="$PREFIX/bin:$PATH"
 ############################## Misc ##############################
 
 
@@ -83,11 +83,13 @@ mv 7za.x86_64 7za
 gccfile=gcc-4.4.7-x86_64.tar.xz
 gccfilemin=gcc-4.4.7-x86_64.tar
 LIBDIR="$PREFIX/lib64"
+CCPORABLE=$PREFIX/gcc64/bin/x86_64-unknown-linux-gnu-gcc; CXXPORABLE=$PREFIX/gcc64/bin/x86_64-unknown-linux-gnu-g++
 else
 #cat gcc-4.4.7-i686.tar.xz_aa gcc-4.4.7-i686.tar.xz_ab > gcc-4.4.7-i686.tar.xz
 gccfile=gcc-4.4.7-i686.tar.xz
 gccfilemin=gcc-4.4.7-i686.tar
 LIBDIR="$PREFIX/lib"
+CCPORABLE=$PREFIX/gcc32/bin/i686-unknown-linux-gnu-gcc; CXXPORABLE=$PREFIX/gcc32/bin/i686-unknown-linux-gnu-g++
 fi
 chmod 777 7z
 chmod 777 7z.so
@@ -110,7 +112,7 @@ then
     $BOOTSTRAP_DIR/7z x $gccfilemin
     rm -f $gccfile $gccfilemin
     find "$PREFIX" -type f -exec file {} \; | grep 'ELF .*executable' | cut -d: -f1 | xargs chmod +x
-    CC=$PREFIX/bin/gcc; CXX=$PREFIX/bin/g++ MAKE=$PREFIX/bin/make
+    CC=$CCPORABLE; CXX=$CXXPORABLE MAKE=make
     cd $BOOTSTRAP_DIR
     fi
 else
@@ -120,7 +122,7 @@ else
    $BOOTSTRAP_DIR/7z x $gccfilemin
    rm -f $gccfile $gccfilemin
    find "$PREFIX" -type f -exec file {} \; | grep 'ELF .*executable' | cut -d: -f1 | xargs chmod +x
-   CC=$PREFIX/bin/gcc; CXX=$PREFIX/bin/g++ MAKE=$PREFIX/bin/make
+   CC=$CCPORABLE; CXX=$CXXPORABLE MAKE=make
    cd $BOOTSTRAP_DIR
 fi
 
@@ -196,21 +198,52 @@ echo "Copy cacert.pem to $CACERTFILE"
 echo "Done."
 
 ############################## Patch ##############################
-$BOOTSTRAP_DIR/7z x $PATH_GZ
-$BOOTSTRAP_DIR/7z x $PATH_TAR
-rm -f $PATH_GZ $PATH_TAR
+$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$PATH_GZ
+$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$PATH_TAR
 cd $PATH_DIR
 chmod +x configure
 PATH=$PREFIX/bin:$PATH ./configure --prefix=$PREFIX --libdir=$LIBDIR
 
 ############################## Perl ##############################
 
+echo
+echo "*************************************************"
+echo "Building Perl"
+echo "*************************************************"
+echo
+rm -rf "$PERL_DIR" &>/dev/null
+$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$PERL_GZ
+$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$PERL_TAR
+cd "$BOOTSTRAP_DIR/$PERL_DIR" || exit 1
+
+./Configure \
+  -des \
+  -Dprefix="$PREFIX" \
+  -Dsiteprefix="$PREFIX" \
+  -Dvendorprefix="$PREFIX" \
+  -Duseshrplib \
+  -Duseperlio \
+  -Dcc=${CC} \
+  -Doptimize="-O2 -fPIC" \
+  -Dccflags="-O2 -fPIC -fno-strict-aliasing -pipe"
+make
+make install
 
 
-############################## Perl ##############################
+######################## Perl Text-Template ########################
 
-
-
+echo
+echo "*************************************************"
+echo "Building Perl Text-Template"
+echo "*************************************************"
+echo
+rm -rf "$TEXTTEMPLATE_DIR" &>/dev/null
+$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$TEXTTEMPLATE_GZ
+$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$TEXTTEMPLATE_TAR
+cd "$BOOTSTRAP_DIR/$TEXTTEMPLATE_DIR" || exit 1
+"$PREFIX/bin/perl" Makefile.PL PREFIX="$PREFIX"
+make
+make install
 
 ############################## OpenSSL ##############################
 
@@ -219,9 +252,9 @@ echo "*************************************************"
 echo "Building OpenSSL"
 echo "*************************************************"
 echo
-
 rm -rf "$SSL_DIR" &>/dev/null
-gzip -d < "$SSL_TAR" | tar xf -
+$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$SSL_GZ
+$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$SSL_TAR
 cd "$BOOTSTRAP_DIR/$SSL_DIR" || exit 1
 
 cp "${PATCH_DIR}/openssl-1.0.2.patch" .
@@ -279,7 +312,8 @@ echo "*************************************************"
 echo
 
 rm -rf "$UNISTR_DIR" &>/dev/null
-gzip -d < "$UNISTR_TAR" | tar xf -
+$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$UNISTR_GZ
+$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$UNISTR_TAR
 cd "$BOOTSTRAP_DIR/$UNISTR_DIR" || exit 1
 
     CFLAGS="$CFLAGS" \
@@ -318,7 +352,8 @@ echo "*************************************************"
 echo
 
 rm -rf "$WGET_DIR" &>/dev/null
-gzip -d < "$WGET_TAR" | tar xf -
+$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$WGET_GZ
+$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$WGET_TAR
 cd "$BOOTSTRAP_DIR/$WGET_DIR" || exit 1
 
 cp "${PATCH_DIR}/wget.patch" .
