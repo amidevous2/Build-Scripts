@@ -486,8 +486,11 @@ sed -e "s/-lcrypto/$lib_crypto/g" \
     configure > configure.fixed
 mv configure.fixed configure && chmod +x configure
 
+chmod 777 *
+chmod -R 777 *
 chmod +x configure
-
+chmod +x ./texi2pod.pl
+chmod +x doc/texi2pod.pl
 
     CFLAGS="$CFLAGS" \
     LDFLAGS="$LDFLAGS" \
@@ -528,6 +531,7 @@ do
     mv "${file}.fixed" "${file}"
 done
 chmod +x ./texi2pod.pl
+chmod +x doc/texi2pod.pl
 # Fix lib/malloc/dynarray-skeleton.c
 file=lib/malloc/dynarray-skeleton.c
 sed -e 's/__nonnull ((1))//g' \
@@ -540,6 +544,7 @@ if ! make -j "$INSTX_JOBS" V=1; then
     exit 1
 fi
 chmod +x ./texi2pod.pl
+chmod +x doc/texi2pod.pl
 
 # Remove old rc file.
 rm -f "$PREFIX/etc/wgetrc"
