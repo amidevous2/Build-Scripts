@@ -37,21 +37,19 @@ CACERTFILE="$CACERTDIR/cacert.pem"
 
 mkdir -p $PREFIX
 if [[ "$(uname -m)" == "x86_64" ]]; then
-mv 7z 7z.i386
-mv 7z.x86_64 7z
-mv 7z.so 7z.so.i386
-mv 7z.so.x86_64 7z.so
-mv 7zCon.sfx 7zCon.sfx.i386
-mv 7zCon.sfx.x86_64 7zCon.sfx
-mv 7za 7za.i386
-mv 7za.x86_64 7za
-#cat gcc-4.4.7-x86_64.tar.xz_aa gcc-4.4.7-x86_64.tar.xz_ab > gcc-4.4.7-x86_64.tar.xz
+#mv 7z 7z.i386
+#mv 7z.x86_64 7z
+#mv 7z.so 7z.so.i386
+#mv 7z.so.x86_64 7z.so
+#mv 7zCon.sfx 7zCon.sfx.i386
+#mv 7zCon.sfx.x86_64 7zCon.sfx
+#mv 7za 7za.i386
+#mv 7za.x86_64 7za
 gccfile=gcc-4.4.7-x86_64.7z.001
 gccfilemin=gcc-4.4.7-x86_64.tar
 LIBDIR="$PREFIX/lib64"
 export CCPORABLE=$HOME/.local/gcc64/bin/x86_64-unknown-linux-gnu-gcc; CXXPORABLE=$HOME/.local/gcc64/bin/x86_64-unknown-linux-gnu-g++
 else
-#cat gcc-4.4.7-i686.tar.xz_aa gcc-4.4.7-i686.tar.xz_ab > gcc-4.4.7-i686.tar.xz
 gccfile=gcc-4.4.7-i686.7z.001
 gccfilemin=gcc-4.4.7-i686.tar
 LIBDIR="$PREFIX/lib"
@@ -319,6 +317,8 @@ cd "$BOOTSTRAP_DIR" || exit 1
 fi
 
 ######################## Perl Text-Template ########################
+if [ ! -f $PREFIX/bin/openssl ]; then
+
 cd "$BOOTSTRAP_DIR" || exit 1
 
 echo
@@ -336,9 +336,10 @@ cd "$BOOTSTRAP_DIR/$TEXTTEMPLATE_DIR" || exit 1
 make
 make install
 cd $BOOTSTRAP_DIR
+fi
 
 ############################## OpenSSL ##############################
-#if [ ! -f $PREFIX/bin/openssl ]; then
+if [ ! -f $PREFIX/bin/openssl ]; then
 cd "$BOOTSTRAP_DIR" || exit 1
 
 echo
