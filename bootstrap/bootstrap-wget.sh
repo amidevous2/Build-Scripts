@@ -106,9 +106,12 @@ then
     elif [[ -n "$(command -v cc 2>/dev/null)" && -n "$(command -v CC 2>/dev/null)" ]]; then
         CC=cc; CXX=CC MAKE=make
     else
-    cd $PREFIX
-    mv $BOOTSTRAP_DIR/$gccfile $PREFIX/
+    mkdir -p $HOME/.local/
+    cd $HOME/.local/
+    rm $HOME/.local/$gccfile
+    cp $BOOTSTRAP_DIR/$gccfile $HOME/.local/
     $BOOTSTRAP_DIR/7z x $gccfile
+	rm -f $gccfilemin
     $BOOTSTRAP_DIR/7z x $gccfilemin
     rm -f $gccfile $gccfilemin
     find "$PREFIX" -type f -exec file {} \; | grep 'ELF .*executable' | cut -d: -f1 | xargs chmod +x
@@ -121,6 +124,7 @@ else
    rm $HOME/.local/$gccfile
    cp $BOOTSTRAP_DIR/$gccfile $HOME/.local/
    $BOOTSTRAP_DIR/7z x $gccfile
+   rm -f $gccfilemin
    $BOOTSTRAP_DIR/7z x $gccfilemin
    rm -f $gccfile $gccfilemin
    find "$PREFIX" -type f -exec file {} \; | grep 'ELF .*executable' | cut -d: -f1 | xargs chmod +x
@@ -214,6 +218,7 @@ echo "Building Perl"
 echo "*************************************************"
 echo
 rm -rf "$PERL_DIR" &>/dev/null
+rm -f $PERL_TAR
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$PERL_GZ
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$PERL_TAR
 cd "$BOOTSTRAP_DIR/$PERL_DIR" || exit 1
@@ -240,6 +245,7 @@ echo "Building Perl Text-Template"
 echo "*************************************************"
 echo
 rm -rf "$TEXTTEMPLATE_DIR" &>/dev/null
+rm -rf $TEXTTEMPLATE_TAR
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$TEXTTEMPLATE_GZ
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$TEXTTEMPLATE_TAR
 cd "$BOOTSTRAP_DIR/$TEXTTEMPLATE_DIR" || exit 1
@@ -255,6 +261,7 @@ echo "Building OpenSSL"
 echo "*************************************************"
 echo
 rm -rf "$SSL_DIR" &>/dev/null
+rm -rf $SSL_TAR
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$SSL_GZ
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$SSL_TAR
 cd "$BOOTSTRAP_DIR/$SSL_DIR" || exit 1
@@ -314,6 +321,7 @@ echo "*************************************************"
 echo
 
 rm -rf "$UNISTR_DIR" &>/dev/null
+rm -rf $UNISTR_TAR
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$UNISTR_GZ
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$UNISTR_TAR
 cd "$BOOTSTRAP_DIR/$UNISTR_DIR" || exit 1
@@ -354,6 +362,7 @@ echo "*************************************************"
 echo
 
 rm -rf "$WGET_DIR" &>/dev/null
+rm -rf $WGET_TAR
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$WGET_GZ
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$WGET_TAR
 cd "$BOOTSTRAP_DIR/$WGET_DIR" || exit 1
