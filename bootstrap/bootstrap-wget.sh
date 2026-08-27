@@ -230,6 +230,41 @@ ln -s $CXXPORABLE $PREFIX/bin/g++
 PATH=$PREFIX/bin:$PATH CC=$CCPORABLE CXX=$CXXPORABLE ./configure --prefix=$PREFIX --libdir=$LIBDIR
 make
 make install
+############################## bzip2 ##############################
+
+cd $BOOTSTRAP_DIR
+$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/bzip2-1.0.8.tar.gz
+$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/bzip2-1.0.8.tar
+cd bzip2-1.0.8
+patch -p1 < ../patch/bzip-1.0.8.patch
+PATH=$PREFIX/bin:$PATH CC=$CCPORABLE CXX=$CXXPORABLE make -f Makefile-libbz2_so
+PATH=$PREFIX/bin:$PATH CC=$CCPORABLE CXX=$CXXPORABLE make bzip2recover
+chmod 644 bzlib.h
+mkdir -p $PREFIX/bin,/lib/pkgconfig,/include}
+cp -p bzlib.h $PREFIX/include
+install -m 755 libbz2.so.1.0.8 $PREFIX/lib
+install -m 644 libbz2.a $PREFIX/lib
+install -m 644 bzip2.pc $PREFIX/lib/pkgconfig/bzip2.pc
+install -m 755 bzip2-shared  $PREFIX/bin/bzip2
+install -m 755 bzip2recover bzgrep bzdiff bzmore  $PREFIX/bin
+rm -f $PREFIX/bin/bunzip2
+ln -s bzip2 $PREFIX/bin/bunzip2
+rm -f $PREFIX/bin/bzcat
+ln -s bzip2 $PREFIX/bin/bzcat
+rm -f ${INSTX_PREFIX}/bin/bzcmp
+ln -s bzdiff $PREFIX/bin/bzcmp
+rm -f $PREFIX/bin/bzless
+ln -s bzmore $PREFIX/bin/bzless
+rm -rf $PREFIX/bin/bzegrep
+ln -s bzgrep $PREFIX/bin/bzegrep
+rm -f $PREFIX/bin/bzfgrep
+ln -s bzgrep$PREFIX/bin/bzfgrep
+rm -f $PREFIX/bin/libbz2.so.1
+ln -s libbz2.so.1.0.8 $PREFIX/bin/libbz2.so.1
+rm -f $PREFIX/bin/libbz2.so
+ln -s libbz2.so.1.0.8 $PREFIX/bin/libbz2.so
+
+
 ############################## zlib ##############################
 
 cd $BOOTSTRAP_DIR
@@ -242,6 +277,7 @@ ln -s $CXXPORABLE $PREFIX/bin/g++
 PATH=$PREFIX/bin:$PATH CC=$CCPORABLE CXX=$CXXPORABLE ./configure --prefix=$PREFIX --libdir=$LIBDIR
 make
 make install
+
 
 ############################## Perl ##############################
 cd "$BOOTSTRAP_DIR" || exit 1
