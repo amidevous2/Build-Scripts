@@ -208,6 +208,8 @@ echo "Copy cacert.pem to $CACERTFILE"
 echo "Done."
 
 ############################## Patch ##############################
+
+cd $BOOTSTRAP_DIR
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$PATH_GZ
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$PATH_TAR
 cd $PATH_DIR
@@ -219,6 +221,7 @@ make
 make install
 
 ############################## Perl ##############################
+cd "$BOOTSTRAP_DIR" || exit 1
 
 echo
 echo "*************************************************"
@@ -243,15 +246,18 @@ cd "$BOOTSTRAP_DIR/$PERL_DIR" || exit 1
   -Dccflags="-O2 -fPIC -fno-strict-aliasing -pipe"
 make
 make install
+cd $BOOTSTRAP_DIR
 
 
 ######################## Perl Text-Template ########################
+cd "$BOOTSTRAP_DIR" || exit 1
 
 echo
 echo "*************************************************"
 echo "Building Perl Text-Template"
 echo "*************************************************"
 echo
+cd $BOOTSTRAP_DIR
 rm -rf "$TEXTTEMPLATE_DIR" &>/dev/null
 rm -rf $TEXTTEMPLATE_TAR
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$TEXTTEMPLATE_GZ
@@ -260,8 +266,10 @@ cd "$BOOTSTRAP_DIR/$TEXTTEMPLATE_DIR" || exit 1
 "$PREFIX/bin/perl" Makefile.PL PREFIX="$PREFIX"
 make
 make install
+cd $BOOTSTRAP_DIR
 
 ############################## OpenSSL ##############################
+cd "$BOOTSTRAP_DIR" || exit 1
 
 echo
 echo "*************************************************"
@@ -270,6 +278,7 @@ echo "*************************************************"
 echo
 rm -rf "$SSL_DIR" &>/dev/null
 rm -rf $SSL_TAR
+cd $BOOTSTRAP_DIR
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$SSL_GZ
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$SSL_TAR
 cd "$BOOTSTRAP_DIR/$SSL_DIR" || exit 1
@@ -317,6 +326,7 @@ rm -rf "$LIBDIR/engines"
     echo "certificate = $CACERTDIR/cacert.pem"
 
 } >> "$PREFIX/openssl.cnf"
+cd $BOOTSTRAP_DIR
 
 ############################## Unistring ##############################
 
