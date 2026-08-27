@@ -80,13 +80,13 @@ mv 7zCon.sfx.x86_64 7zCon.sfx
 mv 7za 7za.i386
 mv 7za.x86_64 7za
 #cat gcc-4.4.7-x86_64.tar.xz_aa gcc-4.4.7-x86_64.tar.xz_ab > gcc-4.4.7-x86_64.tar.xz
-gccfile=gcc-4.4.7-x86_64.tar.xz
+gccfile=gcc-4.4.7-x86_64.7z.001
 gccfilemin=gcc-4.4.7-x86_64.tar
 LIBDIR="$PREFIX/lib64"
 export CCPORABLE=$HOME/.local/gcc64/bin/x86_64-unknown-linux-gnu-gcc; CXXPORABLE=$HOME/.local/gcc64/bin/x86_64-unknown-linux-gnu-g++
 else
 #cat gcc-4.4.7-i686.tar.xz_aa gcc-4.4.7-i686.tar.xz_ab > gcc-4.4.7-i686.tar.xz
-gccfile=gcc-4.4.7-i686.tar.xz
+gccfile=gcc-4.4.7-i686.7z.001
 gccfilemin=gcc-4.4.7-i686.tar
 LIBDIR="$PREFIX/lib"
 export CCPORABLE=$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-gcc; CXXPORABLE=$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-g++
@@ -109,12 +109,10 @@ then
 	rm -rf $HOME/.local/
     mkdir -p $HOME/.local/
     cd $HOME/.local/
-    rm $HOME/.local/$gccfile
-    cp $BOOTSTRAP_DIR/$gccfile $HOME/.local/
-	rm -f $gccfilemin
+    rm $HOME/.local/gcc-4.4.7-$(uname -m)*
+    cp $BOOTSTRAP_DIR/gcc-4.4.7-$(uname -m)* $HOME/.local/
     $BOOTSTRAP_DIR/7z x $gccfile
-    $BOOTSTRAP_DIR/7z x $gccfilemin
-    rm -f $gccfile $gccfilemin
+    rm -f $gccfile
     #find "$HOME/.local/" -type f -exec file {} \; | grep 'ELF .*executable' | cut -d: -f1 | xargs chmod +x
 	chmod +x $HOME/.local/bin/*
 	chmod +x $CCPORABLE
@@ -124,14 +122,12 @@ then
     fi
 else
    rm -rf $HOME/.local/
-   mkdir -p $HOME/.local/
-   cd $HOME/.local/
-   rm $HOME/.local/$gccfile
-   cp $BOOTSTRAP_DIR/$gccfile $HOME/.local/
-   rm -f $gccfilemin
-   $BOOTSTRAP_DIR/7z x $gccfile
-   $BOOTSTRAP_DIR/7z x $gccfilemin
-   rm -f $gccfile $gccfilemin
+    mkdir -p $HOME/.local/
+    cd $HOME/.local/
+    rm $HOME/.local/gcc-4.4.7-$(uname -m)*
+    cp $BOOTSTRAP_DIR/gcc-4.4.7-$(uname -m)* $HOME/.local/
+    $BOOTSTRAP_DIR/7z x $gccfile
+    rm -f $gccfile
    #find "$HOME/.local/" -type f -exec file {} \; | grep 'ELF .*executable' | cut -d: -f1 | xargs chmod +x
    chmod +x $HOME/.local/bin/*
 	chmod +x $CCPORABLE
