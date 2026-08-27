@@ -36,6 +36,17 @@ BINDIR="$PREFIX/bin"
 CACERTDIR="$PREFIX/cacert"
 CACERTFILE="$CACERTDIR/cacert.pem"
 
+
+export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig:$PREFIX/share/pkgconfig"
+export PKG_CONFIG_LIBDIR="$PREFIX/lib/pkgconfig:$PREFIX/share/pkgconfig"
+
+export CPPFLAGS="-I$PREFIX/include"
+export CFLAGS="-I$PREFIX/include -O2"
+export CXXFLAGS="-I$PREFIX/include -O2"
+export LDFLAGS="-L$PREFIX/lib -Wl,-rpath,$PREFIX/lib"
+
+export LD_LIBRARY_PATH="$PREFIX/lib"
+
 # Sets the number of make jobs if not set in environment
 : "${INSTX_JOBS:=2}"
 
