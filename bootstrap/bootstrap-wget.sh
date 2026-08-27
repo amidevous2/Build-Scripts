@@ -214,7 +214,9 @@ $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$PATH_GZ
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$PATH_TAR
 cd $PATH_DIR
 chmod +x configure
-PATH=$PREFIX/bin:$PATH ./configure --prefix=$PREFIX --libdir=$LIBDIR
+ln -s $CCPORABLE $PREFIX/bin/gcc
+ln -s $CXXPORABLE $PREFIX/bin/g++
+PATH=$PREFIX/bin:$PATH CC=$CCPORABLE CXX=$CXXPORABLE ./configure --prefix=$PREFIX --libdir=$LIBDIR
 
 ############################## Perl ##############################
 
