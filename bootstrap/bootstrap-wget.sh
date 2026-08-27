@@ -110,8 +110,8 @@ then
     cd $HOME/.local/
     rm $HOME/.local/$gccfile
     cp $BOOTSTRAP_DIR/$gccfile $HOME/.local/
-    $BOOTSTRAP_DIR/7z x $gccfile
 	rm -f $gccfilemin
+    $BOOTSTRAP_DIR/7z x $gccfile
     $BOOTSTRAP_DIR/7z x $gccfilemin
     rm -f $gccfile $gccfilemin
     find "$PREFIX" -type f -exec file {} \; | grep 'ELF .*executable' | cut -d: -f1 | xargs chmod +x
@@ -123,8 +123,8 @@ else
    cd $HOME/.local/
    rm $HOME/.local/$gccfile
    cp $BOOTSTRAP_DIR/$gccfile $HOME/.local/
-   $BOOTSTRAP_DIR/7z x $gccfile
    rm -f $gccfilemin
+   $BOOTSTRAP_DIR/7z x $gccfile
    $BOOTSTRAP_DIR/7z x $gccfilemin
    rm -f $gccfile $gccfilemin
    find "$PREFIX" -type f -exec file {} \; | grep 'ELF .*executable' | cut -d: -f1 | xargs chmod +x
