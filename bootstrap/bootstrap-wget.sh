@@ -279,7 +279,7 @@ make install
 
 
 ############################## Perl ##############################
-
+exit 1
 cd "$BOOTSTRAP_DIR" || exit 1
 
 echo
