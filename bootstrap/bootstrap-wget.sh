@@ -416,6 +416,7 @@ $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$UNISTR_GZ
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$UNISTR_TAR
 cd "$BOOTSTRAP_DIR/$UNISTR_DIR" || exit 1
 
+chmod +x configure
     CFLAGS="$CFLAGS" \
     LDFLAGS="$LDFLAGS" \
     PKG_CONFIG_PATH="$LIBDIR/pkgconfig/" \
@@ -480,6 +481,9 @@ sed -e "s/-lcrypto/$lib_crypto/g" \
     -e "s/-lunistring/$lib_unistring/g" \
     configure > configure.fixed
 mv configure.fixed configure && chmod +x configure
+
+chmod +x configure
+
 
     CFLAGS="$CFLAGS" \
     LDFLAGS="$LDFLAGS" \
