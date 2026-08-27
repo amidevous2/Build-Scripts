@@ -278,15 +278,15 @@ make install
 
 
 ############################## Perl ##############################
-#cd "$BOOTSTRAP_DIR" || exit 1
-cd "$BOOTSTRAP_DIR"
+cd "$BOOTSTRAP_DIR" || exit 1
+#cd "$BOOTSTRAP_DIR"
 
 echo
 echo "*************************************************"
 echo "Building Perl"
 echo "*************************************************"
 echo
-exit 1
+
 rm -rf "$PERL_DIR" &>/dev/null
 rm -f "$PERL_TAR"
 
