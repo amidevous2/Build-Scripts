@@ -227,6 +227,7 @@ echo "*************************************************"
 echo
 rm -rf "$PERL_DIR" &>/dev/null
 rm -f $PERL_TAR
+cd $BOOTSTRAP_DIR
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$PERL_GZ
 cd "$BOOTSTRAP_DIR/$PERL_DIR" || exit 1
 
