@@ -126,6 +126,8 @@ then
 	chmod +x $CCPORABLE
 	chmod +x $CXXPORABLE
     CC=$CCPORABLE; CXX=$CXXPORABLE MAKE=make
+	rm -f "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/usr/lib/libm.so"
+    ln -s ../../lib/libm.so.6 "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/usr/lib/libm.so"
     cd $BOOTSTRAP_DIR
     fi
 else
@@ -140,6 +142,8 @@ else
 	chmod +x $CCPORABLE
 	chmod +x $CXXPORABLE
    CC=$CCPORABLE; CXX=$CXXPORABLE MAKE=make
+	rm -f "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/usr/lib/libm.so"
+    ln -s ../../lib/libm.so.6 "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/usr/lib/libm.so"
    cd $BOOTSTRAP_DIR
 fi
 
