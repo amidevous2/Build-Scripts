@@ -4,21 +4,21 @@ export LANG=fr_FR.UTF-8
 export LANGUAGE=fr_FR
 
 # Binaries
-WGET_GZ=wget-1.25.0.tar.gz
+WGET_GZ=wget-1.21.3.tar.gz
 UNISTR_GZ=libunistring-1.1.tar.gz
 SSL_GZ=openssl-1.0.2u.tar.gz
 PERL_GZ=perl-5.10.0.7z
 TEXTTEMPLATE_GZ=Text-Template-1.45.tar.gz
 PATH_GZ=patch-2.7.6.tar.gz
 
-WGET_TAR=wget-1.25.0.tar
+WGET_TAR=wget-1.21.3.tar
 UNISTR_TAR=libunistring-1.1.tar
 SSL_TAR=openssl-1.0.2u.tar
 PERL_TAR=perl-5.10.0.tar
 TEXTTEMPLATE_TAR=Text-Template-1.45.tar
 PATH_TAR=patch-2.7.6.tar
 
-WGET_DIR=wget-1.25.0
+WGET_DIR=wget-1.21.3
 UNISTR_DIR=libunistring-1.1
 SSL_DIR=openssl-1.0.2u
 PERL_DIR=perl-5.10.0
@@ -463,7 +463,7 @@ cd "$BOOTSTRAP_DIR/$WGET_DIR" || exit 1
 
 cp "${PATCH_DIR}/wget.patch" .
 
-#patch -p0 < wget.patc
+patch -p0 < wget.patc
 #if ! patch -p0 < wget.patch;
 #then
 #    echo "Failed to patch Wget"
