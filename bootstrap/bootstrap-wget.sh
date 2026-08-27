@@ -35,16 +35,41 @@ BINDIR="$PREFIX/bin"
 CACERTDIR="$PREFIX/cacert"
 CACERTFILE="$CACERTDIR/cacert.pem"
 
+mkdir -p $PREFIX
+if [[ "$(uname -m)" == "x86_64" ]]; then
+mv 7z 7z.i386
+mv 7z.x86_64 7z
+mv 7z.so 7z.so.i386
+mv 7z.so.x86_64 7z.so
+mv 7zCon.sfx 7zCon.sfx.i386
+mv 7zCon.sfx.x86_64 7zCon.sfx
+mv 7za 7za.i386
+mv 7za.x86_64 7za
+#cat gcc-4.4.7-x86_64.tar.xz_aa gcc-4.4.7-x86_64.tar.xz_ab > gcc-4.4.7-x86_64.tar.xz
+gccfile=gcc-4.4.7-x86_64.7z.001
+gccfilemin=gcc-4.4.7-x86_64.tar
+LIBDIR="$PREFIX/lib64"
+export CCPORABLE=$HOME/.local/gcc64/bin/x86_64-unknown-linux-gnu-gcc; CXXPORABLE=$HOME/.local/gcc64/bin/x86_64-unknown-linux-gnu-g++
+else
+#cat gcc-4.4.7-i686.tar.xz_aa gcc-4.4.7-i686.tar.xz_ab > gcc-4.4.7-i686.tar.xz
+gccfile=gcc-4.4.7-i686.7z.001
+gccfilemin=gcc-4.4.7-i686.tar
+LIBDIR="$PREFIX/lib"
+export CCPORABLE=$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-gcc; CXXPORABLE=$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-g++
+fi
+chmod 777 7z
+chmod 777 7z.so
+chmod 777 7zCon.sfx
+chmod 777 7za
 
-export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig:$PREFIX/share/pkgconfig"
-export PKG_CONFIG_LIBDIR="$PREFIX/lib/pkgconfig:$PREFIX/share/pkgconfig"
+export PKG_CONFIG_PATH="$LIBDIR/pkgconfig:$PREFIX/share/pkgconfig"
 
 export CPPFLAGS="-I$PREFIX/include"
 export CFLAGS="-I$PREFIX/include -O2"
 export CXXFLAGS="-I$PREFIX/include -O2"
-export LDFLAGS="-L$PREFIX/lib -Wl,-rpath,$PREFIX/lib"
+export LDFLAGS="-L$LIBDIR -Wl,-rpath,$LIBDIR"
 
-export LD_LIBRARY_PATH="$PREFIX/lib"
+export LD_LIBRARY_PATH="$LIBDIR"
 
 # Sets the number of make jobs if not set in environment
 : "${INSTX_JOBS:=2}"
@@ -79,32 +104,6 @@ export PATH="$PREFIX/bin:$PATH"
 ############################## Misc ##############################
 
 
-mkdir -p $PREFIX
-if [[ "$(uname -m)" == "x86_64" ]]; then
-mv 7z 7z.i386
-mv 7z.x86_64 7z
-mv 7z.so 7z.so.i386
-mv 7z.so.x86_64 7z.so
-mv 7zCon.sfx 7zCon.sfx.i386
-mv 7zCon.sfx.x86_64 7zCon.sfx
-mv 7za 7za.i386
-mv 7za.x86_64 7za
-#cat gcc-4.4.7-x86_64.tar.xz_aa gcc-4.4.7-x86_64.tar.xz_ab > gcc-4.4.7-x86_64.tar.xz
-gccfile=gcc-4.4.7-x86_64.7z.001
-gccfilemin=gcc-4.4.7-x86_64.tar
-LIBDIR="$PREFIX/lib64"
-export CCPORABLE=$HOME/.local/gcc64/bin/x86_64-unknown-linux-gnu-gcc; CXXPORABLE=$HOME/.local/gcc64/bin/x86_64-unknown-linux-gnu-g++
-else
-#cat gcc-4.4.7-i686.tar.xz_aa gcc-4.4.7-i686.tar.xz_ab > gcc-4.4.7-i686.tar.xz
-gccfile=gcc-4.4.7-i686.7z.001
-gccfilemin=gcc-4.4.7-i686.tar
-LIBDIR="$PREFIX/lib"
-export CCPORABLE=$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-gcc; CXXPORABLE=$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-g++
-fi
-chmod 777 7z
-chmod 777 7z.so
-chmod 777 7zCon.sfx
-chmod 777 7za
 
 
 if [[ -z "$CC" ]]
@@ -239,11 +238,11 @@ patch -p1 < ../patch/bzip-1.0.8.patch
 PATH=$PREFIX/bin:$PATH CC=$CCPORABLE CXX=$CXXPORABLE make -f Makefile-libbz2_so
 PATH=$PREFIX/bin:$PATH CC=$CCPORABLE CXX=$CXXPORABLE make bzip2recover
 chmod 644 bzlib.h
-mkdir -p $PREFIX/bin,/lib/pkgconfig,/include}
+mkdir -p $PREFIX/bin $LIBDIR/pkgconfig $PREFIX/include
 cp -p bzlib.h $PREFIX/include
-install -m 755 libbz2.so.1.0.8 $PREFIX/lib
-install -m 644 libbz2.a $PREFIX/lib
-install -m 644 bzip2.pc $PREFIX/lib/pkgconfig/bzip2.pc
+install -m 755 libbz2.so.1.0.8 $LIBDIR
+install -m 644 libbz2.a $LIBDIR
+install -m 644 bzip2.pc $LIBDIR/pkgconfig/bzip2.pc
 install -m 755 bzip2-shared  $PREFIX/bin/bzip2
 install -m 755 bzip2recover bzgrep bzdiff bzmore  $PREFIX/bin
 rm -f $PREFIX/bin/bunzip2
@@ -306,7 +305,7 @@ cd "$BOOTSTRAP_DIR/$PERL_DIR" || exit 1
   -Dcc="$CC" \
   -Doptimize="-O2 -fPIC" \
   -Dccflags="-O2 -fPIC -fno-strict-aliasing -pipe" \
-  -Dldflags="-L$PREFIX/lib -Wl,-rpath,$PREFIX/lib -lm"
+  -Dldflags="-L$LIBDIR -Wl,-rpath,$LIBDIR -lm"
 make
 make install
 
