@@ -280,6 +280,7 @@ make install
 
 
 ############################## Perl ##############################
+
 cd "$BOOTSTRAP_DIR" || exit 1
 
 echo
@@ -287,10 +288,13 @@ echo "*************************************************"
 echo "Building Perl"
 echo "*************************************************"
 echo
+
 rm -rf "$PERL_DIR" &>/dev/null
-rm -f $PERL_TAR
-cd $BOOTSTRAP_DIR
-$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$PERL_GZ
+rm -f "$PERL_TAR"
+
+cd "$BOOTSTRAP_DIR" || exit 1
+"$BOOTSTRAP_DIR/7z" x "$BOOTSTRAP_DIR/$PERL_GZ"
+
 cd "$BOOTSTRAP_DIR/$PERL_DIR" || exit 1
 
 ./Configure \
@@ -300,12 +304,14 @@ cd "$BOOTSTRAP_DIR/$PERL_DIR" || exit 1
   -Dvendorprefix="$PREFIX" \
   -Duseshrplib \
   -Duseperlio \
-  -Dcc=${CC} \
+  -Dcc="$CC" \
   -Doptimize="-O2 -fPIC" \
-  -Dccflags="-O2 -fPIC -fno-strict-aliasing -pipe"
+  -Dccflags="-O2 -fPIC -fno-strict-aliasing -pipe" \
+  -Dldflags="-L$PREFIX/lib -Wl,-rpath,$PREFIX/lib -lm"
 make
 make install
-cd $BOOTSTRAP_DIR
+
+cd "$BOOTSTRAP_DIR" || exit 1
 
 
 ######################## Perl Text-Template ########################
