@@ -527,7 +527,7 @@ do
         "${file}" > "${file}.fixed"
     mv "${file}.fixed" "${file}"
 done
-
+chmod +x ./texi2pod.pl
 # Fix lib/malloc/dynarray-skeleton.c
 file=lib/malloc/dynarray-skeleton.c
 sed -e 's/__nonnull ((1))//g' \
@@ -539,6 +539,7 @@ if ! make -j "$INSTX_JOBS" V=1; then
     echo "Failed to build Wget"
     exit 1
 fi
+chmod +x ./texi2pod.pl
 
 # Remove old rc file.
 rm -f "$PREFIX/etc/wgetrc"
