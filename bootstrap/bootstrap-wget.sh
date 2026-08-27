@@ -37,14 +37,14 @@ CACERTFILE="$CACERTDIR/cacert.pem"
 
 mkdir -p $PREFIX
 if [[ "$(uname -m)" == "x86_64" ]]; then
-#mv 7z 7z.i386
-#mv 7z.x86_64 7z
-#mv 7z.so 7z.so.i386
-#mv 7z.so.x86_64 7z.so
-#mv 7zCon.sfx 7zCon.sfx.i386
-#mv 7zCon.sfx.x86_64 7zCon.sfx
-#mv 7za 7za.i386
-#mv 7za.x86_64 7za
+mv 7z 7z.i386
+mv 7z.x86_64 7z
+mv 7z.so 7z.so.i386
+mv 7z.so.x86_64 7z.so
+mv 7zCon.sfx 7zCon.sfx.i386
+mv 7zCon.sfx.x86_64 7zCon.sfx
+mv 7za 7za.i386
+mv 7za.x86_64 7za
 gccfile=gcc-4.4.7-x86_64.7z.001
 gccfilemin=gcc-4.4.7-x86_64.tar
 LIBDIR="$PREFIX/lib64"
@@ -124,8 +124,6 @@ then
 	chmod +x $CCPORABLE
 	chmod +x $CXXPORABLE
     CC=$CCPORABLE; CXX=$CXXPORABLE MAKE=make
-	rm -f "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/usr/lib/libm.so"
-    ln -s ../../lib/libm.so.6 "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/usr/lib/libm.so"
     cd $BOOTSTRAP_DIR
     fi
 else
@@ -140,8 +138,6 @@ else
 	chmod +x $CCPORABLE
 	chmod +x $CXXPORABLE
    CC=$CCPORABLE; CXX=$CXXPORABLE MAKE=make
-	rm -f "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/usr/lib/libm.so"
-    ln -s ../../lib/libm.so.6 "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/usr/lib/libm.so"
    cd $BOOTSTRAP_DIR
 fi
 
