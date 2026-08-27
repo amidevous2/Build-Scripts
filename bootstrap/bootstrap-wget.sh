@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-
-
 export LANG=fr_FR.UTF-8
 export LANGUAGE=fr_FR
 
