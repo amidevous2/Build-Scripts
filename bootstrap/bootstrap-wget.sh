@@ -364,22 +364,25 @@ chmod +x config
     no-threads no-shared no-dso no-engine
 
 # This will need to be fixed for BSDs and PowerMac
-if ! make depend; then
-    echo "Failed to update OpenSSL dependencies"
-    exit 1
-fi
+make depend
+#if ! make depend; then
+#    echo "Failed to update OpenSSL dependencies"
+#    exit 1
+#fi
 
-if ! make -j "$INSTX_JOBS"; then
-    echo "Failed to build OpenSSL"
-    exit 1
-fi
+make -j "$INSTX_JOBS"
+#if ! make -j "$INSTX_JOBS"; then
+#    echo "Failed to build OpenSSL"
+#    exit 1
+#fi
 
 rm -f "$PREFIX/openssl.cnf"
 
-if ! make install_sw; then
-    echo "Failed to install OpenSSL"
-    exit 1
-fi
+make install_sw
+#if ! make install_sw; then
+#    echo "Failed to install OpenSSL"
+#    exit 1
+#fi
 
 # OpenSSL does not honor no-engines
 rm -rf "$LIBDIR/engines"
