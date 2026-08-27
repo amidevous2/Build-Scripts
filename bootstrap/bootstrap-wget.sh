@@ -165,6 +165,8 @@ echo "  OPT_BITS: $OPT_BITS"
 echo "  OPT_PIC: $OPT_PIC"
 echo "  OPT_LDL: $OPT_LDL"
 echo "  OPT_SOCKET: $OPT_SOCKET"
+echo "  GCC: $CC"
+echo "  CXX: $CC"
 echo "*************************************************"
 
 IS_DARWIN=$(grep -i -c 'darwin' <<< "$(uname -s 2>&1)")
