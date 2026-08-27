@@ -109,7 +109,6 @@ then
 	rm -rf $HOME/.local/
     mkdir -p $HOME/.local/
     cd $HOME/.local/
-    rm $HOME/.local/gcc-4.4.7-$(uname -m)*
     cp $BOOTSTRAP_DIR/gcc-4.4.7-$(uname -m)* $HOME/.local/
     $BOOTSTRAP_DIR/7z x $gccfile
     rm -f $gccfile
@@ -124,7 +123,6 @@ else
    rm -rf $HOME/.local/
     mkdir -p $HOME/.local/
     cd $HOME/.local/
-    rm $HOME/.local/gcc-4.4.7-$(uname -m)*
     cp $BOOTSTRAP_DIR/gcc-4.4.7-$(uname -m)* $HOME/.local/
     $BOOTSTRAP_DIR/7z x $gccfile
     rm -f $gccfile
@@ -217,6 +215,8 @@ chmod +x configure
 ln -s $CCPORABLE $PREFIX/bin/gcc
 ln -s $CXXPORABLE $PREFIX/bin/g++
 PATH=$PREFIX/bin:$PATH CC=$CCPORABLE CXX=$CXXPORABLE ./configure --prefix=$PREFIX --libdir=$LIBDIR
+make
+make install
 
 ############################## Perl ##############################
 
