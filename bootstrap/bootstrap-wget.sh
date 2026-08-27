@@ -354,7 +354,7 @@ then
     echo "Failed to patch OpenSSL"
     exit 1
 fi
-
+chmod +x config
     KERNEL_BITS="$OPT_BITS" \
 ./config \
     --prefix="$PREFIX" \
