@@ -283,6 +283,7 @@ make install
 fi
 
 ############################## Perl ##############################
+if [ ! -f $PREFIX/bin/perl ]; then
 cd "$BOOTSTRAP_DIR" || exit 1
 #cd "$BOOTSTRAP_DIR"
 
@@ -315,7 +316,7 @@ make
 make install
 
 cd "$BOOTSTRAP_DIR" || exit 1
-
+fi
 
 ######################## Perl Text-Template ########################
 cd "$BOOTSTRAP_DIR" || exit 1
@@ -337,6 +338,7 @@ make install
 cd $BOOTSTRAP_DIR
 
 ############################## OpenSSL ##############################
+if [ ! -f $PREFIX/bin/openssl ]; then
 cd "$BOOTSTRAP_DIR" || exit 1
 
 echo
@@ -399,6 +401,7 @@ rm -rf "$LIBDIR/engines"
 
 } >> "$PREFIX/openssl.cnf"
 cd $BOOTSTRAP_DIR
+fi
 
 ############################## Unistring ##############################
 
@@ -460,7 +463,7 @@ cd "$BOOTSTRAP_DIR/$WGET_DIR" || exit 1
 
 cp "${PATCH_DIR}/wget.patch" .
 
-patch -p0 < wget.patc
+#patch -p0 < wget.patc
 #if ! patch -p0 < wget.patch;
 #then
 #    echo "Failed to patch Wget"
