@@ -117,8 +117,8 @@ then
     rm -f $gccfile $gccfilemin
     #find "$HOME/.local/" -type f -exec file {} \; | grep 'ELF .*executable' | cut -d: -f1 | xargs chmod +x
 	chmod +x $HOME/.local/bin/*
-	chmod +x $HOME/.local/bin/$CCPORABLE
-	chmod +x $HOME/.local/bin/$CXXPORABLE
+	chmod +x $CCPORABLE
+	chmod +x $CXXPORABLE
     CC=$CCPORABLE; CXX=$CXXPORABLE MAKE=make
     cd $BOOTSTRAP_DIR
     fi
@@ -134,8 +134,8 @@ else
    rm -f $gccfile $gccfilemin
    #find "$HOME/.local/" -type f -exec file {} \; | grep 'ELF .*executable' | cut -d: -f1 | xargs chmod +x
    chmod +x $HOME/.local/bin/*
-	chmod +x $HOME/.local/bin/$CCPORABLE
-	chmod +x $HOME/.local/bin/$CXXPORABLE
+	chmod +x $CCPORABLE
+	chmod +x $CXXPORABLE
    CC=$CCPORABLE; CXX=$CXXPORABLE MAKE=make
    cd $BOOTSTRAP_DIR
 fi
