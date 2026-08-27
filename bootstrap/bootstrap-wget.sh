@@ -83,13 +83,13 @@ mv 7za.x86_64 7za
 gccfile=gcc-4.4.7-x86_64.tar.xz
 gccfilemin=gcc-4.4.7-x86_64.tar
 LIBDIR="$PREFIX/lib64"
-CCPORABLE=$PREFIX/gcc64/bin/x86_64-unknown-linux-gnu-gcc; CXXPORABLE=$PREFIX/gcc64/bin/x86_64-unknown-linux-gnu-g++
+CCPORABLE=$HOME/.local/gcc64/bin/x86_64-unknown-linux-gnu-gcc; CXXPORABLE=$HOME/.local/gcc64/bin/x86_64-unknown-linux-gnu-g++
 else
 #cat gcc-4.4.7-i686.tar.xz_aa gcc-4.4.7-i686.tar.xz_ab > gcc-4.4.7-i686.tar.xz
 gccfile=gcc-4.4.7-i686.tar.xz
 gccfilemin=gcc-4.4.7-i686.tar
 LIBDIR="$PREFIX/lib"
-CCPORABLE=$PREFIX/gcc32/bin/i686-unknown-linux-gnu-gcc; CXXPORABLE=$PREFIX/gcc32/bin/i686-unknown-linux-gnu-g++
+CCPORABLE=$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-gcc; CXXPORABLE=$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-g++
 fi
 chmod 777 7z
 chmod 777 7z.so
@@ -116,8 +116,10 @@ then
     cd $BOOTSTRAP_DIR
     fi
 else
-   cd $PREFIX
-   mv $BOOTSTRAP_DIR/$gccfile $PREFIX/
+   mkdir -p $HOME/.local/
+   cd $HOME/.local/
+   rm $HOME/.local/$gccfile
+   cp $BOOTSTRAP_DIR/$gccfile $HOME/.local/
    $BOOTSTRAP_DIR/7z x $gccfile
    $BOOTSTRAP_DIR/7z x $gccfilemin
    rm -f $gccfile $gccfilemin
