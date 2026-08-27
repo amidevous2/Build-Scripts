@@ -363,7 +363,7 @@ chmod +x config
     no-ssl2 no-ssl3 no-comp no-zlib no-zlib-dynamic \
     no-threads no-shared no-dso no-engine
 chmod +x util/domd
-
+chmod +x util/*
 # This will need to be fixed for BSDs and PowerMac
 make depend
 #if ! make depend; then
