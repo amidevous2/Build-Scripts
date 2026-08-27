@@ -338,7 +338,7 @@ make install
 cd $BOOTSTRAP_DIR
 
 ############################## OpenSSL ##############################
-if [ ! -f $PREFIX/bin/openssl ]; then
+#if [ ! -f $PREFIX/bin/openssl ]; then
 cd "$BOOTSTRAP_DIR" || exit 1
 
 echo
@@ -371,7 +371,7 @@ chmod +x config
 chmod +x util/domd
 chmod +x util/*
 # This will need to be fixed for BSDs and PowerMac
-#make depend
+make depend
 #if ! make depend; then
 #    echo "Failed to update OpenSSL dependencies"
 #    exit 1
@@ -401,7 +401,7 @@ rm -rf "$LIBDIR/engines"
 
 } >> "$PREFIX/openssl.cnf"
 cd $BOOTSTRAP_DIR
-fi
+#fi
 
 ############################## Unistring ##############################
 
