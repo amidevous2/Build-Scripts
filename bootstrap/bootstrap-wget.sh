@@ -234,7 +234,8 @@ make
 make install
 ############################## bzip2 ##############################
 
-cd $BOOTSTRAP_DIR
+if [ ! -f $LIBDIR/pkgconfig/bzip2.pc ]; then
+cd "$BOOTSTRAP_DIR" || exit 1
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/bzip2-1.0.8.tar.gz
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/bzip2-1.0.8.tar
 cd bzip2-1.0.8
@@ -265,11 +266,11 @@ rm -f $PREFIX/bin/libbz2.so.1
 ln -s libbz2.so.1.0.8 $PREFIX/bin/libbz2.so.1
 rm -f $PREFIX/bin/libbz2.so
 ln -s libbz2.so.1.0.8 $PREFIX/bin/libbz2.so
-
+fi
 
 ############################## zlib ##############################
-
-cd $BOOTSTRAP_DIR
+if [ ! -f $LIBDIR/pkgconfig/zlib.pc ]; then
+cd "$BOOTSTRAP_DIR" || exit 1
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/zlib-1.2.13.tar.gz
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/zlib-1.2.13.tar
 cd zlib-1.2.13
@@ -279,7 +280,7 @@ ln -s $CXXPORABLE $PREFIX/bin/g++
 PATH=$PREFIX/bin:$PATH CC=$CCPORABLE CXX=$CXXPORABLE ./configure --prefix=$PREFIX --libdir=$LIBDIR
 make
 make install
-
+fi
 
 ############################## Perl ##############################
 cd "$BOOTSTRAP_DIR" || exit 1
