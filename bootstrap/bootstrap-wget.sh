@@ -8,7 +8,7 @@
 WGET_GZ=wget-1.25.0.tar.gz
 UNISTR_GZ=libunistring-1.1.tar.gz
 SSL_GZ=openssl-1.0.2u.tar.gz
-PERL_GZ=perl-5.10.0.tar.gz
+PERL_GZ=perl-5.10.0.7z
 TEXTTEMPLATE_GZ=Text-Template-1.45.tar.gz
 PATH_GZ=patch-2.7.6.tar.gz
 
@@ -228,7 +228,6 @@ echo
 rm -rf "$PERL_DIR" &>/dev/null
 rm -f $PERL_TAR
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$PERL_GZ
-$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$PERL_TAR
 cd "$BOOTSTRAP_DIR/$PERL_DIR" || exit 1
 
 ./Configure \
