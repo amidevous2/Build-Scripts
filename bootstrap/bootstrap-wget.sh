@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-# Written and placed in public domain by Jeffrey Walton.
-# This script builds Wget, Unistring and OpenSSL from sources.
-# This Wget is crippled, but allows bootstrapping a full Wget build.
+export LANG=fr_FR.UTF-8
+export LANGUAGE=fr_FR
 
 # Binaries
 WGET_GZ=wget-1.25.0.tar.gz
