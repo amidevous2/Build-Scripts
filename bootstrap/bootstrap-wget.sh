@@ -287,7 +287,7 @@ echo "*************************************************"
 echo "Building Perl"
 echo "*************************************************"
 echo
-
+exit 1
 rm -rf "$PERL_DIR" &>/dev/null
 rm -f "$PERL_TAR"
 
