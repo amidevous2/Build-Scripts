@@ -362,6 +362,7 @@ chmod +x config
     "$OPT_INT128" "$OPT_PIC" -DPEDANTIC \
     no-ssl2 no-ssl3 no-comp no-zlib no-zlib-dynamic \
     no-threads no-shared no-dso no-engine
+chmod +x util/domd
 
 # This will need to be fixed for BSDs and PowerMac
 make depend
