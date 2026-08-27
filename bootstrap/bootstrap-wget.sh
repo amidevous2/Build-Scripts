@@ -369,7 +369,7 @@ chmod +x config
 chmod +x util/domd
 chmod +x util/*
 # This will need to be fixed for BSDs and PowerMac
-make depend
+#make depend
 #if ! make depend; then
 #    echo "Failed to update OpenSSL dependencies"
 #    exit 1
