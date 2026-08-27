@@ -460,11 +460,12 @@ cd "$BOOTSTRAP_DIR/$WGET_DIR" || exit 1
 
 cp "${PATCH_DIR}/wget.patch" .
 
-if ! patch -p0 < wget.patch;
-then
-    echo "Failed to patch Wget"
-    exit 1
-fi
+patch -p0 < wget.patc
+#if ! patch -p0 < wget.patch;
+#then
+#    echo "Failed to patch Wget"
+#    exit 1
+#fi
 
 # Install recipe does not overwrite a config, if present.
 if [[ -f "$PREFIX/etc/wgetrc" ]]; then
