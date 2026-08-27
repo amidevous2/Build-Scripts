@@ -106,6 +106,7 @@ then
     elif [[ -n "$(command -v cc 2>/dev/null)" && -n "$(command -v CC 2>/dev/null)" ]]; then
         CC=cc; CXX=CC MAKE=make
     else
+	rm -rf $HOME/.local/
     mkdir -p $HOME/.local/
     cd $HOME/.local/
     rm $HOME/.local/$gccfile
@@ -119,6 +120,7 @@ then
     cd $BOOTSTRAP_DIR
     fi
 else
+   rm -rf $HOME/.local/
    mkdir -p $HOME/.local/
    cd $HOME/.local/
    rm $HOME/.local/$gccfile
