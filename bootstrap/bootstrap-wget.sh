@@ -214,11 +214,11 @@ echo "  GCC: $CC"
 echo "  CXX: $CC"
 echo "*************************************************"
 
-IS_DARWIN=$(grep -i -c 'darwin' <<< "$(uname -s 2>&1)")
-IS_LINUX=$(grep -i -c 'linux' <<< "$(uname -s 2>&1)")
-IS_SOLARIS=$(grep -i -c 'sunos' <<< "$(uname -s 2>&1)")
-IS_AMD64=$(grep -i -c -E 'x86_64|amd64' <<< "$(uname -m 2>&1)")
-IS_ARM64=$(grep -i -c -E 'aarch64|arm64' <<< "$(uname -m 2>&1)")
+IS_DARWIN=$(grep -i -c 'darwin' <<< "$(uname -s 2>&1)") || true
+IS_LINUX=$(grep -i -c 'linux' <<< "$(uname -s 2>&1)") || true
+IS_SOLARIS=$(grep -i -c 'sunos' <<< "$(uname -s 2>&1)") || true
+IS_AMD64=$(grep -i -c -E 'x86_64|amd64' <<< "$(uname -m 2>&1)") || true
+IS_ARM64=$(grep -i -c -E 'aarch64|arm64' <<< "$(uname -m 2>&1)") || true
 
 # DH is 2x to 4x faster with ec_nistp_64_gcc_128, but it is
 # only available on x64 machines with uint128 available.
