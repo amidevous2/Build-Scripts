@@ -26,8 +26,8 @@ TEXTTEMPLATE_DIR=Text-Template-1.45
 PATH_DIR=patch-2.7.6
 
 # Directories
-BOOTSTRAP_DIR=$(pwd)
-PATCH_DIR="$(pwd)/../patch"
+BOOTSTRAP_DIR="$HOME/Build-Scripts/bootstrap"
+PATCH_DIR="$HOME/Build-Scripts/patch"
 
 # Install location
 PREFIX="$HOME/.build-scripts/wget"
@@ -235,7 +235,8 @@ $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$PATH_GZ
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$PATH_TAR
 cd $PATH_DIR
 chmod +x configure
-PATH=$PREFIX/bin:$PATH CC=gcc CXX=g++ ./configure --prefix=$PREFIX --libdir=$LIBDIR
+echo CC=$CCPORABLE CXX=$CXXPORABLE
+PATH=$PREFIX/bin:$PATH CC=$CCPORABLE CXX=$CXXPORABLE ./configure --prefix=$PREFIX --libdir=$LIBDIR
 make
 make install
 ############################## bzip2 ##############################
