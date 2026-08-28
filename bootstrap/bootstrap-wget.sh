@@ -59,7 +59,7 @@ gccfile=gcc-4.4.7-i686.7z.001
 gccfilemin=gcc-4.4.7-i686.tar
 LIBDIR="$PREFIX/lib"
 export CCPORABLE=$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-gcc
-export CXXPORABLE=$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-g++"
+export CXXPORABLE=$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-g++
 fi
 chmod 777 $BOOTSTRAP_DIR/7z
 chmod 777 $BOOTSTRAP_DIR/7z.so
