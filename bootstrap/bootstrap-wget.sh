@@ -52,12 +52,14 @@ mv 7za.x86_64 7za
 gccfile=gcc-4.4.7-x86_64.7z.001
 gccfilemin=gcc-4.4.7-x86_64.tar
 LIBDIR="$PREFIX/lib64"
-export CCPORABLE=$HOME/.local/gcc64/bin/x86_64-unknown-linux-gnu-gcc; CXXPORABLE=$HOME/.local/gcc64/bin/x86_64-unknown-linux-gnu-g++
+export CCPORABLE="$HOME/.local/gcc64/bin/x86_64-unknown-linux-gnu-gcc"
+export CXXPORABLE="$HOME/.local/gcc64/bin/x86_64-unknown-linux-gnu-g++"
 else
 gccfile=gcc-4.4.7-i686.7z.001
 gccfilemin=gcc-4.4.7-i686.tar
 LIBDIR="$PREFIX/lib"
-export CCPORABLE=$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-gcc; CXXPORABLE=$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-g++
+export CCPORABLE="$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-gcc"
+export CXXPORABLE="$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-g++"
 fi
 chmod 777 $BOOTSTRAP_DIR/7z
 chmod 777 $BOOTSTRAP_DIR/7z.so
@@ -161,8 +163,8 @@ else
     export CC="$CCPORABLE"
 	export CXX="$CXXPORABLE"
 	mkdir -p "$PREFIX/bin/"
-	ln -s "$CCPORABLE" "$PREFIX/bin/gcc"
-	ln -s "$CXXPORABLE" "$PREFIX/bin/g++"	
+	rm -f "$PREFIX/bin/gcc"
+	rm -f "$PREFIX/bin/g++"
     if [[ -f "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/lib/libc-2.12.2.so" ]]; then
         rm -f "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/lib/libc.so.6"
         cp "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/lib/libc-2.12.2.so" \
@@ -271,6 +273,7 @@ $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/bzip2-1.0.8.tar.gz
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/bzip2-1.0.8.tar
 cd bzip2-1.0.8
 patch -p1 < $PATCH_DIR/bzip-1.0.8.patch
+sed -i 's/^CC=gcc$/CC=/' Makefile-libbz2_so
 PATH=$PREFIX/bin:$PATH CC="$CCPORABLE" CXX="$CXXPORABLE" $MAKE -f Makefile-libbz2_so
 PATH=$PREFIX/bin:$PATH CC="$CCPORABLE" CXX="$CXXPORABLE" $MAKE bzip2recover
 chmod 644 bzlib.h
