@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+trap 'echo "ERREUR ligne $LINENO : $BASH_COMMAND"' ERR
 
 export LANG=fr_FR.UTF-8
 export LANGUAGE=fr_FR
