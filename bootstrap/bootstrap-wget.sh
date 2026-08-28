@@ -264,7 +264,7 @@ cd "$BOOTSTRAP_DIR" || exit 1
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/bzip2-1.0.8.tar.gz
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/bzip2-1.0.8.tar
 cd bzip2-1.0.8
-patch -p1 < ../patch/bzip-1.0.8.patch
+patch -p1 < $PATCH_DIR/bzip-1.0.8.patch
 PATH=$PREFIX/bin:$PATH CC=$CCPORABLE CXX=$CXXPORABLE make -f Makefile-libbz2_so
 PATH=$PREFIX/bin:$PATH CC=$CCPORABLE CXX=$CXXPORABLE make bzip2recover
 chmod 644 bzlib.h
