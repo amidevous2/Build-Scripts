@@ -158,7 +158,7 @@ else
     rm -f "$gccfile"
    #find "$HOME/.local/" -type f -exec file {} \; | grep 'ELF .*executable' | cut -d: -f1 | xargs chmod +x
    #chmod +x $HOME/.local/bin/*
-	chmod +x "$CCPORABLE"
+	chmod +x "$CCPORTABLE"
 	chmod +x "$CXXPORABLE"
     export CC="$CCPORABLE"
 	export CXX="$CXXPORABLE"
