@@ -125,6 +125,10 @@ then
 	chmod +x $CXXPORABLE
     export CC=$CCPORABLE
 	export CXX=$CXXPORABLE
+	mkdir -p $PREFIX/bin/
+	ln -s $CCPORABLE $PREFIX/bin/gcc
+	ln -s $$CXXPORABLE $PREFIX/bin/g++
+	hash-r
 	export MAKE=make
     cd $BOOTSTRAP_DIR
     fi
@@ -141,6 +145,10 @@ else
 	chmod +x $CXXPORABLE
     export CC=$CCPORABLE
 	export CXX=$CXXPORABLE
+	mkdir -p $PREFIX/bin/
+	ln -s $CCPORABLE $PREFIX/bin/gcc
+	ln -s $$CXXPORABLE $PREFIX/bin/g++
+	hash-r
 	export MAKE=make
    cd $BOOTSTRAP_DIR
 fi
