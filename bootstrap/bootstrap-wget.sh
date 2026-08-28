@@ -247,7 +247,7 @@ echo "Copy cacert.pem to $CACERTFILE"
 echo "Done."
 
 ############################## Patch ##############################
-
+if [ ! -f "$PREFIX/bin/patch" ]; then
 cd $BOOTSTRAP_DIR
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$PATH_GZ
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$PATH_TAR
@@ -257,9 +257,12 @@ echo CC=$CCPORABLE CXX=$CXXPORABLE
 PATH=$PREFIX/bin:$PATH CC=$CCPORABLE CXX=$CXXPORABLE ./configure --prefix=$PREFIX --libdir=$LIBDIR
 make
 make install
+echo patch build finish
+sleep 30
+fi
 ############################## bzip2 ##############################
 
-if [ ! -f $LIBDIR/pkgconfig/bzip2.pc ]; then
+if [ ! -f "$LIBDIR/pkgconfig/bzip2.pc" ]; then
 cd "$BOOTSTRAP_DIR" || exit 1
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/bzip2-1.0.8.tar.gz
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/bzip2-1.0.8.tar
@@ -291,10 +294,13 @@ rm -f $PREFIX/bin/libbz2.so.1
 ln -s libbz2.so.1.0.8 $PREFIX/bin/libbz2.so.1
 rm -f $PREFIX/bin/libbz2.so
 ln -s libbz2.so.1.0.8 $PREFIX/bin/libbz2.so
+
+echo bzip2 build finish
+sleep 30
 fi
 
 ############################## zlib ##############################
-if [ ! -f $LIBDIR/pkgconfig/zlib.pc ]; then
+if [ ! -f "$LIBDIR/pkgconfig/zlib.pc" ]; then
 cd "$BOOTSTRAP_DIR" || exit 1
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/zlib-1.2.13.tar.gz
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/zlib-1.2.13.tar
@@ -305,10 +311,13 @@ ln -s $CXXPORABLE $PREFIX/bin/g++
 PATH=$PREFIX/bin:$PATH CC=$CCPORABLE CXX=$CXXPORABLE ./configure --prefix=$PREFIX --libdir=$LIBDIR
 make
 make install
+
+echo zlib build finish
+sleep 30
 fi
 
 ############################## Perl ##############################
-if [ ! -f $PREFIX/bin/perl ]; then
+if [ ! -f "$PREFIX/bin/perl" ]; then
 cd "$BOOTSTRAP_DIR" || exit 1
 #cd "$BOOTSTRAP_DIR"
 
@@ -340,11 +349,14 @@ cd "$BOOTSTRAP_DIR/$PERL_DIR" || exit 1
 make
 make install
 
+echo perl build finish
+sleep 30
+
 cd "$BOOTSTRAP_DIR" || exit 1
 fi
 
 ######################## Perl Text-Template ########################
-if [ ! -f $PREFIX/bin/openssl ]; then
+if [ ! -f "$PREFIX/bin/openssl" ]; then
 
 cd "$BOOTSTRAP_DIR" || exit 1
 
@@ -362,11 +374,15 @@ cd "$BOOTSTRAP_DIR/$TEXTTEMPLATE_DIR" || exit 1
 "$PREFIX/bin/perl" Makefile.PL PREFIX="$PREFIX"
 make
 make install
+
+
+echo Perl Text-Template build finish
+sleep 30
 cd $BOOTSTRAP_DIR
 fi
 
 ############################## OpenSSL ##############################
-if [ ! -f $PREFIX/bin/openssl ]; then
+if [ ! -f "$PREFIX/bin/openssl" ]; then
 cd "$BOOTSTRAP_DIR" || exit 1
 
 echo
@@ -428,11 +444,13 @@ rm -rf "$LIBDIR/engines"
     echo "certificate = $CACERTDIR/cacert.pem"
 
 } >> "$PREFIX/openssl.cnf"
+echo openssl build finish
+sleep 30
 cd $BOOTSTRAP_DIR
 #fi
 
 ############################## Unistring ##############################
-
+if [ ! -f "$LIBDIR/pkgconfig/libunistring.pc" ]; then
 cd "$BOOTSTRAP_DIR" || exit 1
 
 echo
@@ -441,8 +459,6 @@ echo "Building Unistring"
 echo "*************************************************"
 echo
 
-rm -rf "$UNISTR_DIR" &>/dev/null
-rm -rf $UNISTR_TAR
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$UNISTR_GZ
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$UNISTR_TAR
 cd "$BOOTSTRAP_DIR/$UNISTR_DIR" || exit 1
@@ -473,7 +489,13 @@ if ! make install; then
     exit 1
 fi
 
+
+echo Unistring build finish
+sleep 30
+fi
 ############################## Wget ##############################
+if [ ! -f $PREFIX/bin/wget ]; then
+
 
 cd "$BOOTSTRAP_DIR" || exit 1
 
@@ -593,6 +615,8 @@ fi
     echo "ca_certificate = $PREFIX/cacert/cacert.pem"
     echo ""
 } >> "$PREFIX/etc/wgetrc"
+fi
+
 
 # Cleanup
 if true; then
