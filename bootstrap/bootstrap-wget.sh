@@ -276,6 +276,7 @@ cd bzip2-1.0.8
 patch -p1 < $PATCH_DIR/bzip-1.0.8.patch
 sed -i 's/^CC=gcc$/CC=/' Makefile-libbz2_so
 sed -i 's/^CC=gcc$/CC=/' Makefile
+mkdir -p $LIBDIR
 PATH=$PREFIX/bin:$PATH CC="$CCPORABLE" CXX="$CXXPORABLE" $MAKE -f Makefile-libbz2_so
 PATH=$PREFIX/bin:$PATH CC="$CCPORABLE" CXX="$CXXPORABLE" $MAKE bzip2recover
 chmod 644 bzlib.h
