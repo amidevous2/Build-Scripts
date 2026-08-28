@@ -38,7 +38,7 @@ BINDIR="$PREFIX/bin"
 CACERTDIR="$PREFIX/cacert"
 CACERTFILE="$CACERTDIR/cacert.pem"
 
-rm -rf $PREFIX
+#rm -rf $PREFIX
 mkdir -p $PREFIX
 if [[ "$(uname -m)" == "x86_64" ]]; then
 mv 7z 7z.i386
