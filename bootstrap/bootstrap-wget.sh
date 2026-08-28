@@ -128,7 +128,7 @@ then
 	mkdir -p $PREFIX/bin/
 	ln -s $CCPORABLE $PREFIX/bin/gcc
 	ln -s $$CXXPORABLE $PREFIX/bin/g++
-	hash-r
+	hash -r
 	export MAKE=make
     cd $BOOTSTRAP_DIR
     fi
@@ -148,7 +148,7 @@ else
 	mkdir -p $PREFIX/bin/
 	ln -s $CCPORABLE $PREFIX/bin/gcc
 	ln -s $$CXXPORABLE $PREFIX/bin/g++
-	hash-r
+	hash -r
 	export MAKE=make
    cd $BOOTSTRAP_DIR
 fi
