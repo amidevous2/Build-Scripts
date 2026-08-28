@@ -55,10 +55,10 @@ gccfilemin=gcc-4.4.7-i686.tar
 LIBDIR="$PREFIX/lib"
 export CCPORABLE=$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-gcc; CXXPORABLE=$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-g++
 fi
-chmod 777 7z
-chmod 777 7z.so
-chmod 777 7zCon.sfx
-chmod 777 7za
+chmod 777 $BOOTSTRAP_DIR/7z
+chmod 777 $BOOTSTRAP_DIR/7z.so
+chmod 777 $BOOTSTRAP_DIR/7zCon.sfx
+chmod 777 $BOOTSTRAP_DIR/7za
 
 export PKG_CONFIG_PATH="$LIBDIR/pkgconfig:$PREFIX/share/pkgconfig"
 
@@ -123,7 +123,9 @@ then
 	#chmod +x $HOME/.local/bin/*
 	chmod +x $CCPORABLE
 	chmod +x $CXXPORABLE
-    CC=$CCPORABLE; CXX=$CXXPORABLE MAKE=make
+    export CC=$CCPORABLE
+	export CXX=$CXXPORABLE
+	export MAKE=make
     cd $BOOTSTRAP_DIR
     fi
 else
@@ -137,7 +139,9 @@ else
    chmod +x $HOME/.local/bin/*
 	chmod +x $CCPORABLE
 	chmod +x $CXXPORABLE
-   CC=$CCPORABLE; CXX=$CXXPORABLE MAKE=make
+    export CC=$CCPORABLE
+	export CXX=$CXXPORABLE
+	export MAKE=make
    cd $BOOTSTRAP_DIR
 fi
 
