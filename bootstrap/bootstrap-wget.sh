@@ -256,8 +256,8 @@ cd $PATH_DIR
 chmod +x configure
 echo CC=$CCPORABLE CXX=$CXXPORABLE
 PATH=$PREFIX/bin:$PATH CC=$CCPORABLE CXX=$CXXPORABLE ./configure --prefix=$PREFIX --libdir=$LIBDIR
-make
-make install
+$MAKE
+$MAKE install
 echo patch build finish
 sleep 30
 fi
@@ -269,8 +269,8 @@ $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/bzip2-1.0.8.tar.gz
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/bzip2-1.0.8.tar
 cd bzip2-1.0.8
 patch -p1 < $PATCH_DIR/bzip-1.0.8.patch
-PATH=$PREFIX/bin:$PATH CC=$CCPORABLE CXX=$CXXPORABLE make -f Makefile-libbz2_so
-PATH=$PREFIX/bin:$PATH CC=$CCPORABLE CXX=$CXXPORABLE make bzip2recover
+PATH=$PREFIX/bin:$PATH CC="$CCPORABLE" CXX="$CXXPORABLE" $MAKE -f Makefile-libbz2_so
+PATH=$PREFIX/bin:$PATH CC="$CCPORABLE" CXX="$CXXPORABLE" $MAKE bzip2recover
 chmod 644 bzlib.h
 mkdir -p $PREFIX/bin $LIBDIR/pkgconfig $PREFIX/include
 cp -p bzlib.h $PREFIX/include
