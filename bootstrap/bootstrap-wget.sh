@@ -114,42 +114,60 @@ then
         CC=cc; CXX=CC MAKE=make
     else
 	echo "remove old home"
-	rm -rf $HOME/.local/
-    mkdir -p $HOME/.local/
-    cd $HOME/.local/
-    cp $BOOTSTRAP_DIR/gcc-4.4.7-$(uname -m)* $HOME/.local/
-    $BOOTSTRAP_DIR/7z x $gccfile
-    rm -f $gccfile
+	rm -rf "$HOME/.local/"
+    mkdir -p "$HOME/.local/"
+    cd "$HOME/.local/"
+    cp $BOOTSTRAP_DIR/gcc-4.4.7-$(uname -m)* "$HOME/.local/"
+    "$BOOTSTRAP_DIR/7z" x "$gccfile"
+    rm -f "$gccfile"
     #find "$HOME/.local/" -type f -exec file {} \; | grep 'ELF .*executable' | cut -d: -f1 | xargs chmod +x
 	#chmod +x $HOME/.local/bin/*
-	chmod +x $CCPORABLE
-	chmod +x $CXXPORABLE
-    export CC=$CCPORABLE
-	export CXX=$CXXPORABLE
-	mkdir -p $PREFIX/bin/
-	ln -s $CCPORABLE $PREFIX/bin/gcc
-	ln -s $$CXXPORABLE $PREFIX/bin/g++
+	chmod +x "$CCPORABLE"
+	chmod +x "$CXXPORABLE"
+    export CC="$CCPORABLE"
+	export CXX="$CXXPORABLE"
+	mkdir -p "$PREFIX/bin/"
+	ln -s "$CCPORABLE" "$PREFIX/bin/gcc"
+	ln -s "$CXXPORABLE" "$PREFIX/bin/g++"
+    if [[ -f "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/lib/libc-2.12.2.so" ]]; then
+        rm -f "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/lib/libc.so.6"
+        cp "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/lib/libc-2.12.2.so" \
+       "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/lib/libc.so.6"
+    elif [[ -f "$HOME/.local/gcc64/x86_64-unknown-linux-gnu/sysroot/lib/libc-2.12.2.so" ]]; then
+        rm -f "$HOME/.local/gcc64/x86_64-unknown-linux-gnu/sysroot/lib/libc.so.6"
+        cp "$HOME/.local/gcc64/x86_64-unknown-linux-gnu/sysroot/lib/libc-2.12.2.so" \
+        "$HOME/.local/gcc64/x86_64-unknown-linux-gnu/sysroot/lib/libc.so.6"
+    fi
 	hash -r
 	export MAKE=make
     cd $BOOTSTRAP_DIR
     fi
 else
 	echo "remove old home"
-   rm -rf $HOME/.local/
-    mkdir -p $HOME/.local/
-    cd $HOME/.local/
-    cp $BOOTSTRAP_DIR/gcc-4.4.7-$(uname -m)* $HOME/.local/
-    $BOOTSTRAP_DIR/7z x $gccfile
-    rm -f $gccfile
+   rm -rf "$HOME/.local/"
+    mkdir -p "$HOME/.local/"
+    cd "$HOME/.local/"
+    cp $BOOTSTRAP_DIR/gcc-4.4.7-$(uname -m)* "$HOME/.local/"
+    "$BOOTSTRAP_DIR/7z" x "$gccfile"
+    rm -f "$gccfile"
    #find "$HOME/.local/" -type f -exec file {} \; | grep 'ELF .*executable' | cut -d: -f1 | xargs chmod +x
    chmod +x $HOME/.local/bin/*
-	chmod +x $CCPORABLE
-	chmod +x $CXXPORABLE
-    export CC=$CCPORABLE
-	export CXX=$CXXPORABLE
-	mkdir -p $PREFIX/bin/
-	ln -s $CCPORABLE $PREFIX/bin/gcc
-	ln -s $$CXXPORABLE $PREFIX/bin/g++
+	chmod +x "$CCPORABLE"
+	chmod +x "$CXXPORABLE"
+    export CC="$CCPORABLE"
+	export CXX="$CXXPORABLE"
+	mkdir -p "$PREFIX/bin/"
+	ln -s "$CCPORABLE" "$PREFIX/bin/gcc"
+	ln -s "$CXXPORABLE" "$PREFIX/bin/g++"	
+    if [[ -f "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/lib/libc-2.12.2.so" ]]; then
+        rm -f "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/lib/libc.so.6"
+        cp "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/lib/libc-2.12.2.so" \
+       "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/lib/libc.so.6"
+    elif [[ -f "$HOME/.local/gcc64/x86_64-unknown-linux-gnu/sysroot/lib/libc-2.12.2.so" ]]; then
+        rm -f "$HOME/.local/gcc64/x86_64-unknown-linux-gnu/sysroot/lib/libc.so.6"
+        cp "$HOME/.local/gcc64/x86_64-unknown-linux-gnu/sysroot/lib/libc-2.12.2.so" \
+        "$HOME/.local/gcc64/x86_64-unknown-linux-gnu/sysroot/lib/libc.so.6"
+    fi    
 	hash -r
 	export MAKE=make
    cd $BOOTSTRAP_DIR
