@@ -222,8 +222,7 @@ IS_ARM64=$(grep -i -c -E 'aarch64|arm64' <<< "$(uname -m 2>&1)") || true
 
 # DH is 2x to 4x faster with ec_nistp_64_gcc_128, but it is
 # only available on x64 machines with uint128 available.
-HAVE_INT128=$($CC $CFLAGS -dM -E - </dev/null | grep -i -c "__SIZEOF_INT128__")
-
+HAVE_INT128=$($CC $CFLAGS -dM -E - </dev/null | grep -i -c "__SIZEOF_INT128__") || true
 if [[ "$IS_AMD64" -ne 0 && "$HAVE_INT128" -ne 0 ]]; then
     OPT_INT128="enable-ec_nistp_64_gcc_128"
 fi
@@ -313,8 +312,8 @@ chmod +x configure
 ln -s $CCPORABLE $PREFIX/bin/gcc
 ln -s $CXXPORABLE $PREFIX/bin/g++
 PATH=$PREFIX/bin:$PATH CC=$CCPORABLE CXX=$CXXPORABLE ./configure --prefix=$PREFIX --libdir=$LIBDIR
-make
-make install
+$MAKE
+$MAKE install
 
 echo zlib build finish
 sleep 30
@@ -350,8 +349,8 @@ cd "$BOOTSTRAP_DIR/$PERL_DIR" || exit 1
   -Doptimize="-O2 -fPIC" \
   -Dccflags="-O2 -fPIC -fno-strict-aliasing -pipe" \
   -Dldflags="-L$LIBDIR -Wl,-rpath,$LIBDIR -lm"
-make
-make install
+$MAKE
+$MAKE install
 
 echo perl build finish
 sleep 30
@@ -376,8 +375,8 @@ $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$TEXTTEMPLATE_GZ
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$TEXTTEMPLATE_TAR
 cd "$BOOTSTRAP_DIR/$TEXTTEMPLATE_DIR" || exit 1
 "$PREFIX/bin/perl" Makefile.PL PREFIX="$PREFIX"
-make
-make install
+$MAKE
+$MAKE install
 
 
 echo Perl Text-Template build finish
@@ -419,13 +418,13 @@ chmod +x config
 chmod +x util/domd
 chmod +x util/*
 # This will need to be fixed for BSDs and PowerMac
-make depend
+$MAKE depend
 #if ! make depend; then
 #    echo "Failed to update OpenSSL dependencies"
 #    exit 1
 #fi
 
-make -j "$INSTX_JOBS"
+$MAKE -j "$INSTX_JOBS"
 #if ! make -j "$INSTX_JOBS"; then
 #    echo "Failed to build OpenSSL"
 #    exit 1
@@ -433,7 +432,7 @@ make -j "$INSTX_JOBS"
 
 rm -f "$PREFIX/openssl.cnf"
 
-make install_sw
+$MAKE install_sw
 #if ! make install_sw; then
 #    echo "Failed to install OpenSSL"
 #    exit 1
@@ -483,12 +482,12 @@ if [[ "$?" -ne 0 ]]; then
     exit 1
 fi
 
-if ! make -j "$INSTX_JOBS" V=1; then
+if ! $MAKE -j "$INSTX_JOBS" V=1; then
     echo "Failed to build Unistring"
     exit 1
 fi
 
-if ! make install; then
+if ! $MAKE install; then
     echo "Failed to install Unistring"
     exit 1
 fi
@@ -596,7 +595,7 @@ sed -e 's/__nonnull ((1))//g' \
     "${file}" > "${file}.fixed"
 mv "${file}.fixed" "${file}"
 
-if ! make -j "$INSTX_JOBS" V=1; then
+if ! $MAKE -j "$INSTX_JOBS" V=1; then
     echo "Failed to build Wget"
     exit 1
 fi
@@ -606,7 +605,7 @@ chmod +x doc/texi2pod.pl
 # Remove old rc file.
 rm -f "$PREFIX/etc/wgetrc"
 
-if ! make install; then
+if ! $MAKE install; then
     echo "Failed to install Wget"
     exit 1
 fi
