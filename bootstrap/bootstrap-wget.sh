@@ -52,14 +52,14 @@ mv 7za.x86_64 7za
 gccfile=gcc-4.4.7-x86_64.7z.001
 gccfilemin=gcc-4.4.7-x86_64.tar
 LIBDIR="$PREFIX/lib64"
-export CCPORABLE="$HOME/.local/gcc64/bin/x86_64-unknown-linux-gnu-gcc"
-export CXXPORABLE="$HOME/.local/gcc64/bin/x86_64-unknown-linux-gnu-g++"
+export CCPORABLE=$HOME/.local/gcc64/bin/x86_64-unknown-linux-gnu-gcc
+export CXXPORABLE=$HOME/.local/gcc64/bin/x86_64-unknown-linux-gnu-g++
 else
 gccfile=gcc-4.4.7-i686.7z.001
 gccfilemin=gcc-4.4.7-i686.tar
 LIBDIR="$PREFIX/lib"
-export CCPORABLE="$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-gcc"
-export CXXPORABLE="$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-g++"
+export CCPORABLE=$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-gcc
+export CXXPORABLE=$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-g++"
 fi
 chmod 777 $BOOTSTRAP_DIR/7z
 chmod 777 $BOOTSTRAP_DIR/7z.so
@@ -128,8 +128,8 @@ then
     rm -f "$gccfile"
     #find "$HOME/.local/" -type f -exec file {} \; | grep 'ELF .*executable' | cut -d: -f1 | xargs chmod +x
 	#chmod +x $HOME/.local/bin/*
-	chmod +x "$CCPORABLE"
-	chmod +x "$CXXPORABLE"
+	chmod +x $CCPORABLE
+	chmod +x $CXXPORABLE
     export CC="$CCPORABLE"
 	export CXX="$CXXPORABLE"
 	mkdir -p "$PREFIX/bin/"
@@ -158,6 +158,7 @@ else
     rm -f "$gccfile"
    #find "$HOME/.local/" -type f -exec file {} \; | grep 'ELF .*executable' | cut -d: -f1 | xargs chmod +x
    #chmod +x $HOME/.local/bin/*
+    echo $CCPORABLE
 	chmod +x $CCPORABLE
 	chmod +x $CXXPORABLE
     export CC="$CCPORABLE"
