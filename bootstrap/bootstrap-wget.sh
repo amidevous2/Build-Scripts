@@ -233,9 +233,7 @@ $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$PATH_GZ
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$PATH_TAR
 cd $PATH_DIR
 chmod +x configure
-ln -s $CCPORABLE $PREFIX/bin/gcc
-ln -s $CXXPORABLE $PREFIX/bin/g++
-PATH=$PREFIX/bin:$PATH CC=$CCPORABLE CXX=$CXXPORABLE ./configure --prefix=$PREFIX --libdir=$LIBDIR
+PATH=$PREFIX/bin:$PATH CC=gcc CXX=g++ ./configure --prefix=$PREFIX --libdir=$LIBDIR
 make
 make install
 ############################## bzip2 ##############################
