@@ -336,7 +336,7 @@ rm -f $PREFIX/bin/bunzip2
 ln -s bzip2 $PREFIX/bin/bunzip2
 rm -f $PREFIX/bin/bzcat
 ln -s bzip2 $PREFIX/bin/bzcat
-rm -f ${INSTX_PREFIX}/bin/bzcmp
+rm -f $PREFIX/bin/bzcmp
 ln -s bzdiff $PREFIX/bin/bzcmp
 rm -f $PREFIX/bin/bzless
 ln -s bzmore $PREFIX/bin/bzless
