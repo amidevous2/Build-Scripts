@@ -269,16 +269,41 @@ fi
 ############################## bzip2 ##############################
 
 if [ ! -f "$LIBDIR/pkgconfig/bzip2.pc" ]; then
-cd "$BOOTSTRAP_DIR" || exit 1
-$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/bzip2-1.0.8.tar.gz
+cd "$BOOTSTRAP_DIR" || exit 
+rm -rf bzip2-1.0.8
+#$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/bzip2-1.0.8.tar.gz
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/bzip2-1.0.8.tar
 cd bzip2-1.0.8
 patch -p1 < $PATCH_DIR/bzip-1.0.8.patch
 sed -i 's/^CC=gcc$/CC=/' Makefile-libbz2_so
+sed -i 's/CC=//' Makefile-libbz2_so
 sed -i 's/^CC=gcc$/CC=/' Makefile
+sed -i 's/CC=//' Makefile
 mkdir -p $LIBDIR
-PATH=$PREFIX/bin:$PATH CC="$CCPORABLE" CXX="$CXXPORABLE" $MAKE -f Makefile-libbz2_so
-PATH=$PREFIX/bin:$PATH CC="$CCPORABLE" CXX="$CXXPORABLE" $MAKE bzip2recover
+$CCPORABLE -I$PREFIX/include -O2 -fPIC -c blocksort.c -o blocksort.o
+$CCPORABLE -I$PREFIX/include -O2 -fPIC -c huffman.c -o huffman.o
+$CCPORABLE -I$PREFIX/include -O2 -fPIC -c crctable.c -o crctable.o
+$CCPORABLE -I$PREFIX/include -O2 -fPIC -c randtable.c -o randtable.o
+$CCPORABLE -I$PREFIX/include -O2 -fPIC -c compress.c -o compress.o
+$CCPORABLE -I$PREFIX/include -O2 -fPIC -c decompress.c -o decompress.o
+$CCPORABLE -I$PREFIX/include -O2 -fPIC -c bzlib.c -o bzlib.o
+$CCPORABLE -I$PREFIX/include -O2 -fPIC \
+  -L$PREFIX/lib64 \
+  -Wl,-rpath,$LIBDIR \
+  -shared -Wl,-soname -Wl,libbz2.so.1 \
+  -o libbz2.so.1.0.8 \
+  blocksort.o huffman.o crctable.o randtable.o compress.o decompress.o bzlib.o | true
+$CCPORABLE -I/$PREFIX/include -O2 -fPIC \
+  -L$LIBDIR \
+  -Wl,-rpath,$LIBDIR \
+  -o bzip2-shared bzip2.c libbz2.so.1.0.8
+  
+$CCPORABLE -I$LIBDIR/include -O2 \
+  -c bzip2recover.c -o bzip2recover.o
+$CCPORABLE -I$PREFIX/include -O2 \
+  -L$LIBDIR \
+  -Wl,-rpath,$LIBDIR \
+  -o bzip2recover bzip2recover.o
 chmod 644 bzlib.h
 mkdir -p $PREFIX/bin $LIBDIR/pkgconfig $PREFIX/include
 cp -p bzlib.h $PREFIX/include
