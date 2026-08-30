@@ -143,6 +143,7 @@ then
 	mkdir -p "$PREFIX/bin/"
 	ln -s "$CCPORABLE" "$PREFIX/bin/gcc"
 	ln -s "$CXXPORABLE" "$PREFIX/bin/g++"
+	ln -s "$CPPPORABLE" "$PREFIX/bin/cpp"
     if [[ -f "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/lib/libc-2.12.2.so" ]]; then
         rm -f "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/lib/libc.so.6"
         cp "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/lib/libc-2.12.2.so" \
@@ -185,7 +186,23 @@ else
         rm -f "$HOME/.local/gcc64/x86_64-unknown-linux-gnu/sysroot/lib/libc.so.6"
         cp "$HOME/.local/gcc64/x86_64-unknown-linux-gnu/sysroot/lib/libc-2.12.2.so" \
         "$HOME/.local/gcc64/x86_64-unknown-linux-gnu/sysroot/lib/libc.so.6"
-    fi    
+    fi 
+	
+
+    if [[ -f "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/lib/libc-2.12.2.so" ]]; then
+        rm -f "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/lib/libc.so.6"
+        cp "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/lib/libc-2.12.2.so" \
+       "$HOME/.local/gcc32/i686-unknown-linux-gnu/sysroot/lib/libc.so.6"
+    elif [[ -f "$HOME/.local/gcc64/x86_64-unknown-linux-gnu/sysroot/lib/libc-2.12.2.so" ]]; then
+        rm -f "$HOME/.local/gcc64/x86_64-unknown-linux-gnu/sysroot/lib/libc.so.6"
+        cp "$HOME/.local/gcc64/x86_64-unknown-linux-gnu/sysroot/lib/libc-2.12.2.so" \
+        "$HOME/.local/gcc64/x86_64-unknown-linux-gnu/sysroot/lib/libc.so.6"
+    fi 
+	
+	
+	
+	
+	
 	hash -r
 	export MAKE=make
    cd $BOOTSTRAP_DIR
@@ -271,7 +288,7 @@ $PRFIX/bin/7z x $BOOTSTRAP_DIR/$PATH_TAR
 cd $PATH_DIR
 chmod +x configure
 echo CC=$CCPORABLE CXX=$CXXPORABLE
-PATH=$PREFIX/bin:$PATH CC=$CCPORABLE CXX=$CXXPORABLE ./configure --prefix=$PREFIX --libdir=$LIBDIR
+PATH=$PREFIX/bin:$PATH CC="$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-gcc" CXX="$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-g++" CPP="$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-cpp" ./configure --prefix=$PREFIX --libdir=$LIBDIR
 $MAKE
 $MAKE install
 echo patch build finish
@@ -371,6 +388,11 @@ chmod +x configure
 PATH=$PREFIX/bin:$PATH CC=$CCPORABLE CXX=$CXXPORABLE ./configure --prefix=$PREFIX --libdir=$LIBDIR
 $MAKE
 $MAKE install
+$MAKE disclean
+$MAKE clean
+PATH=$PREFIX/bin:$PATH CC=$CCPORABLE CXX=$CXXPORABLE ./configure --prefix=$PWD/poubelle --libdir=$PREFIX/lib
+$MAKE
+$MAKE install
 
 echo zlib build finish
 sleep 30
@@ -386,6 +408,14 @@ echo "*************************************************"
 echo "Building Perl"
 echo "*************************************************"
 echo
+
+
+export CC="$CCPORABLE"
+export CPP="$CPPPORABLE"
+export CXX="$CXXPORABLE"
+export AR="$($CCPORABLE -print-prog-name=ar)"
+export RANLIB="$($CCPORABLE -print-prog-name=ranlib)"
+export PATH="$PREFIX/bin:$HOME/.local/bin:$PATH"
 
 rm -rf "$PERL_DIR" &>/dev/null
 rm -f "$PERL_TAR"
