@@ -318,7 +318,18 @@ mkdir -p $PREFIX/bin $LIBDIR/pkgconfig $PREFIX/include
 cp -p bzlib.h $PREFIX/include
 install -m 755 libbz2.so.1.0.8 $LIBDIR
 install -m 644 libbz2.a $LIBDIR
-install -m 644 bzip2.pc $LIBDIR/pkgconfig/bzip2.pc
+cat > bzip2.pc <<EOF
+prefix=$PREFIX
+exec_prefix=\${prefix}
+libdir=$LIBDIR
+includedir=\${prefix}/include
+
+Name: bzip2
+Description: bzip2 compression library
+Version: 1.0.8
+Libs: -L\${libdir} -lbz2
+Cflags: -I\${includedir}
+EOF
 install -m 755 bzip2-shared  $PREFIX/bin/bzip2
 install -m 755 bzip2recover bzgrep bzdiff bzmore  $PREFIX/bin
 rm -f $PREFIX/bin/bunzip2
