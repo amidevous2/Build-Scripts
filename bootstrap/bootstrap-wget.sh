@@ -304,6 +304,15 @@ $CCPORABLE -I$PREFIX/include -O2 \
   -L$LIBDIR \
   -Wl,-rpath,$LIBDIR \
   -o bzip2recover bzip2recover.o
+
+AR="$($CCPORABLE -print-prog-name=ar)"
+RANLIB="$($CCPORABLE -print-prog-name=ranlib)"
+
+rm -f libbz2.a
+$AR cq libbz2.a blocksort.o huffman.o crctable.o randtable.o compress.o decompress.o bzlib.o
+$RANLIB libbz2.a
+
+
 chmod 644 bzlib.h
 mkdir -p $PREFIX/bin $LIBDIR/pkgconfig $PREFIX/include
 cp -p bzlib.h $PREFIX/include
