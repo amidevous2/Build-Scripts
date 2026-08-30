@@ -360,8 +360,6 @@ $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/zlib-1.2.13.tar.gz
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/zlib-1.2.13.tar
 cd zlib-1.2.13
 chmod +x configure
-ln -s $CCPORABLE $PREFIX/bin/gcc
-ln -s $CXXPORABLE $PREFIX/bin/g++
 PATH=$PREFIX/bin:$PATH CC=$CCPORABLE CXX=$CXXPORABLE ./configure --prefix=$PREFIX --libdir=$LIBDIR
 $MAKE
 $MAKE install
