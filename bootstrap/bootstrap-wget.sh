@@ -41,30 +41,35 @@ CACERTFILE="$CACERTDIR/cacert.pem"
 #rm -rf $PREFIX
 mkdir -p $PREFIX
 if [[ "$(uname -m)" == "x86_64" ]]; then
-mv 7z 7z.i386
-mv 7z.x86_64 7z
-mv 7z.so 7z.so.i386
-mv 7z.so.x86_64 7z.so
-mv 7zCon.sfx 7zCon.sfx.i386
-mv 7zCon.sfx.x86_64 7zCon.sfx
-mv 7za 7za.i386
-mv 7za.x86_64 7za
 gccfile=gcc-4.4.7-x86_64.7z.001
 gccfilemin=gcc-4.4.7-x86_64.tar
 LIBDIR="$PREFIX/lib64"
 export CCPORABLE=$HOME/.local/gcc64/bin/x86_64-unknown-linux-gnu-gcc
+export CPPPORABLE=$HOME/.local/gcc64/bin/x86_64-unknown-linux-gnu-cpp
 export CXXPORABLE=$HOME/.local/gcc64/bin/x86_64-unknown-linux-gnu-g++
+perllibdir="-Dloclibpth=$LIBDIR -Duse64bitint -Duse64bitall"
 else
 gccfile=gcc-4.4.7-i686.7z.001
 gccfilemin=gcc-4.4.7-i686.tar
 LIBDIR="$PREFIX/lib"
 export CCPORABLE=$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-gcc
+export CPPPORABLE=$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-cpp
 export CXXPORABLE=$HOME/.local/gcc32/bin/i686-unknown-linux-gnu-g++
+perllibdir="-Dloclibpth=$LIBDIR"
 fi
-chmod 777 $BOOTSTRAP_DIR/7z
-chmod 777 $BOOTSTRAP_DIR/7z.so
-chmod 777 $BOOTSTRAP_DIR/7zCon.sfx
-chmod 777 $BOOTSTRAP_DIR/7za
+mkdir -p $PRFIX/bin
+rm -f $PRFIX/bin/7z
+cp $BOOTSTRAP_DIR/$(uname -m)/7z $PRFIX/bin
+chmod 777 $PRFIX/bin/7z
+rm -f $PRFIX/bin/7z.so
+cp $BOOTSTRAP_DIR/$(uname -m)/7z.so $PRFIX/bin
+chmod 777 $PRFIX/bin/7z.so
+rm -f $PRFIX/bin/7zCon.sfx
+cp $BOOTSTRAP_DIR/$(uname -m)/7zCon.sfx $PRFIX/bin
+chmod 777 $PRFIX/bin/7zCon.sfx
+rm -f $PRFIX/bin/7za
+cp $BOOTSTRAP_DIR/$(uname -m)/7za $PRFIX/bin
+chmod 777 $PRFIX/bin/7za
 
 export PKG_CONFIG_PATH="$LIBDIR/pkgconfig:$PREFIX/share/pkgconfig"
 
@@ -104,7 +109,6 @@ elif [[ -d "/usr/ucb/bin" ]]; then
         export PATH="/usr/ucb/bin:$PATH"
     fi
 fi
-export PATH="$PREFIX/bin:$PATH"
 ############################## Misc ##############################
 
 
@@ -126,12 +130,16 @@ then
     cp $BOOTSTRAP_DIR/gcc-4.4.7-$(uname -m)* "$HOME/.local/"
     "$BOOTSTRAP_DIR/7z" x "$gccfile"
     rm -f "$gccfile"
-    #find "$HOME/.local/" -type f -exec file {} \; | grep 'ELF .*executable' | cut -d: -f1 | xargs chmod +x
-	#chmod +x $HOME/.local/bin/*
+    find "$HOME/.local/" -type f -exec file {} \; | grep 'ELF .*executable' | cut -d: -f1 | xargs chmod +x
 	chmod +x $CCPORABLE
+	chmod +x $CPPPORABLE
 	chmod +x $CXXPORABLE
     export CC="$CCPORABLE"
+    export CPP="$CPPPORABLE"
 	export CXX="$CXXPORABLE"
+    export AR="$($CCPORABLE -print-prog-name=ar)"
+    export RANLIB="$($CCPORABLE -print-prog-name=ranlib)"
+	export PATH="$PREFIX/bin:$HOME/.local/bin:$PATH"
 	mkdir -p "$PREFIX/bin/"
 	ln -s "$CCPORABLE" "$PREFIX/bin/gcc"
 	ln -s "$CXXPORABLE" "$PREFIX/bin/g++"
@@ -156,13 +164,16 @@ else
     cp $BOOTSTRAP_DIR/gcc-4.4.7-$(uname -m)* "$HOME/.local/"
     "$BOOTSTRAP_DIR/7z" x "$gccfile"
     rm -f "$gccfile"
-   #find "$HOME/.local/" -type f -exec file {} \; | grep 'ELF .*executable' | cut -d: -f1 | xargs chmod +x
-   #chmod +x $HOME/.local/bin/*
-    echo $CCPORABLE
+    find "$HOME/.local/" -type f -exec file {} \; | grep 'ELF .*executable' | cut -d: -f1 | xargs chmod +x
 	chmod +x $CCPORABLE
+	chmod +x $CPPPORABLE
 	chmod +x $CXXPORABLE
     export CC="$CCPORABLE"
+    export CPP="$CPPPORABLE"
 	export CXX="$CXXPORABLE"
+    export AR="$($CCPORABLE -print-prog-name=ar)"
+    export RANLIB="$($CCPORABLE -print-prog-name=ranlib)"
+	export PATH="$PREFIX/bin:$HOME/.local/bin:$PATH"
 	mkdir -p "$PREFIX/bin/"
 	rm -f "$PREFIX/bin/gcc"
 	rm -f "$PREFIX/bin/g++"
@@ -255,8 +266,8 @@ echo "Done."
 ############################## Patch ##############################
 if [ ! -f "$PREFIX/bin/patch" ]; then
 cd $BOOTSTRAP_DIR
-$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$PATH_GZ
-$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$PATH_TAR
+$PRFIX/bin/7z x $BOOTSTRAP_DIR/$PATH_GZ
+$PRFIX/bin/7z x $BOOTSTRAP_DIR/$PATH_TAR
 cd $PATH_DIR
 chmod +x configure
 echo CC=$CCPORABLE CXX=$CXXPORABLE
@@ -271,8 +282,8 @@ fi
 if [ ! -f "$LIBDIR/pkgconfig/bzip2.pc" ]; then
 cd "$BOOTSTRAP_DIR" || exit 
 rm -rf bzip2-1.0.8
-$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/bzip2-1.0.8.tar.gz
-$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/bzip2-1.0.8.tar
+$PRFIX/bin/7z $BOOTSTRAP_DIR/bzip2-1.0.8.tar.gz
+$PRFIX/bin/7z x $BOOTSTRAP_DIR/bzip2-1.0.8.tar
 cd bzip2-1.0.8
 patch -p1 < $PATCH_DIR/bzip-1.0.8.patch
 sed -i 's/^CC=gcc$/CC=/' Makefile-libbz2_so
@@ -304,9 +315,6 @@ $CCPORABLE -I$PREFIX/include -O2 \
   -L$LIBDIR \
   -Wl,-rpath,$LIBDIR \
   -o bzip2recover bzip2recover.o
-
-AR="$($CCPORABLE -print-prog-name=ar)"
-RANLIB="$($CCPORABLE -print-prog-name=ranlib)"
 
 rm -f libbz2.a
 $AR cq libbz2.a blocksort.o huffman.o crctable.o randtable.o compress.o decompress.o bzlib.o
@@ -356,8 +364,8 @@ fi
 ############################## zlib ##############################
 if [ ! -f "$LIBDIR/pkgconfig/zlib.pc" ]; then
 cd "$BOOTSTRAP_DIR" || exit 1
-$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/zlib-1.2.13.tar.gz
-$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/zlib-1.2.13.tar
+$PRFIX/bin/7z x $BOOTSTRAP_DIR/zlib-1.2.13.tar.gz
+$PRFIX/bin/7z x $BOOTSTRAP_DIR/zlib-1.2.13.tar
 cd zlib-1.2.13
 chmod +x configure
 PATH=$PREFIX/bin:$PATH CC=$CCPORABLE CXX=$CXXPORABLE ./configure --prefix=$PREFIX --libdir=$LIBDIR
@@ -383,15 +391,13 @@ rm -rf "$PERL_DIR" &>/dev/null
 rm -f "$PERL_TAR"
 
 cd "$BOOTSTRAP_DIR" || exit 1
-"$BOOTSTRAP_DIR/7z" x "$BOOTSTRAP_DIR/$PERL_GZ"
+$PRFIX/bin/7z x "$BOOTSTRAP_DIR/$PERL_GZ"
 
 cd "$BOOTSTRAP_DIR/$PERL_DIR" || exit 1
 
-export PATH="$PREFIX/bin:$PATH"
-export CC="$CCPORABLE"
-export CXX="$CXXPORABLE"
-export AR="$($CCPORABLE -print-prog-name=ar)"
-export RANLIB="$($CCPORABLE -print-prog-name=ranlib)"
+
+nl -ba "$BOOTSTRAP_DIR/$PERL_DIR/ext/Errno/Errno_pm.PL" | sed -n '130,205p'
+nl -ba "$BOOTSTRAP_DIR/$PERL_DIR/ext/Errno/Errno_pm.PL" | sed -n '250,330p'
 
 ./Configure \
   -des \
@@ -403,7 +409,9 @@ export RANLIB="$($CCPORABLE -print-prog-name=ranlib)"
   -Dcc="$CCPORABLE" \
   -Doptimize="-O2 -fPIC" \
   -Dccflags="-O2 -fPIC -fno-strict-aliasing -pipe" \
-  -Dldflags="-L$LIBDIR -Wl,-rpath,$LIBDIR -lm"
+  -Dldflags="-L$LIBDIR -Wl,-rpath,$LIBDIR -lm" \
+  -Dlocincpth="$PREFIX/include" \
+  $perllibdir
 
 $MAKE
 $MAKE install
@@ -427,8 +435,8 @@ echo
 cd $BOOTSTRAP_DIR
 rm -rf "$TEXTTEMPLATE_DIR" &>/dev/null
 rm -rf $TEXTTEMPLATE_TAR
-$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$TEXTTEMPLATE_GZ
-$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$TEXTTEMPLATE_TAR
+$PRFIX/bin/7z x $BOOTSTRAP_DIR/$TEXTTEMPLATE_GZ
+$PRFIX/bin/7z x $BOOTSTRAP_DIR/$TEXTTEMPLATE_TAR
 cd "$BOOTSTRAP_DIR/$TEXTTEMPLATE_DIR" || exit 1
 "$PREFIX/bin/perl" Makefile.PL PREFIX="$PREFIX"
 $MAKE
@@ -452,8 +460,8 @@ echo
 rm -rf "$SSL_DIR" &>/dev/null
 rm -rf $SSL_TAR
 cd $BOOTSTRAP_DIR
-$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$SSL_GZ
-$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$SSL_TAR
+$PRFIX/bin/7z x $BOOTSTRAP_DIR/$SSL_GZ
+$PRFIX/bin/7z x $BOOTSTRAP_DIR/$SSL_TAR
 cd "$BOOTSTRAP_DIR/$SSL_DIR" || exit 1
 
 cp "${PATCH_DIR}/openssl-1.0.2.patch" .
@@ -518,8 +526,8 @@ echo "Building Unistring"
 echo "*************************************************"
 echo
 
-$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$UNISTR_GZ
-$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$UNISTR_TAR
+$PRFIX/bin/7z x $BOOTSTRAP_DIR/$UNISTR_GZ
+$PRFIX/bin/7z x $BOOTSTRAP_DIR/$UNISTR_TAR
 cd "$BOOTSTRAP_DIR/$UNISTR_DIR" || exit 1
 
 chmod +x configure
@@ -566,8 +574,8 @@ echo
 
 rm -rf "$WGET_DIR" &>/dev/null
 rm -rf $WGET_TAR
-$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$WGET_GZ
-$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/$WGET_TAR
+$PRFIX/bin/7z x $BOOTSTRAP_DIR/$WGET_GZ
+$PRFIX/bin/7z x $BOOTSTRAP_DIR/$WGET_TAR
 cd "$BOOTSTRAP_DIR/$WGET_DIR" || exit 1
 chmod +x configure
 chmod +x doc/*.pl
