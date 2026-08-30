@@ -271,7 +271,7 @@ fi
 if [ ! -f "$LIBDIR/pkgconfig/bzip2.pc" ]; then
 cd "$BOOTSTRAP_DIR" || exit 
 rm -rf bzip2-1.0.8
-#$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/bzip2-1.0.8.tar.gz
+$BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/bzip2-1.0.8.tar.gz
 $BOOTSTRAP_DIR/7z x $BOOTSTRAP_DIR/bzip2-1.0.8.tar
 cd bzip2-1.0.8
 patch -p1 < $PATCH_DIR/bzip-1.0.8.patch
