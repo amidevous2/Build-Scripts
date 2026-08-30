@@ -318,7 +318,7 @@ mkdir -p $PREFIX/bin $LIBDIR/pkgconfig $PREFIX/include
 cp -p bzlib.h $PREFIX/include
 install -m 755 libbz2.so.1.0.8 $LIBDIR
 install -m 644 libbz2.a $LIBDIR
-cat > bzip2.pc <<EOF
+cat > $LIBDIR/pkgconfig/bzip2.pc <<EOF
 prefix=$PREFIX
 exec_prefix=\${prefix}
 libdir=$LIBDIR
@@ -387,6 +387,12 @@ cd "$BOOTSTRAP_DIR" || exit 1
 
 cd "$BOOTSTRAP_DIR/$PERL_DIR" || exit 1
 
+export PATH="$PREFIX/bin:$PATH"
+export CC="$CCPORABLE"
+export CXX="$CXXPORABLE"
+export AR="$($CCPORABLE -print-prog-name=ar)"
+export RANLIB="$($CCPORABLE -print-prog-name=ranlib)"
+
 ./Configure \
   -des \
   -Dprefix="$PREFIX" \
@@ -394,10 +400,11 @@ cd "$BOOTSTRAP_DIR/$PERL_DIR" || exit 1
   -Dvendorprefix="$PREFIX" \
   -Duseshrplib \
   -Duseperlio \
-  -Dcc="$CC" \
+  -Dcc="$CCPORABLE" \
   -Doptimize="-O2 -fPIC" \
   -Dccflags="-O2 -fPIC -fno-strict-aliasing -pipe" \
   -Dldflags="-L$LIBDIR -Wl,-rpath,$LIBDIR -lm"
+
 $MAKE
 $MAKE install
 
